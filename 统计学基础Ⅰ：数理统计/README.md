@@ -365,6 +365,3 @@ iid样本
 3. 复习公式时同时检查适用条件。
 4. 做 PPT 例题时，把题目翻译成“随机对象 + 参数 + 分布 + 目标”。
 5. 考前用每章末尾的“PPT 对照复习清单”逐项自测。
-
-# 我们的project
-- [PJ仓库](https://github.com/Loong-C/pess-policy-learning)

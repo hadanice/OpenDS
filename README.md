@@ -12,4 +12,4 @@
 2. [数据库及实现 CS20019](./数据库及实现)，[PJ仓库](https://github.com/Loong-C/FDU-Database)
 3. [自然语言处理与大语言模型 CS40008](https://github.com/baojian/llm-26)，[PJ仓库](https://github.com/kiangyeeo/parametric-faithfulness)
 4. [统计学基础Ⅰ：数理统计 STAT20010h](./统计学基础Ⅰ：数理统计)，[PJ仓库](https://github.com/Loong-C/pess-policy-learning)
-5. [生物统计学 STAT50025](./生物统计学)，[PJ仓库](https://github.com/Syn-fdu/VBM-implementation)
+5. [生物统计学 STAT50025](./生物统计学)，[PJ仓库](https://github.com/Syn-fdu/VBM-implementation)，[PJ的beamer](./project_presentation/vbm_sensitivity_beamer.pdf)
