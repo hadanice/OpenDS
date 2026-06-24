@@ -88,7 +88,7 @@
 | **Wolfe 条件** | Ch8 §1.1 | 保证 $s_k^Ty_k>0$，维持拟牛顿矩阵正定 |
 | **次梯度最优性** $0\in\partial f(x^*)$ | Ch9 §1.1 | 不可微凸优化的 KKT / 最优性条件 |
 | **投影不等式** | Ch9 Lemma 2.1 | 投影次梯度法收敛证明 |
-| **Proximal mapping** $\operatorname{prox}_{th}$ | Ch10 Def 1.1 | PGM / ISTA / 投影梯度的统一写法 |
+| **Proximal mapping** ${prox}_{th}$ | Ch10 Def 1.1 | PGM / ISTA / 投影梯度的统一写法 |
 | **Gradient mapping** $G_t(x)$ | Ch10 §2 | composite 问题的 stationarity 与收敛分析 |
 
 ## 四、考察重点（从作业逆推）
