@@ -138,3 +138,5 @@
 > **学习这门课的最大收获**：拿到一份数据集时，能从"目标 → 数据类型 → 假设条件"反推到"应该用哪种方法"。
 > 工具是死的，思路是活的。
 
+[PJ的beamer](./project_presentation/vbm_sensitivity_beamer.pdf)
+[PJ的源码](https://github.com/Syn-fdu/VBM-implementation)
