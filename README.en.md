@@ -45,7 +45,7 @@ Whether you're a classmate looking for reference materials, a junior student exp
 
 ## 📖 Recommended Online Resources
 
-1. [Mathematical Analysis by Jixiu Chen ](https://www.bilibili.com/video/BV15v411g7VP/?p=2&share_source=copy_web&vd_source=b81438166547b82da63ac8972437cb72): The textbook is authored by Professor Chen Jixiu himself
+1. [Mathematical Analysis by Jixiu Chen ](https://www.bilibili.com/video/BV15v411g7VP/?p=2&share_source=copy_web&vd_source=b81438166547b82da63ac8972437cb72): The textbook is authored by Prof himself
 2. [CS Self-Study Guide](https://csdiy.wiki/): Comprehensive computer science learning path and resources
 3. [Think Python](https://cycleuser.gitbooks.io/think-python/content/): An excellent Python beginner's guide
 4. [UC Berkeley, CS 61B](https://sp24.datastructur.es): Java-based data structures and algorithms course, emphasizing practical implementation
