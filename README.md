@@ -1,6 +1,8 @@
-# OpenDS
+# 📚 OpenDS
 
-This repository contains my notes and materials for the courses I've taken in the School of Data Science at Fudan University. The materials are organized by semester and course, and include lecture notes, assignments, projects, and other relevant resources.
+欢迎来到我的学习笔记库！这里汇聚了我在复旦大学大数据学院学习期间的课程笔记、作业解答、项目代码、自学资源和其他材料。
+
+无论你是找资料参考的同学、提前探路的学弟学妹，还是对某个课程感兴趣的好奇者，都欢迎来翻翻。希望这些记录能对你有所帮助，也欢迎提出意见和建议！
 ## 🍂 25秋
 
 | 课程 | 代码 | 任课老师 | 资料 |
