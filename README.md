@@ -24,7 +24,7 @@
 | :---: | :---: | :---: | :---: |
 | 多模态数据同化 | AIS410010| 陈钊 | null |
 | 图像处理与数据可视化 | CS30065h | [庄吓海](https://zmiclab.github.io/zxh/)、[陈思明](http://simingchen.me/) | null |
-| 人工智能 | CS50020 | [张伟](https://zhangwei.github.io/) | null |
+| 人工智能 | CS50020 | [魏忠钰](http://www.fudan-disc.com/people/zywei) | null |
 | 图数据管理与挖掘 | CS50027 | [郑卫国](https://weiguozheng.github.io/) | null |
 | 统计（机器）学习概论 | STAT30015 | [王天宇](https://wangt1anyu.github.io/) | null |
 | 统计计算 | STAT30016h | [张楠](https://zhangnanfudan.github.io/)、[周渊](https://zhouyuanzxcv.github.io/) | null |
@@ -32,4 +32,4 @@
 ## 27春
 | 课程 | 代码 | 任课老师 | 资料 |
 | :---: | :---: | :---: | :---: |
-| 神经网络与深度学习 | CS30064 | [魏忠钰](http://www.fudan-disc.com/people/zywei) | null |
+| 神经网络与深度学习 | CS30064 | [付彦伟](https://yanweifu.github.io/) | null |
