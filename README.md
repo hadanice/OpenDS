@@ -1,5 +1,7 @@
 # 📚 OpenDS
 
+中文 | [English](./README.en.md)
+
 欢迎来到我的学习笔记库！这里汇聚了我在复旦大学大数据学院学习期间的课程笔记、作业解答、项目代码、自学资源和其他材料。
 
 无论你是找资料参考的同学、提前探路的学弟学妹，还是对某个课程感兴趣的好奇者，都欢迎来翻翻。希望这些记录能对你有所帮助，也欢迎提出意见和建议！
@@ -7,8 +9,8 @@
 
 | 课程 | 代码 | 任课老师 | 资料 |
 | :---: | :---: | :---: | :---: |
-| [高等线性代数](./高等线性代数) | MATH10003 | 邵美悦 | 笔记、作业 |
-| [数值算法与案例分析Ⅰ](./数值算法与案例分析Ⅰ) | MATH20007 | 邵美悦 | [教材](https://zh.z-library.sk/book/NOVQYVLdvk/%E6%95%B0%E5%80%BC%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E7%AC%AC%E4%BA%8C%E7%89%88.html)、笔记、作业、PJ |
+| [高等线性代数](./高等线性代数) | MATH10003 | [邵美悦](https://scholar.google.com/citations?user=yk0MnRQAAAAJ) | 笔记、作业 |
+| [数值算法与案例分析Ⅰ](./数值算法与案例分析Ⅰ) | MATH20007 | [邵美悦](https://scholar.google.com/citations?user=yk0MnRQAAAAJ) | [教材](https://zh.z-library.sk/book/NOVQYVLdvk/%E6%95%B0%E5%80%BC%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E7%AC%AC%E4%BA%8C%E7%89%88.html)、笔记、作业、PJ |
 | [算法与数据结构](./算法与数据结构) | CS20017h | [黄增峰](https://zengfenghuang.github.io/) | [参考教材](https://zh.z-library.sk/book/0OZLxW2Kjd/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA-%E7%AC%AC%E4%B8%89%E7%89%88-%E5%8F%AF%E5%A4%8D%E5%88%B6-%E6%9C%89%E7%9B%AE%E5%BD%95.html)、课件、作业 |
 | [计算机原理](./计算机原理) | CS20018 | [梁家卿](https://lsdefine.github.io/) | [参考教材](https://zh.z-library.sk/book/D2RA8YEKOL/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F.html)、课件、lab、模拟卷（比期末简单得多）|
 | [概率论基础](./概率论基础) | STAT20011 | [吴波](https://math.fudan.edu.cn/fa/61/c30607a326241/page.htm) | [教材](https://zh.z-library.sk/book/JO7grpMkO3/%E6%A6%82%E7%8E%87%E8%AE%BA.html)、笔记、作业 |
@@ -25,7 +27,7 @@
 ## 🍂 26秋
 | 课程 | 代码 | 任课老师 | 资料 |
 | :---: | :---: | :---: | :---: |
-| 多模态数据同化 | AIS410010| 陈钊 | null |
+| 多模态数据同化 | AIS410010| [陈钊](https://sds.fudan.edu.cn/17428/list.htm) | null |
 | 图像处理与数据可视化 | CS30065h | [庄吓海](https://zmiclab.github.io/zxh/)、[陈思明](http://simingchen.me/) | null |
 | 人工智能 | CS50020 | [魏忠钰](http://www.fudan-disc.com/people/zywei) | [相关课程](https://www.bilibili.com/video/BV1M24y1x7mM/?vd_source=0e233a3f76bc6a97438e42ccb57b496b) |
 | 图数据管理与挖掘 | CS50027 | [郑卫国](https://weiguozheng.github.io/) | null |
