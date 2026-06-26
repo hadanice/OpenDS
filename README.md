@@ -36,10 +36,12 @@ This repository contains my notes and materials for the courses I have taken in 
 | 神经网络与深度学习 | CS30064 | [付彦伟](https://yanweifu.github.io/) | null |
 
 ## 线上资源推荐
- 1. [数学分析 陈纪修](https://www.bilibili.com/video/BV15v411g7VP/?p=2&share_source=copy_web&vd_source=b81438166547b82da63ac8972437cb72)
- 2. [CS自学指南](https://csdiy.wiki/)
- 3. [Think Python](https://cycleuser.gitbooks.io/think-python/content/)
- 4. [UC Berkeley, CS 61B: Data Structures](https://sp24.datastructur.es)
- 5. [Princeton,Algorithms, Part I](https://www.coursera.org/learn/algorithms-part1)
- 6. [CMU 15-445: Database Systems](https://15445.courses.cs.cmu.edu)
- 7. [MIT The Missing Semester](https://missing.csail.mit.edu/)
+ 1. [数学分析 陈纪修](https://www.bilibili.com/video/BV15v411g7VP/?p=2&share_source=copy_web&vd_source=b81438166547b82da63ac8972437cb72)：无需多言，教材就是陈纪修老师主编的
+ 2. [CS自学指南](https://csdiy.wiki/)：提供全面的计算机科学学习路径和资源
+ 3. [Think Python](https://cycleuser.gitbooks.io/think-python/content/)：一本优秀的Python入门书籍
+ 4. [UC Berkeley, CS 61B](https://sp24.datastructur.es)：基于Java的数据结构与算法课程，重实操，与黄老师侧重数学推导的风格互补
+ 5. [Princeton, Algorithms Part I](https://www.coursera.org/learn/algorithms-part1)：基于Java的算法课程，需要下功夫
+ 6. [CMU, 15-445: Database Systems](https://15445.courses.cs.cmu.edu)：广受好评的数据库系统课程
+ 7. [MIT, The Missing Semester](https://missing.csail.mit.edu/)：计算机系统课程，可以看做对常用工具的介绍
+ 8. [UvA, Deep Learning Tutorials](https://uvadlc-notebooks.readthedocs.io/en/latest/index.html)：深度学习教程
+ 9. [Google, Machine Learning Courses](https://developers.google.com/machine-learning)：机器学习系列课程
