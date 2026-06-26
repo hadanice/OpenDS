@@ -16,7 +16,7 @@ This repository contains my notes and materials for the courses I have taken in 
 | :---: | :---: | :---: | :---: |
 | [最优化方法](./最优化方法) | MATH20008 | [江如俊](https://rjjiang.github.io/) | 笔记、作业 |
 | [数据库及实现](./数据库及实现) | CS20019 | [郑卫国](https://weiguozheng.github.io/) | [教材](https://zh.z-library.sk/book/Bj4qk6n4v3/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%8F%8Amysql%E5%BA%94%E7%94%A8%E6%95%99%E7%A8%8B-%E7%AC%AC2%E7%89%88.html)、[参考教材](https://zh.z-library.sk/book/DjEmmmBzjo/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E6%A6%82%E5%BF%B5%E5%8E%9F%E4%B9%A6%E7%AC%AC7%E7%89%88.html)、笔记、[PJ源码](https://github.com/Loong-C/FDU-Database)、[PJ主页](https://linkukai.com/bookstore/) |
-| [自然语言处理与大语言模型](https://github.com/baojian/llm-26) | CS40008 | [周宝健](https://baojian.github.io/) | [PJ源码](https://github.com/kiangyeeo/parametric-faithfulness) |
+| [自然语言处理与大语言模型](https://baojian.github.io/llm-26/) | CS40008 | [周宝健](https://baojian.github.io/) | [课程仓库](https://github.com/baojian/llm-26)[PJ源码](https://github.com/kiangyeeo/parametric-faithfulness) |
 | [统计学基础Ⅰ：数理统计](./统计学基础Ⅰ：数理统计) | STAT20010h | [孙鑫伟](https://sunxinwei0625.github.io/sunxw.github.io/) | 笔记、[PJ源码](https://github.com/Loong-C/pess-policy-learning)、[take-home-exam](./统计学基础Ⅰ：数理统计/final.pdf) |
 | [生物统计学](./生物统计学) | STAT50025 | [张静茹](https://jingru-zhang.github.io/index.html) | 笔记、[PJ源码](https://github.com/Syn-fdu/VBM-implementation)、[Pre的beamer](./生物统计学/project_presentation/vbm_sensitivity_beamer.pdf) |
 
