@@ -35,8 +35,11 @@ This repository contains my notes and materials for the courses I have taken in 
 | :---: | :---: | :---: | :---: |
 | 神经网络与深度学习 | CS30064 | [付彦伟](https://yanweifu.github.io/) | null |
 
-## 推荐线上课程
+## 线上资源推荐
  1. [数学分析 陈纪修](https://www.bilibili.com/video/BV15v411g7VP/?p=2&share_source=copy_web&vd_source=b81438166547b82da63ac8972437cb72)
- 2. [UC Berkeley, CS 61B: Data Structures](https://sp24.datastructur.es)
- 3. [CMU 15-445: Database Systems](https://15445.courses.cs.cmu.edu)
- 4. [MIT The Missing Semester](https://missing.csail.mit.edu/)
+ 2. [CS自学指南](https://csdiy.wiki/)
+ 3. [Think Python](https://cycleuser.gitbooks.io/think-python/content/)
+ 4. [UC Berkeley, CS 61B: Data Structures](https://sp24.datastructur.es)
+ 5. [Princeton,Algorithms, Part I](https://www.coursera.org/learn/algorithms-part1)
+ 6. [CMU 15-445: Database Systems](https://15445.courses.cs.cmu.edu)
+ 7. [MIT The Missing Semester](https://missing.csail.mit.edu/)
