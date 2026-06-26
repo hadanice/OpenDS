@@ -1,4 +1,4 @@
-# my_DS_notes
+# OpenDS
 
 This repository contains my notes and materials for the courses I have taken in the School of Data Science at Fudan University. The materials are organized by semester and course, and include lecture notes, assignments, projects, and other relevant resources.
 ## 25秋
