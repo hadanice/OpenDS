@@ -1,6 +1,6 @@
 # 最优化课程学习总览（Lecture 2 – Lecture 10）
 
-> 本系列讲义覆盖凸优化课程从"凸性基础"到"一阶/二阶/不可微算法"的主线内容（对应 note 2 ~ note 10）。
+> 本系列笔记覆盖凸优化课程从"凸性基础"到"一阶/二阶/不可微算法"的主线内容（对应 note 2 ~ note 10）。
 > 阅读建议：先把本文看完，建立宏观地图，再按章节顺序学习。
 
 ## 一、课程的"主线故事"
@@ -65,31 +65,31 @@
 
 ## 三、按章节的核心"硬核工具"
 
-下面这张表是考试和作业最常用的"工具箱"，遇到任何题目你都应该能立刻匹配到对应工具。
+这张表是考试和作业最常用的"工具箱"，遇到任何题目你都应该能立刻匹配到对应工具。
 
-| 工具 | 出处 | 典型用法 |
-|---|---|---|
-| **凸性保持运算**（交、仿射、透视、线性分式） | Ch2 §1.2 | 判定一个集合是否凸 |
-| **凸函数运算法则**（非负组合、点态上确界、仿射复合、单调复合、最小化、透视） | Ch2 Thm 2.7 | 判定一个函数是否凸 |
-| **一阶条件** $f(y)\ge f(x)+\nabla f(x)^T(y-x)$ | Ch2 Thm 2.10 | 与 $\nabla^2 f \succeq 0$ 等价；推 KKT 充分性 |
-| **二阶条件** $\nabla^2 f \succeq 0$ | Ch2 Thm 2.11 | 大多数判凸题首选 |
-| **Schur 补** | Ch2 Ex 2.12 | 把"分式/二次型"塞进 SDP/SOCP |
-| **标准形改写**（引入松弛、x⁺-x⁻、log-sum-exp、第二阶锥技巧） | Ch3 §2 | LP/QP/SOCP 建模 |
-| **FJ 条件 / KKT 条件 / Slater 条件** | Ch4 Thm 3.1, 3.2, 3.4 | 求最优解、判定正则性 |
-| **Lagrangian 与对偶函数** $\theta(\lambda,\nu)=\inf_x L$ | Ch5 (D) | 对偶推导第一步永远是写 L |
-| **共轭函数** $f^*(y)=\sup_x(y^T x-f(x))$ | Ch2 Def 2.4 + Ch5 §1 | Fenchel 对偶、LASSO/正则化对偶 |
-| **proper cone & dual cone** | Ch5 §2.1 | 写 CLP/SDP/SOCP 的对偶 |
-| **Lipschitz 梯度（L-smooth）** | Ch6 Lemma 1.2 | 二次上界 → "充分下降"引理 |
-| **强凸（μ-strongly convex）** | Ch6 Def 1.11 | 二次下界 → 线性收敛率 |
-| **Armijo 回溯** | Ch6 §1.1 + §2.1 | 步长安全网，保证下降 |
-| **Newton decrement** $\lambda^2=-\nabla f^Td$ | Ch7 §1.1.2 | Newton 停止准则、二次收敛分析 |
-| **Inexact Newton 残差条件** $\|r_k\|\le\eta_k\|\nabla f_k\|$ | Ch7 §2 | Newton-CG、局部线性/超线性/二次收敛 |
-| **Secant equation** $B_{k+1}s_k=y_k$ | Ch8 §1.1 | BFGS / L-BFGS 更新的核心约束 |
-| **Wolfe 条件** | Ch8 §1.1 | 保证 $s_k^Ty_k>0$，维持拟牛顿矩阵正定 |
-| **次梯度最优性** $0\in\partial f(x^*)$ | Ch9 §1.1 | 不可微凸优化的 KKT / 最优性条件 |
-| **投影不等式** | Ch9 Lemma 2.1 | 投影次梯度法收敛证明 |
-| **Proximal mapping** ${prox}_{th}$ | Ch10 Def 1.1 | PGM / ISTA / 投影梯度的统一写法 |
-| **Gradient mapping** $G_t(x)$ | Ch10 §2 | composite 问题的 stationarity 与收敛分析 |
+| 工具                                                       | 出处                    | 典型用法                                  |
+| -------------------------------------------------------- | --------------------- | ------------------------------------- |
+| **凸性保持运算**（交、仿射、透视、线性分式）                                 | Ch2 §1.2              | 判定一个集合是否凸                             |
+| **凸函数运算法则**（非负组合、点态上确界、仿射复合、单调复合、最小化、透视）                 | Ch2 Thm 2.7           | 判定一个函数是否凸                             |
+| **一阶条件** $f(y)\ge f(x)+\nabla f(x)^T(y-x)$               | Ch2 Thm 2.10          | 与 $\nabla^2 f \succeq 0$ 等价；推 KKT 充分性 |
+| **二阶条件** $\nabla^2 f \succeq 0$                          | Ch2 Thm 2.11          | 大多数判凸题首选                              |
+| **Schur 补**                                              | Ch2 Ex 2.12           | 把"分式/二次型"塞进 SDP/SOCP                  |
+| **标准形改写**（引入松弛、x⁺-x⁻、log-sum-exp、第二阶锥技巧）                 | Ch3 §2                | LP/QP/SOCP 建模                         |
+| **FJ 条件 / KKT 条件 / Slater 条件**                           | Ch4 Thm 3.1, 3.2, 3.4 | 求最优解、判定正则性                            |
+| **Lagrangian 与对偶函数** $\theta(\lambda,\nu)=\inf_x L$      | Ch5 (D)               | 对偶推导第一步永远是写 L                         |
+| **共轭函数** $f^*(y)=\sup_x(y^T x-f(x))$                     | Ch2 Def 2.4 + Ch5 §1  | Fenchel 对偶、LASSO/正则化对偶                |
+| **proper cone & dual cone**                              | Ch5 §2.1              | 写 CLP/SDP/SOCP 的对偶                    |
+| **Lipschitz 梯度（L-smooth）**                               | Ch6 Lemma 1.2         | 二次上界 → "充分下降"引理                       |
+| **强凸（μ-strongly convex）**                                | Ch6 Def 1.11          | 二次下界 → 线性收敛率                          |
+| **Armijo 回溯**                                            | Ch6 §1.1 + §2.1       | 步长安全网，保证下降                            |
+| **Newton decrement** $\lambda^2=-\nabla f^Td$            | Ch7 §1.1.2            | Newton 停止准则、二次收敛分析                    |
+| **Inexact Newton 残差条件** $\|r_k\|\le\eta_k\|\nabla f_k\|$ | Ch7 §2                | Newton-CG、局部线性/超线性/二次收敛               |
+| **Secant equation** $B_{k+1}s_k=y_k$                     | Ch8 §1.1              | BFGS / L-BFGS 更新的核心约束                 |
+| **Wolfe 条件**                                             | Ch8 §1.1              | 保证 $s_k^Ty_k>0$，维持拟牛顿矩阵正定             |
+| **次梯度最优性** $0\in\partial f(x^*)$                         | Ch9 §1.1              | 不可微凸优化的 KKT / 最优性条件                   |
+| **投影不等式**                                                | Ch9 Lemma 2.1         | 投影次梯度法收敛证明                            |
+| **Proximal mapping** $\operatorname{prox}_{th}$          | Ch10 Def 1.1          | PGM / ISTA / 投影梯度的统一写法                |
+| **Gradient mapping** $G_t(x)$                            | Ch10 §2               | composite 问题的 stationarity 与收敛分析      |
 
 ## 四、考察重点（从作业逆推）
 
@@ -175,17 +175,17 @@
 
 ## 五、各章建议复习时长（按从易到难）
 
-| 章 | 难度 | 建议复习节奏 |
-|---|---|---|
-| Ch2 | ★★☆ | 1.5 天，重点是**做完 A1+A2+A3 的判凸题**才算掌握 |
-| Ch3 | ★★☆ | 1 天，关键是建模"套路"——见过几次就熟了 |
-| Ch4 | ★★★ | 1 天，必须能**徒手写 KKT 系统**并且用它解题 |
-| Ch5 | ★★★★ | 2 天，**写对偶**是本课程的最高频考点 |
-| Ch6 | ★★★ | 1.5 天，重点是**收敛性证明的标准套路** |
-| Ch7 | ★★★★ | 1.5 天，重点是 **Newton system + decrement + inexact Newton**，配合 hw9 |
-| Ch8 | ★★★ | 1 天，重点是 **secant equation、Wolfe、BFGS/L-BFGS、BB**，配合 hw10 |
-| Ch9 | ★★★ | 1 天，重点是 **次微分计算 + $0\in\partial f$ + Polyak 步长 + 投影梯度**，配合 A11 |
-| Ch10 | ★★★ | 1 天，重点是 **prox、gradient mapping、PGM/ISTA/FISTA**，配合 A12 |
+| 章    | 难度   | 复习节奏                                                            |
+| ---- | ---- | --------------------------------------------------------------- |
+| Ch2  | ★★☆  | 1.5 天，重点是**做完 A1+A2+A3 的判凸题**才算掌握                               |
+| Ch3  | ★★☆  | 1 天，关键是建模"套路"——见过几次就熟了                                          |
+| Ch4  | ★★★  | 1 天，必须能**徒手写 KKT 系统**并且用它解题                                     |
+| Ch5  | ★★★★ | 2 天，**写对偶**是本课程的最高频考点                                           |
+| Ch6  | ★★★  | 1.5 天，重点是**收敛性证明的标准套路**                                         |
+| Ch7  | ★★★★ | 1.5 天，重点是 **Newton system + decrement + inexact Newton**，配合 hw9 |
+| Ch8  | ★★★  | 1 天，重点是 **secant equation、Wolfe、BFGS/L-BFGS、BB**，配合 hw10        |
+| Ch9  | ★★★  | 1 天，重点是 **次微分计算 + $0\in\partial f$ + Polyak 步长 + 投影梯度**，配合 A11  |
+| Ch10 | ★★★  | 1 天，重点是 **prox、gradient mapping、PGM/ISTA/FISTA**，配合 A12         |
 
 ## 六、做题策略
 
@@ -200,17 +200,17 @@
 
 ## 七、文件清单
 
-| 文件 | 章 |
-|---|---|
-| `1_总览与学习路径.md` | 总览 |
-| `2_凸集与凸函数.md` | Lecture 2 |
-| `3_凸优化问题.md` | Lecture 3 |
-| `4_最优性条件.md` | Lecture 4 |
-| `5_拉格朗日对偶.md` | Lecture 5 |
-| `6_梯度下降与牛顿法.md` | Lecture 6 |
-| `7_牛顿法.md` | Lecture 7 |
-| `8_拟牛顿法.md` | Lecture 8 |
-| `9_次梯度与次梯度法.md` | Lecture 9 |
-| `10_近端梯度法.md` | Lecture 10 |
+| 文件              | 章          |
+| --------------- | ---------- |
+| `README.md`     | 总览         |
+| `2_凸集与凸函数.md`   | Lecture 2  |
+| `3_凸优化问题.md`    | Lecture 3  |
+| `4_最优性条件.md`    | Lecture 4  |
+| `5_拉格朗日对偶.md`   | Lecture 5  |
+| `6_梯度下降与牛顿法.md` | Lecture 6  |
+| `7_牛顿法.md`      | Lecture 7  |
+| `8_拟牛顿法.md`     | Lecture 8  |
+| `9_次梯度与次梯度法.md` | Lecture 9  |
+| `10_近端梯度法.md`   | Lecture 10 |
 
 > 学习方式建议：每章先按"核心思想 → 工具表 → 题型分类"过一遍，然后**回到对应作业（A1～A8、hw07、hw9、hw10、A11、A12）认真做一遍**。本系列文档不直接给作业答案，但会把每道题"考什么、用什么工具、思路从哪里切入"标得很清楚。
