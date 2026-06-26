@@ -31,7 +31,7 @@ Whether you're a classmate looking for reference materials, a junior student exp
 | Course | Code | Instructor | Materials |
 | :---: | :---: | :---: | :---: |
 | Multimode Data Assimilation | AIS410010 | [Zhao Chen](https://sds.fudan.edu.cn/17428/list.htm) | null |
-| Image Processing and Data Visualization | CS30065h | [Zhuang Xiahai](https://zmiclab.github.io/zxh/), [Chen Siming](http://simingchen.me/) | null |
+| Image Processing and Data Visualization | CS30065h | [Xiahai Zhuang](https://zmiclab.github.io/zxh/), [Siming Chen](http://simingchen.me/) | null |
 | Introduction to Artificial Intelligence | CS50020 | [Zhongyu Wei](http://www.fudan-disc.com/people/zywei) | [Related Course](https://www.bilibili.com/video/BV1M24y1x7mM/?vd_source=0e233a3f76bc6a97438e42ccb57b496b) |
 | Graph Data Management and Mining | CS50027 | [Weiguo Zheng](https://weiguozheng.github.io/) | null |
 | Introduction to Statistical Learning and Machine Learning | STAT30015 | [Tianyu Wang](https://wangt1anyu.github.io/) | null |
