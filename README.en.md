@@ -13,7 +13,7 @@ Whether you're a classmate looking for reference materials, a junior student exp
 | [Advanced Linear Algebra](./高等线性代数) | MATH10003 | [Meiyue Shao](https://scholar.google.com/citations?user=yk0MnRQAAAAJ) | Notes, Assignments |
 | [Numerical Algorithms and Case Studies Ⅰ](./数值算法与案例分析Ⅰ) | MATH20007 | [Meiyue Shao](https://scholar.google.com/citations?user=yk0MnRQAAAAJ) | [Textbook](https://zh.z-library.sk/book/NOVQYVLdvk/%E6%95%B0%E5%80%BC%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E7%AC%AC%E4%BA%8C%E7%89%88.html), Notes, Assignments, Project |
 | [Algorithms and Data Structures](./算法与数据结构) | CS20017h | [Zengfeng Huang](https://zengfenghuang.github.io/) | [Reference Textbook](https://zh.z-library.sk/book/0OZLxW2Kjd/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA-%E7%AC%AC%E4%B8%89%E7%89%88-%E5%8F%AF%E5%A4%8D%E5%88%B6-%E6%9C%89%E7%9B%AE%E5%BD%95.html), Slides, Assignments |
-| [Principle of Computer Engineering](./计算机原理) | CS20018 | [Jiaqing Liang](https://lsdefine.github.io/) | [Reference Textbook](https://zh.z-library.sk/book/D2RA8YEKOL/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F.html), Slides, Labs, Mock Exams |
+| [Principle of Computer Engineering](./计算机原理) | CS20018 | [Jiaqing Liang](https://lsdefine.github.io/) | [Reference Textbook](https://zh.z-library.sk/book/D2RA8YEKOL/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F.html), Notes, Slides, Labs, Mock Exams |
 | [Foundations of Probability Theory](./概率论基础) | STAT20011 | [Bo Wu](https://math.fudan.edu.cn/fa/61/c30607a326241/page.htm) | [Textbook](https://zh.z-library.sk/book/JO7grpMkO3/%E6%A6%82%E7%8E%87%E8%AE%BA.html), Notes, Assignments |
 
 ## 🌸 Spring 2026
