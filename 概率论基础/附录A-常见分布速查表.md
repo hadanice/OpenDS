@@ -90,11 +90,11 @@ $$
 | Bernoulli | $1-p+pe^{it}$ |
 | 二项 $B(n,p)$ | $(1-p+pe^{it})^n$ |
 | Poisson $P(\lambda)$ | $\exp\{\lambda(e^{it}-1)\}$ |
-| 均匀 $U(a,b)$ | $\frac{e^{itb}-e^{ita}}{it(b-a)}$，$t\ne 0$ |
+| 均匀 $U(a,b)$ | $\frac{e^{itb}-e^{ita}}{it(b-a)}$， $t\ne 0$ |
 | 指数 $Exp(\lambda)$ | $\frac{\lambda}{\lambda-it}$ |
 | Gamma $\Gamma(r,\lambda)$ | $\left(\frac{\lambda}{\lambda-it}\right)^r$ |
 | 正态 $N(\mu,\sigma^2)$ | $\exp(i\mu t-\sigma^2t^2/2)$ |
-| 标准 Cauchy | $e^{-|t|}$ |
+| 标准 Cauchy | $e^{-\|t\|}$ |
 
 独立和：
 
