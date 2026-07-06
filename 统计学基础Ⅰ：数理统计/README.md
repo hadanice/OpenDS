@@ -183,27 +183,23 @@
 
 ## 5. 高频公式链
 
+```mermaid
+flowchart TD
+A["联合密度独立f(x₁,...,xn)=∏f(xi)"] --> B["似然函数
+L(θ)=∏f(xi;θ)"]
+B --> C["MLE
+θ_hat=argmax L(θ)"] 
+C --> D["Fisher信息
+I(θ)=-E[∂² log f/∂θ²]"]
+D --> E["CRLB
+Var(T) ≥ [g'(θ)]²/I(θ)"]
+E --> F["渐近正态
+sqrt(n)(θ_hat-θ) -> N(0,I_1(θ)^(-1))"]
+F --> G["CI"]
+F --> H["Hypothesis Testing"]
+F --> I["GLRT"]
 ```
-联合密度独立：f(x1,...,xn)=∏f(xi)
-        |
-        v
-似然函数：L(θ)=∏f(xi;θ)
-        |
-        v
-MLE：θ_hat=argmax L(θ)
-        |
-        v
-Fisher信息：I(θ)=-E[∂² log f/∂θ²]
-        |
-        v
-CRLB：Var(T) ≥ [g'(θ)]²/I(θ)
-        |
-        v
-渐近正态：sqrt(n)(θ_hat-θ) -> N(0,I_1(θ)^(-1))
-        |
-        v
-CI / Hypothesis Testing / GLRT
-```
+
 
 ---
 
