@@ -7,74 +7,121 @@
 ---
 
 ## 1. 总知识图谱
+```mermaid
+mindmap
+  root((统计学))
 
+    概率基础
+      导论
+        随机实验
+        样本空间
+        事件
+        概率公理
+        条件概率
+        全概率
+        Bayes
+        独立性
+        组合计数
+      随机变量
+        离散 pmf
+        连续 pdf
+        CDF
+        二项分布
+        超几何分布
+
+    随机变量工具箱
+      I
+        期望
+        方差
+        高阶矩
+        联合分布
+        边际分布
+        独立性
+        变量变换
+      II
+        协方差
+        线性组合方差
+        顺序统计量
+        条件分布
+        条件期望
+        MGF
+
+    分布与极限
+      特殊分布
+        Poisson
+        Normal
+        Geometric
+        Negative Binomial
+        Gamma
+        Poisson过程等待时间
+        正态近似
+      渐近理论
+        收敛方式
+        O_p 与 o_p
+        LLN
+        CLT
+        Slutsky
+        Delta 方法
+        Monte Carlo 模拟
+
+    参数估计
+      I
+        MLE
+        MoM
+        置信区间
+        无偏性
+        有效性
+        Fisher 信息
+        Cramer-Rao 下界
+      II
+        指数族
+        充分性
+        完备性
+        一致性
+        Bayes 估计
+        MLE 渐近最优
+
+    E. 假设检验与推断
+      假设检验
+        H₀/H₁
+        拒绝域
+        p-value
+        Type I-II error
+        power
+        GLRT
+        渐近检验
+      正态分布推断
+        t
+        χ²
+        F
+        单样本均值与方差 CI 和检验
+      双样本推断
+        两样本 t
+        Welch
+        F 检验
+        两比例检验
+        参数差与方差比 CI
+
+    数据分析模型
+      数据类型概览
+        定量/定性
+        相似/不相似单位
+        独立/相关
+        paired
+        k-sample
+        block
+        categorical
+      线性回归与 Lasso
+        线性模型
+        OLS
+        投影
+        t 与 F 推断
+        正则化
+        Lasso
+        KKT
+        风险界
 ```
-统计学
- |
- |-- A. 概率基础
- |     |
- |     |-- 第1章：概率论导论
- |     |     随机实验 / 样本空间 / 事件 / 概率公理
- |     |     条件概率 / 全概率 / Bayes / 独立性 / 组合计数
- |     |
- |     |-- 第2章：随机变量 I
- |           随机变量 / 离散pmf / 连续pdf / CDF
- |           二项分布 / 超几何分布
- |
- |-- B. 随机变量工具箱
- |     |
- |     |-- 第3章：随机变量 II
- |     |     期望 / 方差 / 高阶矩
- |     |     联合分布 / 边际分布 / 独立性 / 变量变换
- |     |
- |     |-- 第4章：随机变量 III
- |           协方差 / 线性组合方差
- |           顺序统计量 / 条件分布 / 条件期望 / MGF
- |
- |-- C. 分布与极限
- |     |
- |     |-- 第5章：特殊分布
- |     |     Poisson / Normal / Geometric / Negative Binomial / Gamma
- |     |     Poisson过程等待时间 / 正态近似
- |     |
- |     |-- 第6章：渐近理论与Monte Carlo
- |           收敛方式 / O_p与o_p / LLN / CLT
- |           Slutsky / Delta方法 / Monte Carlo模拟
- |
- |-- D. 参数估计
- |     |
- |     |-- 第7章：参数估计
- |     |     MLE / MoM / 置信区间 / 无偏性 / 有效性
- |     |     Fisher信息 / Cramer-Rao下界
- |     |
- |     |-- 第8章：参数估计 II
- |           指数族 / 充分性 / 完备性 / 一致性
- |           Bayes估计 / MLE渐近最优
- |
- |-- E. 假设检验与推断
- |     |
- |     |-- 第9章：假设检验
- |     |     H0/H1 / 拒绝域 / p-value / Type I-II error
- |     |     power / GLRT / 渐近检验
- |     |
- |     |-- 第10章：正态分布推断
- |     |     t / chi-square / F
- |     |     单样本均值与方差CI和检验
- |     |
- |     |-- 第12章：双样本推断
- |           两样本t / Welch / F检验
- |           两比例检验 / 参数差与方差比CI
- |
- |-- F. 数据分析模型
-       |
-       |-- 第11章：数据类型概览
-       |     定量/定性 / 相似/不相似单位
-       |     独立/相关 / paired / k-sample / block / categorical
-       |
-       |-- 第13章：线性回归与Lasso
-             线性模型 / OLS / 投影 / t与F推断
-             正则化 / Lasso / KKT / 风险界
-```
+
 
 ---
 
