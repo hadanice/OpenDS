@@ -35,7 +35,7 @@ const renderDiagram = async () => {
     mermaid.initialize({
       startOnLoad: false,
       securityLevel: 'strict',
-      theme: isDark.value ? 'dark' : 'neutral',
+      theme: isDark.value ? 'dark' : 'neo',
       fontFamily: 'Inter, "Noto Sans SC", "Microsoft YaHei", sans-serif',
       flowchart: {
         htmlLabels: true,
