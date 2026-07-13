@@ -1,5 +1,7 @@
 # 📚 OpenDS
 
+[🌐 Visit the OpenDS course website](https://hadanice.github.io/OpenDS/)
+
 [中文](./README.md) | English
 
 Welcome to my learning notes repository! This collection brings together my course notes, homework solutions, project code, self-study resources, and other materials from my years at the School of Data Science at Fudan University.
