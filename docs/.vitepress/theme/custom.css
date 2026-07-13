@@ -90,6 +90,7 @@ body {
 
 .VPHomeHero .text {
   max-width: 720px;
+  padding-top: clamp(18px, 3vw, 40px);
   font-size: clamp(2rem, 5vw, 3.6rem);
   letter-spacing: -0.04em;
   line-height: 1.17;
