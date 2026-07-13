@@ -141,6 +141,18 @@ body {
   text-underline-offset: 3px;
 }
 
+.vp-doc mjx-container {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-block: 2px;
+}
+
+.vp-doc mjx-container[display="true"] {
+  margin: 1.35rem 0;
+  padding: 0.5rem 0 0.7rem;
+}
+
 .home-section {
   max-width: 1152px;
   margin: 72px auto 0;

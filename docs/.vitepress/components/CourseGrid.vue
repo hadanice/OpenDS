@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { withBase } from 'vitepress'
 
 type CourseState = '已整理' | '持续更新' | '计划中'
 
@@ -11,6 +12,7 @@ interface Course {
   materials: string[]
   state: CourseState
   href?: string
+  external?: boolean
 }
 
 const props = withDefaults(defineProps<{ featured?: boolean }>(), {
@@ -28,7 +30,8 @@ const courses: Course[] = [
     teacher: '邵美悦',
     materials: ['笔记', '作业'],
     state: '已整理',
-    href: path('高等线性代数')
+    href: path('高等线性代数'),
+    external: true
   },
   {
     term: '25秋',
@@ -37,7 +40,8 @@ const courses: Course[] = [
     teacher: '邵美悦',
     materials: ['笔记', '作业', '项目'],
     state: '已整理',
-    href: path('数值算法与案例分析Ⅰ')
+    href: path('数值算法与案例分析Ⅰ'),
+    external: true
   },
   {
     term: '25秋',
@@ -46,7 +50,7 @@ const courses: Course[] = [
     teacher: '黄增峰',
     materials: ['笔记', '课件', '作业'],
     state: '已整理',
-    href: path('算法与数据结构')
+    href: '/notes/algorithms/'
   },
   {
     term: '25秋',
@@ -55,7 +59,7 @@ const courses: Course[] = [
     teacher: '梁家卿',
     materials: ['笔记', '课件', 'Lab'],
     state: '已整理',
-    href: path('计算机原理')
+    href: '/notes/computer-systems/'
   },
   {
     term: '25秋',
@@ -64,7 +68,7 @@ const courses: Course[] = [
     teacher: '吴波',
     materials: ['笔记', '作业'],
     state: '已整理',
-    href: path('概率论基础')
+    href: '/notes/probability/'
   },
   {
     term: '26春',
@@ -73,7 +77,7 @@ const courses: Course[] = [
     teacher: '江如俊',
     materials: ['笔记', '作业'],
     state: '持续更新',
-    href: path('最优化方法')
+    href: '/notes/optimization/'
   },
   {
     term: '26春',
@@ -82,7 +86,7 @@ const courses: Course[] = [
     teacher: '郑卫国',
     materials: ['笔记', '项目'],
     state: '持续更新',
-    href: path('数据库及实现')
+    href: '/notes/database/'
   },
   {
     term: '26春',
@@ -91,7 +95,8 @@ const courses: Course[] = [
     teacher: '周宝健',
     materials: ['课程仓库', '项目'],
     state: '已整理',
-    href: 'https://baojian.github.io/llm-26/'
+    href: 'https://baojian.github.io/llm-26/',
+    external: true
   },
   {
     term: '26春',
@@ -100,7 +105,7 @@ const courses: Course[] = [
     teacher: '孙鑫伟',
     materials: ['笔记', '项目', '考试'],
     state: '持续更新',
-    href: path('统计学基础Ⅰ：数理统计')
+    href: '/notes/mathematical-statistics/'
   },
   {
     term: '26春',
@@ -109,7 +114,7 @@ const courses: Course[] = [
     teacher: '张静茹',
     materials: ['笔记', '项目', '展示'],
     state: '持续更新',
-    href: path('生物统计学')
+    href: '/notes/biostatistics/'
   },
   {
     term: '26秋',
@@ -180,6 +185,11 @@ const visibleCourses = computed(() => {
   if (activeTerm.value === '全部') return courses
   return courses.filter((course) => course.term === activeTerm.value)
 })
+
+const courseHref = (course: Course) => {
+  if (!course.href) return undefined
+  return course.external ? course.href : withBase(course.href)
+}
 </script>
 
 <template>
@@ -205,9 +215,9 @@ const visibleCourses = computed(() => {
         :key="`${course.term}-${course.code}`"
         class="course-card"
         :class="{ 'is-planned': !course.href }"
-        :href="course.href"
-        :target="course.href ? '_blank' : undefined"
-        :rel="course.href ? 'noreferrer' : undefined"
+        :href="courseHref(course)"
+        :target="course.external ? '_blank' : undefined"
+        :rel="course.external ? 'noreferrer' : undefined"
       >
         <div class="course-card__topline">
           <span class="course-term">{{ course.term }}</span>
@@ -221,7 +231,10 @@ const visibleCourses = computed(() => {
         <div class="course-materials">
           <span v-for="material in course.materials" :key="material">{{ material }}</span>
         </div>
-        <span v-if="course.href" class="course-card__link">查看资料 <span aria-hidden="true">↗</span></span>
+        <span v-if="course.href" class="course-card__link">
+          {{ course.external ? '查看资料' : '阅读课程' }}
+          <span aria-hidden="true">{{ course.external ? '↗' : '→' }}</span>
+        </span>
         <span v-else class="course-card__link">等待开课</span>
       </component>
     </div>

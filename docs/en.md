@@ -16,7 +16,7 @@ OpenDS is a growing archive of course notes, assignments, project code, and self
 - Course projects and implementation experiments
 - Selected open learning resources
 
-The website serves as a lightweight map of the archive. Full materials remain in the [GitHub repository](https://github.com/hadanice/OpenDS), where their history and original directory structure are preserved.
+The website provides full, searchable reading views for courses with structured Markdown notes, including mathematical formula rendering and chapter navigation. PDFs, lab code, and other large attachments remain in the [GitHub repository](https://github.com/hadanice/OpenDS), where their history and original directory structure are preserved.
 
 For a detailed English course list, see the repository's [English README](https://github.com/hadanice/OpenDS/blob/main/README.en.md).
 
