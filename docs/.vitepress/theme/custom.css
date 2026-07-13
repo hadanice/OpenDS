@@ -1,4 +1,7 @@
 :root {
+  --opends-left-sidebar-width: 300px;
+  --opends-right-sidebar-width: 288px;
+  --vp-sidebar-width: var(--opends-left-sidebar-width);
   --vp-c-brand-1: #175f5a;
   --vp-c-brand-2: #24756f;
   --vp-c-brand-3: #2f8b84;
@@ -14,6 +17,78 @@
   --opends-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", SimSun, serif;
   --opends-gold: #b27432;
   --opends-ink: #132724;
+}
+
+@media (min-width: 960px) {
+  .opends-left-sidebar-collapsed .VPSidebar {
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none;
+    transform: translateX(-100%) !important;
+  }
+
+  .opends-left-sidebar-collapsed .VPContent.has-sidebar {
+    padding-left: 0 !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  .VPDoc .aside {
+    flex: 0 0 var(--opends-right-sidebar-width);
+    width: var(--opends-right-sidebar-width);
+    max-width: var(--opends-right-sidebar-width);
+  }
+
+  .VPDoc .aside-container,
+  .VPDoc .aside-curtain {
+    width: calc(var(--opends-right-sidebar-width) - 32px);
+  }
+
+  .VPDoc .aside-container {
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--vp-c-divider) transparent;
+  }
+
+  .VPDoc .aside-container::-webkit-scrollbar {
+    display: block;
+    width: 6px;
+  }
+
+  .VPDoc .aside-container::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: var(--vp-c-divider);
+  }
+
+  .VPDocAsideOutline .outline-link {
+    overflow: visible !important;
+    padding: 5px 0;
+    line-height: 1.5 !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+    text-overflow: clip !important;
+  }
+
+  .opends-right-sidebar-collapsed .VPDoc .aside {
+    display: none !important;
+  }
+
+  .opends-right-sidebar-collapsed .VPDoc.has-aside .content-container {
+    max-width: 880px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .opends-left-sidebar-collapsed .VPContent.has-sidebar {
+    padding-left: calc((100% - var(--vp-layout-max-width)) / 2) !important;
+  }
+}
+
+.opends-resizing-sidebar,
+.opends-resizing-sidebar * {
+  cursor: col-resize !important;
+  user-select: none !important;
 }
 
 .dark {
