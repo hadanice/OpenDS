@@ -5,7 +5,7 @@ titleTemplate: 数据科学学习档案
 
 hero:
   name: OpenDS
-  text: 把学习沉淀为一张知识地图
+  text: 用知识沉淀一张地图
   tagline: 复旦大学大数据学院课程的笔记、作业、项目与自学资源。持续整理，开放分享。
   actions:
     - theme: brand

@@ -7,7 +7,7 @@ description: OpenDS 推荐的数学、计算机与机器学习公开课程和学
 
 # 学习资源
 
-这些资源是课程学习之外的补充入口。选择标准很简单：内容扎实、结构清楚，并且值得反复查阅。
+课程学习之外的补充入口。它们内容扎实、结构清楚，并且值得反复查阅。
 
 <div class="resource-grid">
   <a class="resource-card" href="https://www.bilibili.com/video/BV15v411g7VP/" target="_blank" rel="noreferrer">
@@ -48,7 +48,7 @@ description: OpenDS 推荐的数学、计算机与机器学习公开课程和学
   <a class="resource-card" href="https://uvadlc-notebooks.readthedocs.io/" target="_blank" rel="noreferrer">
     <small>Deep Learning</small>
     <h3>UvA Deep Learning Tutorials</h3>
-    <p>以可运行 Notebook 解释深度学习主题，兼顾直觉、公式和实现。</p>
+    <p>以可运行 Notebook 解释深度学习，兼顾直觉、公式和实现。</p>
   </a>
   <a class="resource-card" href="https://developers.google.com/machine-learning" target="_blank" rel="noreferrer">
     <small>Machine Learning</small>
@@ -59,4 +59,4 @@ description: OpenDS 推荐的数学、计算机与机器学习公开课程和学
 
 ## 选择建议
 
-不必同时展开所有资源。更有效的方式是围绕当前课程选择一个主参考和一个补充参考，并通过作业或项目验证理解。
+围绕当前课程选择一个主参考和一个补充参考，并通过作业或项目验证理解。
