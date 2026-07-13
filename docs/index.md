@@ -5,8 +5,8 @@ titleTemplate: 数据科学学习档案
 
 hero:
   name: OpenDS
-  text: 把学习沉淀为一张可探索的知识地图
-  tagline: 汇集复旦大学数据科学相关课程的笔记、作业、项目与自学资源。持续整理，开放分享。
+  text: 把学习沉淀为一张知识地图
+  tagline: 复旦大学大数据学院课程的笔记、作业、项目与自学资源。持续整理，开放分享。
   actions:
     - theme: brand
       text: 浏览课程
@@ -49,17 +49,17 @@ import CourseGrid from './.vitepress/components/CourseGrid.vue'
     <article class="principle-card">
       <span class="principle-card__number">01</span>
       <h3>先理解，再归档</h3>
-      <p>资料不是简单堆放。通过命名、分类和复盘，把一次性的课堂输入变成可检索的长期记忆。</p>
+      <p>通过命名、分类和复盘，把一次性的课堂输入变成可检索的长期记忆。</p>
     </article>
     <article class="principle-card">
       <span class="principle-card__number">02</span>
       <h3>保留推导过程</h3>
-      <p>结论固然重要，真正可迁移的是从问题、假设到方法与验证的完整思考路径。</p>
+      <p>结论固然重要，但真正可迁移的是从问题、假设到方法与验证的完整思考路径。</p>
     </article>
     <article class="principle-card">
       <span class="principle-card__number">03</span>
       <h3>分享促进校正</h3>
-      <p>开放记录意味着接受错误、修正和补充。欢迎通过 Issue 提出问题或分享更好的解释。</p>
+      <p>开放记录，接受错误、修正和补充。欢迎通过 Issue 提出问题或分享更好的解释。</p>
     </article>
   </div>
 </section>
