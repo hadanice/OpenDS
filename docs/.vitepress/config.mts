@@ -1,8 +1,9 @@
 import { defineConfig } from 'vitepress'
+import { Buffer } from 'node:buffer'
 import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { join, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { publishedCourses } from '../../scripts/site-course-manifest.mjs'
+import { publishedCourses } from './course-manifest.mjs'
 
 const notesRoot = fileURLToPath(new URL('../notes/', import.meta.url))
 
@@ -54,7 +55,7 @@ const courseSidebar = (course: (typeof publishedCourses)[number]) => {
       text: '课程导航',
       items: [
         { text: '返回课程地图', link: '/courses/' },
-        { text: '查看 GitHub 源目录', link: `https://github.com/hadanice/OpenDS/tree/main/${encodeURIComponent(course.source)}` }
+        { text: '查看 GitHub 源目录', link: `https://github.com/hadanice/OpenDS/tree/main/docs/notes/${course.slug}` }
       ]
     }
   ]
@@ -147,39 +148,7 @@ export default defineConfig({
       }
     },
     editLink: {
-      pattern: ({ filePath }) => {
-        const normalizedPath = filePath.replace(/\\/g, '/')
-        const noteMatch = normalizedPath.match(/^notes\/([^/]+)\/(.+)$/)
-
-        if (noteMatch) {
-          const courseSources: Record<string, string> = {
-            probability: '概率论基础',
-            algorithms: '算法与数据结构',
-            'computer-systems': '计算机原理',
-            optimization: '最优化方法',
-            database: '数据库及实现',
-            'mathematical-statistics': '统计学基础Ⅰ：数理统计',
-            biostatistics: '生物统计学'
-          }
-          const courseSource = courseSources[noteMatch[1]]
-          if (courseSource) {
-            const sourcePage = noteMatch[2] === 'index.md'
-              ? 'README.md'
-              : noteMatch[2]
-            const sourcePath = `${courseSource}/${sourcePage}`
-              .split('/')
-              .map(encodeURIComponent)
-              .join('/')
-            return `https://github.com/hadanice/OpenDS/edit/main/${sourcePath}`
-          }
-        }
-
-        const docsPath = normalizedPath
-          .split('/')
-          .map(encodeURIComponent)
-          .join('/')
-        return `https://github.com/hadanice/OpenDS/edit/main/docs/${docsPath}`
-      },
+      pattern: 'https://github.com/hadanice/OpenDS/edit/main/docs/:path',
       text: '在 GitHub 上编辑此页'
     },
     socialLinks: [
@@ -198,6 +167,17 @@ export default defineConfig({
     },
     languageAlias: {
       gdb: 'text'
+    },
+    config: (markdown) => {
+      const defaultFence = markdown.renderer.rules.fence!
+      markdown.renderer.rules.fence = (tokens, index, options, env, self) => {
+        const token = tokens[index]
+        if (token.info.trim().split(/\s+/)[0] === 'mermaid') {
+          const code = Buffer.from(token.content, 'utf8').toString('base64')
+          return `<MermaidDiagram code="${code}" />`
+        }
+        return defaultFence(tokens, index, options, env, self)
+      }
     },
     lineNumbers: true,
     theme: {

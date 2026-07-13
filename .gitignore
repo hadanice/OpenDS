@@ -1,6 +1,5 @@
 .agents
 .obsidian
 node_modules/
-docs/notes/
 docs/.vitepress/cache/
 docs/.vitepress/dist/
