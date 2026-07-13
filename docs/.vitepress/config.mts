@@ -162,7 +162,9 @@ export default defineConfig({
   markdown: {
     math: {
       svg: {
-        fontCache: 'global'
+        // Keep every formula self-contained. The global cache emits <use>
+        // references without their shared <defs> in statically rendered pages.
+        fontCache: 'none'
       }
     },
     languageAlias: {
