@@ -271,6 +271,7 @@ onBeforeUnmount(() => {
 
 .story-intro {
   align-items: center;
+  overflow: visible;
   background:
     radial-gradient(circle at 72% 42%, rgba(178, 116, 50, 0.12), transparent 24rem),
     radial-gradient(circle at 18% 18%, rgba(23, 95, 90, 0.13), transparent 31rem),
@@ -281,11 +282,16 @@ onBeforeUnmount(() => {
   position: relative;
   z-index: 2;
   max-width: 920px;
+  overflow: visible;
+  isolation: isolate;
 }
 
 .story-intro h1 {
+  position: relative;
+  z-index: 10;
   display: inline-block;
   margin: 0;
+  overflow: visible;
   background: linear-gradient(120deg, var(--vp-c-brand-1) 14%, var(--vp-c-brand-3) 58%, var(--opends-gold));
   background-clip: text;
   color: transparent;
@@ -293,11 +299,13 @@ onBeforeUnmount(() => {
   font-size: clamp(4.5rem, 11.5vw, 9.5rem);
   font-weight: 800;
   letter-spacing: -0.075em;
-  line-height: 1.08;
-  padding-bottom: 0.08em;
+  line-height: 1.18;
+  padding-bottom: 0.16em;
 }
 
 .story-intro h2 {
+  position: relative;
+  z-index: 1;
   max-width: 820px;
   margin: clamp(8px, 2vh, 24px) 0 18px;
   font-family: var(--opends-serif);
@@ -569,7 +577,7 @@ onBeforeUnmount(() => {
 
 @media (max-width: 640px) {
   .story-scene__panel { --story-gutter: 22px; padding-inline: var(--story-gutter); }
-  .story-intro h1 { font-size: clamp(4rem, 23vw, 6.5rem); line-height: 1.08; }
+  .story-intro h1 { font-size: clamp(4rem, 23vw, 6.5rem); line-height: 1.18; }
   .story-intro h2 { font-size: 2.35rem; }
   .story-feature { grid-template-columns: 44px 1fr; padding: 18px; }
   .story-feature > span { width: 42px; height: 42px; font-size: 1.15rem; }
