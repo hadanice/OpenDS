@@ -300,7 +300,7 @@ onBeforeUnmount(() => {
   font-weight: 800;
   letter-spacing: -0.075em;
   line-height: 1.18;
-  padding-bottom: 0.16em;
+  padding: 0 0.16em 0.16em 0;
 }
 
 .story-intro h2 {
@@ -364,10 +364,10 @@ onBeforeUnmount(() => {
   transform: translateX(-50%);
 }
 
-.story-intro__orbit i:nth-child(1) { inset: 0; animation-delay: -2s; animation-duration: 22s; }
-.story-intro__orbit i:nth-child(2) { inset: 19%; animation-delay: -10s; animation-duration: 28s; animation-direction: reverse; }
+.story-intro__orbit i:nth-child(1) { inset: 0; animation-delay: -8s; animation-duration: 38s; }
+.story-intro__orbit i:nth-child(2) { inset: 19%; animation-delay: -13s; animation-duration: 24s; }
 .story-intro__orbit i:nth-child(2)::after { background: var(--opends-gold); }
-.story-intro__orbit i:nth-child(3) { inset: 39%; animation-delay: -17s; animation-duration: 34s; }
+.story-intro__orbit i:nth-child(3) { inset: 39%; animation-delay: -5s; animation-duration: 14s; }
 
 @keyframes story-orbit {
   to { transform: rotate(1turn); }
