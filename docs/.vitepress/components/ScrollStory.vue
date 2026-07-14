@@ -5,6 +5,7 @@ import CourseGrid from './CourseGrid.vue'
 
 const repository = 'https://github.com/hadanice/OpenDS'
 const activeScene = ref(0)
+const transitionDirection = ref<'forward' | 'backward'>('forward')
 const sceneElements: HTMLElement[] = []
 const sceneLabels = ['开场', '如何使用', '开始阅读', '学习方法']
 
@@ -19,6 +20,7 @@ const goToScene = (index: number) => {
   const nextScene = Math.max(0, Math.min(index, sceneLabels.length - 1))
   if (nextScene === activeScene.value) return
 
+  transitionDirection.value = nextScene > activeScene.value ? 'forward' : 'backward'
   activeScene.value = nextScene
   void nextTick(() => {
     const panel = sceneElements[nextScene]
@@ -53,7 +55,12 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <main class="scroll-story" @touchstart.passive="onTouchStart" @touchend.passive="onTouchEnd">
+  <main
+    class="scroll-story"
+    :class="`is-moving-${transitionDirection}`"
+    @touchstart.passive="onTouchStart"
+    @touchend.passive="onTouchEnd"
+  >
     <nav class="story-progress" aria-label="首页章节导航">
       <button
         v-for="(label, index) in sceneLabels"
@@ -177,7 +184,7 @@ onBeforeUnmount(() => {
   display: flex;
   width: 100%;
   height: 100%;
-  transition: transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 860ms cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
 }
 
@@ -193,10 +200,11 @@ onBeforeUnmount(() => {
 }
 
 .story-scene__panel {
+  --story-gutter: max(28px, calc((100vw - 1240px) / 2));
   position: relative;
   display: flex;
   min-height: 100%;
-  padding: calc(var(--vp-nav-height) + 44px) max(28px, calc((100vw - 1240px) / 2)) 48px;
+  padding: calc(var(--vp-nav-height) + 44px) var(--story-gutter) 48px;
   overflow: hidden;
 }
 
@@ -276,6 +284,7 @@ onBeforeUnmount(() => {
 }
 
 .story-intro h1 {
+  display: inline-block;
   margin: 0;
   background: linear-gradient(120deg, var(--vp-c-brand-1) 14%, var(--vp-c-brand-3) 58%, var(--opends-gold));
   background-clip: text;
@@ -284,12 +293,13 @@ onBeforeUnmount(() => {
   font-size: clamp(4.5rem, 11.5vw, 9.5rem);
   font-weight: 800;
   letter-spacing: -0.075em;
-  line-height: 0.94;
+  line-height: 1.08;
+  padding-bottom: 0.08em;
 }
 
 .story-intro h2 {
   max-width: 820px;
-  margin: clamp(24px, 4vh, 48px) 0 18px;
+  margin: clamp(8px, 2vh, 24px) 0 18px;
   font-family: var(--opends-serif);
   font-size: clamp(2rem, 5vw, 4.8rem);
   letter-spacing: -0.055em;
@@ -328,16 +338,32 @@ onBeforeUnmount(() => {
 
 .story-intro__orbit i {
   position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  animation: story-orbit 24s linear infinite;
+}
+
+.story-intro__orbit i::after {
+  position: absolute;
+  top: -5px;
+  left: 50%;
   width: 10px;
   height: 10px;
   border-radius: 50%;
   background: var(--vp-c-brand-2);
   box-shadow: 0 0 0 7px var(--vp-c-brand-soft);
+  content: '';
+  transform: translateX(-50%);
 }
 
-.story-intro__orbit i:nth-child(1) { top: 11%; left: 26%; }
-.story-intro__orbit i:nth-child(2) { top: 53%; right: -5px; background: var(--opends-gold); }
-.story-intro__orbit i:nth-child(3) { bottom: 13%; left: 20%; }
+.story-intro__orbit i:nth-child(1) { animation-delay: -2s; animation-duration: 22s; }
+.story-intro__orbit i:nth-child(2) { animation-delay: -10s; animation-duration: 28s; animation-direction: reverse; }
+.story-intro__orbit i:nth-child(2)::after { background: var(--opends-gold); }
+.story-intro__orbit i:nth-child(3) { animation-delay: -17s; animation-duration: 34s; }
+
+@keyframes story-orbit {
+  to { transform: rotate(1turn); }
+}
 
 .story-archive {
   align-items: center;
@@ -456,6 +482,7 @@ onBeforeUnmount(() => {
 .story-course-grid :deep(.course-card__link) { padding-top: 14px; }
 
 .story-method {
+  padding-bottom: 0;
   background:
     radial-gradient(circle at 84% 18%, rgba(178, 116, 50, 0.09), transparent 27rem),
     var(--vp-c-bg-alt);
@@ -466,6 +493,7 @@ onBeforeUnmount(() => {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
   width: 100%;
+  margin-bottom: 32px;
 }
 
 .story-principle {
@@ -483,20 +511,45 @@ onBeforeUnmount(() => {
 .story-principle p { max-width: 340px; margin: 0; color: var(--vp-c-text-2); line-height: 1.75; }
 
 .story-end-footer {
-  display: grid;
-  gap: 8px;
-  width: 100%;
-  margin-top: clamp(42px, 7vh, 72px);
+  align-self: stretch;
+  width: auto;
+  margin: auto calc(0px - var(--story-gutter)) 0;
+  border-top: 1px solid var(--vp-c-gutter);
+  padding: 32px;
+  color: var(--vp-c-text-2);
+  background-color: var(--vp-c-bg);
   text-align: center;
 }
 
-.story-end-footer strong {
-  font-family: var(--opends-serif);
-  font-size: clamp(1rem, 1.5vw, 1.25rem);
+.story-end-footer strong,
+.story-end-footer span {
+  display: block;
+  color: var(--vp-c-text-2);
+  font-family: var(--vp-font-family-base);
+  font-size: 14px;
   font-weight: 500;
+  line-height: 24px;
 }
 
-.story-end-footer span { color: var(--vp-c-text-2); font-size: 0.82rem; }
+@media (min-width: 901px) {
+  .scroll-story.is-moving-forward .story-scene.is-active .story-scene__panel {
+    animation: story-arrive-forward 760ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .scroll-story.is-moving-backward .story-scene.is-active .story-scene__panel {
+    animation: story-arrive-backward 760ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes story-arrive-forward {
+    from { opacity: 0.55; filter: blur(5px); transform: translateX(54px) scale(0.985); }
+    to { opacity: 1; filter: blur(0); transform: translateX(0) scale(1); }
+  }
+
+  @keyframes story-arrive-backward {
+    from { opacity: 0.55; filter: blur(5px); transform: translateX(-54px) scale(0.985); }
+    to { opacity: 1; filter: blur(0); transform: translateX(0) scale(1); }
+  }
+}
 
 @media (max-width: 900px) {
   .story-progress { display: none; }
@@ -511,16 +564,16 @@ onBeforeUnmount(() => {
   .story-principles { grid-template-columns: 1fr; }
   .story-courses,
   .story-method { justify-content: flex-start; }
+  .story-method { padding-bottom: 0; }
 }
 
 @media (max-width: 640px) {
-  .story-scene__panel { padding-inline: 22px; }
-  .story-intro h1 { font-size: clamp(4rem, 23vw, 6.5rem); line-height: 0.98; }
+  .story-scene__panel { --story-gutter: 22px; padding-inline: var(--story-gutter); }
+  .story-intro h1 { font-size: clamp(4rem, 23vw, 6.5rem); line-height: 1.08; }
   .story-intro h2 { font-size: 2.35rem; }
   .story-feature { grid-template-columns: 44px 1fr; padding: 18px; }
   .story-feature > span { width: 42px; height: 42px; font-size: 1.15rem; }
   .story-principle h3 { margin-top: 18px; }
-  .story-end-footer { margin-top: 46px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -529,6 +582,11 @@ onBeforeUnmount(() => {
   .story-progress button::after,
   .story-button {
     transition: none;
+  }
+
+  .story-scene__panel,
+  .story-intro__orbit i {
+    animation: none !important;
   }
 
   .story-reveal {
