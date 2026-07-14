@@ -176,10 +176,13 @@ const courses: Course[] = [
 
 const terms = ['全部', '25秋', '26春', '26秋', '27春']
 const activeTerm = ref('全部')
+const termOrder = new Map(terms.slice(1).map((term, index) => [term, index]))
 
 const visibleCourses = computed(() => {
   if (props.featured) {
-    return courses.filter((course) => course.state !== '计划中').slice(0, 6)
+    return courses
+      .filter((course) => Boolean(course.href))
+      .sort((left, right) => (termOrder.get(right.term) ?? -1) - (termOrder.get(left.term) ?? -1))
   }
 
   if (activeTerm.value === '全部') return courses
