@@ -356,10 +356,10 @@ onBeforeUnmount(() => {
   transform: translateX(-50%);
 }
 
-.story-intro__orbit i:nth-child(1) { animation-delay: -2s; animation-duration: 22s; }
-.story-intro__orbit i:nth-child(2) { animation-delay: -10s; animation-duration: 28s; animation-direction: reverse; }
+.story-intro__orbit i:nth-child(1) { inset: 0; animation-delay: -2s; animation-duration: 22s; }
+.story-intro__orbit i:nth-child(2) { inset: 19%; animation-delay: -10s; animation-duration: 28s; animation-direction: reverse; }
 .story-intro__orbit i:nth-child(2)::after { background: var(--opends-gold); }
-.story-intro__orbit i:nth-child(3) { animation-delay: -17s; animation-duration: 34s; }
+.story-intro__orbit i:nth-child(3) { inset: 39%; animation-delay: -17s; animation-duration: 34s; }
 
 @keyframes story-orbit {
   to { transform: rotate(1turn); }
