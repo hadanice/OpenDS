@@ -1,12 +1,25 @@
-# 📚 OpenDS
+<div align="center">
+  <a href="https://hadanice.github.io/OpenDS/en">
+    <img src="./docs/public/opends-icon.svg" width="112" height="112" alt="OpenDS icon">
+  </a>
 
-[🌐 Visit the OpenDS course website](https://hadanice.github.io/OpenDS/)
+  <h1>OpenDS</h1>
 
-[中文](./README.md) | English
+  <p><a href="./README.md">中文</a> · <strong>English</strong></p>
 
-Welcome to my learning notes repository! This collection brings together my course notes, homework solutions, project code, self-study resources, and other materials from my years at the School of Data Science at Fudan University.
+  <p><strong>Turning knowledge into a map</strong></p>
+  <p>Notes, assignments, projects, and self-study resources from the School of Data Science at Fudan University. Continuously organized and openly shared.</p>
 
-Whether you're a classmate looking for reference materials, a junior student exploring ahead, or simply curious about a particular course, feel free to explore. I hope these records can be helpful to you, and I welcome your feedback and suggestions!
+  <p>
+    <a href="https://hadanice.github.io/OpenDS/">Explore the course map</a>
+    ·
+    <a href="https://hadanice.github.io/OpenDS/resources">Learning resources</a>
+  </p>
+</div>
+
+---
+
+OpenDS documents my studies at the School of Data Science, Fudan University, and organizes scattered course notes, homework solutions, project code, and self-study materials into a searchable, traceable, and continuously evolving open archive. Use the course tables below to open specific materials, or explore the website through its course map.
 
 ## 🍂 Fall 2025
 
@@ -14,19 +27,19 @@ Whether you're a classmate looking for reference materials, a junior student exp
 | :---: | :---: | :---: | :---: |
 | [Advanced Linear Algebra](./高等线性代数) | MATH10003 | [Meiyue Shao](https://scholar.google.com/citations?user=yk0MnRQAAAAJ) | Notes, Assignments |
 | [Numerical Algorithms and Case Studies Ⅰ](./数值算法与案例分析Ⅰ) | MATH20007 | [Meiyue Shao](https://scholar.google.com/citations?user=yk0MnRQAAAAJ) | [Textbook](https://zh.z-library.sk/book/NOVQYVLdvk/%E6%95%B0%E5%80%BC%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E7%AC%AC%E4%BA%8C%E7%89%88.html), Notes, Assignments, Project |
-| [Algorithms and Data Structures](./算法与数据结构) | CS20017h | [Zengfeng Huang](https://zengfenghuang.github.io/) | [Reference Textbook](https://zh.z-library.sk/book/0OZLxW2Kjd/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA-%E7%AC%AC%E4%B8%89%E7%89%88-%E5%8F%AF%E5%A4%8D%E5%88%B6-%E6%9C%89%E7%9B%AE%E5%BD%95.html), Notes, Slides, Assignments |
-| [Principle of Computer Engineering](./计算机原理) | CS20018 | [Jiaqing Liang](https://lsdefine.github.io/) | [Reference Textbook](https://zh.z-library.sk/book/D2RA8YEKOL/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F.html), Notes, Slides, Labs, Mock Exams |
-| [Foundations of Probability Theory](./概率论基础) | STAT20011 | [Bo Wu](https://math.fudan.edu.cn/fa/61/c30607a326241/page.htm) | [Textbook](https://zh.z-library.sk/book/JO7grpMkO3/%E6%A6%82%E7%8E%87%E8%AE%BA.html), Notes, Assignments |
+| [Algorithms and Data Structures](https://hadanice.github.io/OpenDS/notes/algorithms/) | CS20017h | [Zengfeng Huang](https://zengfenghuang.github.io/) | [Reference Textbook](https://zh.z-library.sk/book/0OZLxW2Kjd/%E7%AE%97%E6%B3%95%E5%AF%BC%E8%AE%BA-%E7%AC%AC%E4%B8%89%E7%89%88-%E5%8F%AF%E5%A4%8D%E5%88%B6-%E6%9C%89%E7%9B%AE%E5%BD%95.html), Notes, Slides, Assignments |
+| [Principle of Computer Engineering](https://hadanice.github.io/OpenDS/notes/computer-systems/) | CS20018 | [Jiaqing Liang](https://lsdefine.github.io/) | [Reference Textbook](https://zh.z-library.sk/book/D2RA8YEKOL/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F.html), Notes, Slides, Labs, Mock Exams |
+| [Foundations of Probability Theory](https://hadanice.github.io/OpenDS/notes/probability/) | STAT20011 | [Bo Wu](https://math.fudan.edu.cn/fa/61/c30607a326241/page.htm) | [Textbook](https://zh.z-library.sk/book/JO7grpMkO3/%E6%A6%82%E7%8E%87%E8%AE%BA.html), Notes, Assignments |
 
 ## 🌸 Spring 2026
 
 | Course | Code | Instructor | Materials |
 | :---: | :---: | :---: | :---: |
-| [Method of Optimization](./最优化方法) | MATH20008 | [Rujun Jiang](https://rjjiang.github.io/) | Notes, Assignments |
-| [Database and Implementation](./数据库及实现) | CS20019 | [Weiguo Zheng](https://weiguozheng.github.io/) | [Textbook](https://zh.z-library.sk/book/Bj4qk6n4v3/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%8F%8Amysql%E5%BA%94%E7%94%A8%E6%95%99%E7%A8%8B-%E7%AC%AC2%E7%89%88.html), [Reference Textbook](https://www.db-book.com/), Notes, PJ Info, [PJ Code](https://github.com/Loong-C/FDU-Database), [PJ Page](https://linkukai.com/bookstore/) |
+| [Method of Optimization](https://hadanice.github.io/OpenDS/notes/optimization/) | MATH20008 | [Rujun Jiang](https://rjjiang.github.io/) | Notes, Assignments |
+| [Database and Implementation](https://hadanice.github.io/OpenDS/notes/database/) | CS20019 | [Weiguo Zheng](https://weiguozheng.github.io/) | [Textbook](https://zh.z-library.sk/book/Bj4qk6n4v3/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86%E5%8F%8Amysql%E5%BA%94%E7%94%A8%E6%95%99%E7%A8%8B-%E7%AC%AC2%E7%89%88.html), [Reference Textbook](https://www.db-book.com/), Notes, PJ Info, [PJ Code](https://github.com/Loong-C/FDU-Database), [PJ Page](https://linkukai.com/bookstore/) |
 | [NLP and LLMs](https://baojian.github.io/llm-26/) | CS40008 | [Baojian Zhou](https://baojian.github.io/) | [Course Repository](https://github.com/baojian/llm-26), [Project Code](https://github.com/kiangyeeo/parametric-faithfulness) |
-| [Statistics I:Mathematical Statistics](./统计学基础Ⅰ：数理统计) | STAT20010h | [Xinwei Sun](https://sunxinwei0625.github.io/sunxw.github.io/) | [Textbook](https://math.emory.edu/~lchen41/teaching/2020_Spring/Larsen-5E.pdf), [Reference Textbook](https://1lib.sk/book/nvJWk1nJPq/%E6%95%B0%E7%90%86%E7%BB%9F%E8%AE%A1%E8%AE%B2%E4%B9%89.html), Notes, [Project Code](https://github.com/Loong-C/pess-policy-learning), [Take-home Exam](./统计学基础Ⅰ：数理统计/final.pdf) |
-| [Biostatistics](./生物统计学) | STAT50025 | [Jingru Zhang](https://jingru-zhang.github.io/index.html) | [Textbook](https://studylib.net/doc/26120247/fundamentals-of-biostatistics-8th-edition), Notes, [Project Code](https://github.com/Syn-fdu/VBM-implementation), [Presentation Slides](./生物统计学/project_presentation/vbm_sensitivity_beamer.pdf) |
+| [Statistics I: Mathematical Statistics](https://hadanice.github.io/OpenDS/notes/mathematical-statistics/) | STAT20010h | [Xinwei Sun](https://sunxinwei0625.github.io/sunxw.github.io/) | [Textbook](https://math.emory.edu/~lchen41/teaching/2020_Spring/Larsen-5E.pdf), [Reference Textbook](https://1lib.sk/book/nvJWk1nJPq/%E6%95%B0%E7%90%86%E7%BB%9F%E8%AE%A1%E8%AE%B2%E4%B9%89.html), Notes, [Project Code](https://github.com/Loong-C/pess-policy-learning), [Take-home Exam](./统计学基础Ⅰ：数理统计/final.pdf) |
+| [Biostatistics](https://hadanice.github.io/OpenDS/notes/biostatistics/) | STAT50025 | [Jingru Zhang](https://jingru-zhang.github.io/index.html) | [Textbook](https://studylib.net/doc/26120247/fundamentals-of-biostatistics-8th-edition), Notes, [Project Code](https://github.com/Syn-fdu/VBM-implementation), [Presentation Slides](./生物统计学/project_presentation/vbm_sensitivity_beamer.pdf) |
 
 ## 🍂 Fall 2026
 
