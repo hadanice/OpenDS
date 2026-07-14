@@ -2,6 +2,7 @@
   <a href="https://hadanice.github.io/OpenDS/en">
     <img src="./docs/public/opends-icon.svg" width="112" height="112" alt="OpenDS icon">
   </a>
+  <p><sub>Click the icon above to visit the OpenDS website</sub></p>
 
   <h1>OpenDS</h1>
 
@@ -11,7 +12,7 @@
   <p>Notes, assignments, projects, and self-study resources from the School of Data Science at Fudan University. Continuously organized and openly shared.</p>
 
   <p>
-    <a href="https://hadanice.github.io/OpenDS/">Explore the course map</a>
+    <a href="https://hadanice.github.io/OpenDS/courses/">Explore the course map</a>
     ·
     <a href="https://hadanice.github.io/OpenDS/resources">Learning resources</a>
   </p>

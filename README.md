@@ -2,6 +2,7 @@
   <a href="https://hadanice.github.io/OpenDS/">
     <img src="./docs/public/opends-icon.svg" width="112" height="112" alt="OpenDS icon">
   </a>
+  <p><sub>点击上方图标进入 OpenDS 网站</sub></p>
 
   <h1>OpenDS</h1>
 
@@ -11,7 +12,7 @@
   <p>复旦大学大数据学院课程的笔记、作业、项目与自学资源。持续整理，开放分享。</p>
 
   <p>
-    <a href="https://hadanice.github.io/OpenDS/">浏览课程地图</a>
+    <a href="https://hadanice.github.io/OpenDS/courses/">浏览课程地图</a>
     ·
     <a href="https://hadanice.github.io/OpenDS/resources">学习资源</a>
   </p>
