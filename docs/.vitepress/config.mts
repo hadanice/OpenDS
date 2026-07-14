@@ -79,6 +79,7 @@ export default defineConfig({
     hostname: 'https://hadanice.github.io/OpenDS/'
   },
   head: [
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/OpenDS/opends-icon.svg' }],
     ['meta', { name: 'theme-color', content: '#175f5a' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:site_name', content: 'OpenDS' }],
@@ -90,6 +91,7 @@ export default defineConfig({
   ],
   themeConfig: {
     siteTitle: 'OpenDS',
+    logo: '/opends-icon.svg',
     nav: [
       { text: '首页', link: '/' },
       { text: '课程', link: '/courses/' },
