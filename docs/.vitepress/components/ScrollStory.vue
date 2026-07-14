@@ -86,7 +86,7 @@ onBeforeUnmount(() => {
           <div class="story-intro__orbit" aria-hidden="true"><i /><i /><i /></div>
           <div class="story-intro__content story-reveal">
             <p class="story-kicker">Fudan Data Science · Open archive</p>
-            <h1>OpenDS</h1>
+            <h1>OpenDS </h1>
             <h2>用知识沉淀一张地图</h2>
             <p>复旦大学大数据学院课程的笔记、作业、项目与自学资源。持续整理，开放分享。</p>
           </div>
