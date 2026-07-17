@@ -68,7 +68,21 @@ $$
 
 增长，其中 $L$ 为层数。MQA 让所有 query heads 共享一组 K/V，GQA 让若干 query heads 共享，显著减少缓存与带宽，代价是可能牺牲少量表达能力。
 
-## 6. LoRA 与参数高效微调
+## 6. FlashAttention、量化与服务指标
+
+标准 attention 会把 $T\times T$ 分数矩阵写入显存再读回，长序列时高带宽内存访问常比算术运算更慢。FlashAttention 通过分块、在线 softmax 和算子融合，在片上 SRAM 中完成局部计算，避免物化完整注意力矩阵；它计算的是精确 attention，主要改变 IO 复杂度而非模型目标。
+
+权重量化把 FP16/BF16 参数压缩到 INT8、INT4 或 FP4。若按组量化，常写为
+
+$$
+w\approx s(q-z),
+$$
+
+其中 $q$ 是低比特整数，$s$ 是缩放因子，$z$ 是零点。权重-only 量化主要节省模型存储与加载带宽；激活和 KV cache 量化还能继续省显存，但对异常值和累计误差更敏感。量化效果必须同时报告精度退化、吞吐、首 token 延迟和单 token 延迟。
+
+在线服务区分 prefill 与 decode：前者并行计算提示，后者逐 token 串行生成。continuous batching 将不同请求的 decode 步动态拼批，提高吞吐；但大 batch、长上下文和长输出会增加排队时间。系统优化因此是 latency、throughput、显存、功耗和模型质量的多目标权衡。
+
+## 7. LoRA 与参数高效微调
 
 冻结原权重 $W\in\mathbb R^{d_{out}\times d_{in}}$，只学习低秩增量：
 
@@ -80,17 +94,9 @@ $$
 
 QLoRA 进一步把冻结基座量化到 4 bit，在较高精度中训练 adapter，并通过量化格式与分页优化器降低显存。量化节省存储不代表所有算子都以 4 bit 训练；实际计算会解量化到适合的计算 dtype。
 
-## 7. 模型选择与评测
+## 8. 模型选择与评测
 
 比较模型时至少控制 tokenizer、提示模板、解码参数、上下文长度和评测脚本。PPL 衡量建模能力；任务基准衡量准确率、F1、EM、BLEU/ROUGE 等；开放回答还需要事实性、帮助性、安全性和人类偏好评测。单一总分不能代表所有应用。
-
-## 8. 自检清单
-
-- 能比较 CLM、MLM 与 span corruption。
-- 能说明 greedy、beam、top-k、top-p 与 temperature 的取舍。
-- 能区分 prefill 与 decode，并解释 KV cache 的收益与显存成本。
-- 能推导 LoRA 参数量，解释 $r$ 与 $\alpha$。
-- 能说明 scaling law 不是“只把模型做大”。
 
 ## 延伸阅读
 

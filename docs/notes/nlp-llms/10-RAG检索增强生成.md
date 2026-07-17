@@ -110,14 +110,6 @@ $$
 - 长上下文适合文档总量小、单次全读可承受，但成本与注意力有效性有限；
 - 实际系统常组合：微调指令遵循 + RAG 获取知识 + 长上下文容纳证据。
 
-## 9. 自检清单
-
-- 能画出离线索引与在线查询两条流水线。
-- 能比较 BM25、dense、hybrid 与 cross-encoder rerank。
-- 能用 Recall@k 与 faithfulness 分别评估检索和生成。
-- 能解释 chunk size/overlap/top-k 的联动。
-- 能指出权限过滤、prompt injection 与引用验证的安全位置。
-
 ## 延伸阅读
 
 - Lewis et al., [Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401)
