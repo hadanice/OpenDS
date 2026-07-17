@@ -25,6 +25,11 @@ export const publishedCourses = [
     code: 'CS20019'
   },
   {
+    slug: 'nlp-llms',
+    title: '自然语言处理与大语言模型',
+    code: 'CS40008'
+  },
+  {
     slug: 'mathematical-statistics',
     title: '统计学基础Ⅰ：数理统计',
     code: 'STAT20010h'

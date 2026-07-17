@@ -93,10 +93,9 @@ const courses: Course[] = [
     title: '自然语言处理与大语言模型',
     code: 'CS40008',
     teacher: '周宝健',
-    materials: ['课程仓库', '项目'],
+    materials: ['笔记', 'Readings', '实验', '项目'],
     state: '已整理',
-    href: 'https://baojian.github.io/llm-26/',
-    external: true
+    href: '/notes/nlp-llms/'
   },
   {
     term: '26春',

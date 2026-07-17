@@ -62,7 +62,7 @@ const courses: CourseNode[] = [
   { id: 'ai', title: '人工智能', code: 'CS50020', term: '26 秋 · 第 5 学期', column: 4, row: 4, tracks: ['systems', 'intelligence'], state: '培养方案' },
   { id: 'image', title: '图像处理与数据可视化', code: 'CS30065h', term: '26 秋 · 第 5/6 学期', column: 4, row: 5, tracks: ['systems', 'intelligence', 'application'], state: '培养方案' },
   { id: 'graph-mining', title: '图数据管理与挖掘', code: 'CS50027', term: '26 秋 · 系统模块', column: 4, row: 6, tracks: ['systems', 'intelligence'], state: '培养方案' },
-  { id: 'nlp', title: '自然语言处理与大语言模型', code: 'CS40008', term: '26 春 · 系统/类脑模块', column: 4, row: 7, tracks: ['systems', 'intelligence'], state: '仓库资料', href: 'https://baojian.github.io/llm-26/', external: true },
+  { id: 'nlp', title: '自然语言处理与大语言模型', code: 'CS40008', term: '26 春 · 系统/类脑模块', column: 4, row: 7, tracks: ['systems', 'intelligence'], state: '站内可读', href: '/notes/nlp-llms/' },
   { id: 'deep-learning', title: '神经网络与深度学习', code: 'CS30064', term: '27 春 · 第 6 学期', column: 4, row: 8, tracks: ['intelligence', 'application'], state: '培养方案' },
 
   { id: 'internship', title: '生产实习', code: 'STAT40004', term: '第 7 学期', column: 5, row: 3, tracks: ['math', 'statistics', 'systems', 'intelligence', 'application'], state: '培养方案' },
