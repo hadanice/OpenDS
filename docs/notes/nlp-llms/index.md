@@ -56,7 +56,7 @@ flowchart LR
 
 | 符号 | 含义 |
 | --- | --- |
-| $\mathcal V$ | 词表，大小为 $|\mathcal V|$ |
+| $\mathcal V$ | 词表，大小为 $\lvert\mathcal V\rvert$ |
 | $w_{1:T}$ | 长度为 $T$ 的 token 序列 |
 | $d$ | 隐藏维度；$h$ 为注意力头数；$d_k=d/h$ |
 | $\theta$ | 模型参数；$p_\theta$ 为模型分布 |
