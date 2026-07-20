@@ -46,7 +46,7 @@ const courses: CourseNode[] = [
   { id: 'physics', title: '大学物理 BⅠ—Ⅱ', code: 'PHYS10003 / 04', term: '第 1—2 学期', column: 1, row: 7, tracks: ['math', 'application'], state: '培养方案' },
 
   { id: 'advanced-linear', title: '高等线性代数', code: 'MATH10003', term: '25 秋 · 第 3 学期', column: 2, row: 1, tracks: ['math', 'statistics', 'intelligence'], state: '站内可读', href: '/notes/advanced-linear-algebra/' },
-  { id: 'numerical', title: '数值算法与案例分析Ⅰ', code: 'MATH20007', term: '25 秋 · 第 3 学期', column: 2, row: 2, tracks: ['math', 'statistics', 'application'], state: '仓库资料', href: repositoryPath('数值算法与案例分析Ⅰ'), external: true },
+  { id: 'numerical', title: '数值算法与案例分析Ⅰ', code: 'MATH20007', term: '25 秋 · 第 3 学期', column: 2, row: 2, tracks: ['math', 'statistics', 'application'], state: '站内可读', href: '/notes/numerical-algorithms/' },
   { id: 'probability', title: '概率论基础', code: 'STAT20011', term: '25 秋 · 第 3 学期', column: 2, row: 3, tracks: ['statistics', 'intelligence', 'application'], state: '站内可读', href: '/notes/probability/' },
   { id: 'algorithms', title: '算法与数据结构', code: 'CS20017h', term: '25 秋 · 第 3 学期', column: 2, row: 5, tracks: ['systems', 'intelligence'], state: '站内可读', href: '/notes/algorithms/' },
   { id: 'computer-systems', title: '计算机原理', code: 'CS20018', term: '25 秋 · 第 3 学期', column: 2, row: 7, tracks: ['systems', 'intelligence'], state: '站内可读', href: '/notes/computer-systems/' },

@@ -5,6 +5,11 @@ export const publishedCourses = [
     code: 'MATH10003'
   },
   {
+    slug: 'numerical-algorithms',
+    title: '数值算法与案例分析Ⅰ',
+    code: 'MATH20007'
+  },
+  {
     slug: 'probability',
     title: '概率论基础',
     code: 'STAT20011'
