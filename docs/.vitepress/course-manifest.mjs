@@ -1,5 +1,10 @@
 export const publishedCourses = [
   {
+    slug: 'advanced-linear-algebra',
+    title: '高等线性代数',
+    code: 'MATH10003'
+  },
+  {
     slug: 'probability',
     title: '概率论基础',
     code: 'STAT20011'
