@@ -99,6 +99,71 @@ DPO 从 KL 正则化的偏好优化推导出直接的二分类目标，无需显
 
 红队评测主动构造越狱、提示注入、隐私提取、危险能力和多轮诱导案例。结果应按风险类型、严重度和攻击成功率分层，并保留正常任务能力作为对照，防止只降低风险分数却同时破坏可用性。训练集、奖励模型和 judge 可能共享盲点，因此还需要独立测试、人工复核与部署后的事件监测。
 
+## 8. 强化学习符号与策略梯度
+
+在 LLM 中，状态 $s_t=(x,y_{<t})$，动作 $a_t=y_t$，一条完整回复形成轨迹 $\tau$。回报、价值与优势为
+
+$$
+G_t=\sum_{k=t}^{T}\gamma^{k-t}r_k,
+\quad V^\pi(s)=\mathbb E[G_t\mid s_t=s],
+\quad A^\pi(s,a)=Q^\pi(s,a)-V^\pi(s).
+$$
+
+策略梯度使用 log-derivative trick：
+
+$$
+\nabla_\theta J(\theta)=
+\mathbb E_{\tau\sim\pi_\theta}
+\left[\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)G_t\right].
+$$
+
+减去只依赖状态的 baseline 不改变期望，却能显著降方差。Actor–Critic 用 value model 学 baseline；GAE 用 TD 残差
+
+$$
+\delta_t=r_t+\gamma V(s_{t+1})-V(s_t),\qquad
+\hat A_t=\sum_{l\ge0}(\gamma\lambda)^l\delta_{t+l}
+$$
+
+在偏差与方差之间折中。RLHF 常把 RM 的序列级分数放在末 token，再把逐 token KL 惩罚加入奖励。
+
+## 9. PPO 裁剪到底限制什么
+
+重要性比 $r_t>1$ 表示新策略提高了该动作概率，$r_t<1$ 表示降低。若 $A_t>0$，更新应提高概率，但超过 $1+\epsilon$ 后不再奖励继续提高；若 $A_t<0$，更新应降低概率，但低于 $1-\epsilon$ 后不再奖励继续降低。`min` 与 clip 共同构成一个悲观代理目标，避免同一批旧策略数据被反复利用时策略走得太远。
+
+PPO 并不保证实际 KL 一定小于阈值，所以实现还会监控 `approx_kl`，必要时 early stop 或自适应 $\beta$。关键监控项包括：policy reward、non-score reward、KL、clip fraction、entropy、value loss、explained variance、回复长度和真实验证集能力。
+
+## 10. 四模型数据流与显存压力
+
+经典 PPO-RLHF 同时涉及：
+
+1. actor/policy：生成并更新；
+2. reference：冻结，用于 KL；
+3. reward model：冻结，为完整回复打分；
+4. critic/value：更新，估计每个 token 的价值。
+
+rollout 阶段主要是推理，update 阶段才反向传播。大模型系统会使用共享 backbone、LoRA、ZeRO/FSDP、张量并行、生成引擎与训练引擎切换等方式节省显存。课堂的小型 GPT-2 demo 能展示算法数据流，但不能用其输出质量代表 InstructGPT 规模结果。
+
+## 11. DPO 的推导直觉与边界
+
+KL 正则化 RL 的最优策略满足
+
+$$
+\pi^*(y\mid x)\propto
+\pi_{ref}(y\mid x)\exp(r(x,y)/\beta).
+$$
+
+把奖励差写成策略与参考策略的 log-ratio，再代入 Bradley–Terry 损失，可得 DPO：
+
+$$
+\mathcal L_{DPO}=-\log\sigma\left(
+\beta\left[
+\log\frac{\pi_\theta(y_w\mid x)}{\pi_{ref}(y_w\mid x)}-
+\log\frac{\pi_\theta(y_l\mid x)}{\pi_{ref}(y_l\mid x)}
+\right]\right).
+$$
+
+它省掉显式 RM、critic 和在线 rollout，训练像普通 pairwise classification；但数据是离线的，无法探索数据集中没有的回复，也仍会继承偏好标注的长度、风格和群体偏差。
+
 ## 延伸阅读
 
 - Ouyang et al., [Training language models to follow instructions with human feedback](https://arxiv.org/abs/2203.02155)

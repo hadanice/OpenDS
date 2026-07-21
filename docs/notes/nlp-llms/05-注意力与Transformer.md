@@ -109,3 +109,56 @@ Decoder block 的 masked self-attention 只能看已生成前缀；encoder–dec
 - dropout 只在训练模式启用。
 - causal 单元测试：改变未来 token 不应影响当前位置输出。
 - attention 行概率和应约为 1，被 mask 位置应约为 0。
+
+## 9. 机器翻译目标与教师强制
+
+Transformer 最初用于条件语言建模。给定平行语料 $(x^{(i)},y^{(i)})$，训练目标为
+
+$$
+\mathcal L=-\sum_i\sum_t\log p_\theta
+(y_t^{(i)}\mid y_{<t}^{(i)},x^{(i)}).
+$$
+
+训练时 decoder 输入是真实目标句右移一位，因果 mask 使位置 $t$ 看不到未来标签；所有位置仍可在一次矩阵计算中并行。推理时没有真实目标前缀，只能逐 token 生成，这解释了“训练高度并行、解码仍然串行”的区别。
+
+原论文使用标签平滑。若平滑系数为 $\epsilon$，真实类不再占概率 1，而与其他类别分享一小部分质量。它降低过度自信，改善 BLEU，但可能让训练 perplexity 看起来略差，因此不能机械用训练 loss 判断泛化。
+
+## 10. Encoder、Decoder 与 Cross-Attention 的数据流
+
+Encoder self-attention 的 Q/K/V 都来自源序列，只有 padding mask。Decoder 的第一层 attention 使用 causal mask，Q/K/V 都来自目标前缀；cross-attention 中 Q 来自 decoder，K/V 来自 encoder 最终表示：
+
+$$
+\operatorname{CrossAttn}(H_y,H_x)
+=\operatorname{softmax}\left(
+\frac{H_yW^Q(H_xW^K)^T}{\sqrt{d_k}}
+\right)H_xW^V.
+$$
+
+因此 decoder 可以一边保持目标端语言流畅，一边按当前位置读取源端证据。纯 decoder LLM 把指令、资料和回答拼成一个因果序列，不再使用独立 cross-attention。
+
+## 11. Add & Norm、Pre-LN 与 Post-LN
+
+原始 Transformer 是 Post-LN：子层输出先与残差相加，再做 LayerNorm。现代深层 LLM 常用 Pre-LN：先归一化再进入子层，残差主干保持更接近恒等映射，梯度更稳定。两者不是仅改变一行代码：初始化、学习率、最终是否需要额外 LayerNorm 都会不同。
+
+LayerNorm 对单个 token 的隐藏维归一化：
+
+$$
+\operatorname{LN}(x)=\gamma\odot
+\frac{x-\mu}{\sqrt{\sigma^2+\varepsilon}}+\beta.
+$$
+
+它不依赖 batch 大小。RMSNorm 省去减均值，只按均方根缩放，计算更简单，已被许多 decoder-only 模型采用。
+
+## 12. 参数量估算
+
+若模型维度为 $d$、FFN 维度为 $d_{ff}$，一层标准 Transformer 的主要权重是：
+
+- Q/K/V 与输出投影：约 $4d^2$；
+- 两层 FFN：约 $2dd_{ff}$；
+- LayerNorm 与 bias：相对较小。
+
+当 $d_{ff}=4d$ 时，每层约 $12d^2$ 参数。再加 token embedding $\lvert\mathcal V\rvert d$ 与输出头；若输入输出权重绑定，可以少一份大词表矩阵。课堂以 $d=768$、12 层、词表 30522 为例，可得到约 110M 量级，这与 BERT-base 对上。参数量估算是检查实现 shape 和显存预算的有效手段。
+
+## 13. 复杂度要按训练与解码分别看
+
+Self-attention 的矩阵计算约为 $O(T^2d)$，线性投影和 FFN 约为 $O(Td^2)$。当 $T\ll d$ 时，FFN/投影可能更贵；当上下文很长时，$T^2$ 注意力成为瓶颈。训练能在 $T$ 个位置并行，自回归 decode 却一次只有一个 query，此时 KV cache 的读带宽往往比 FLOPs 更关键。

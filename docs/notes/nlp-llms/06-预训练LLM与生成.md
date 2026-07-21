@@ -98,6 +98,55 @@ QLoRA 进一步把冻结基座量化到 4 bit，在较高精度中训练 adapter
 
 比较模型时至少控制 tokenizer、提示模板、解码参数、上下文长度和评测脚本。PPL 衡量建模能力；任务基准衡量准确率、F1、EM、BLEU/ROUGE 等；开放回答还需要事实性、帮助性、安全性和人类偏好评测。单一总分不能代表所有应用。
 
+## 9. 从静态词向量到上下文化表示
+
+静态 word2vec 给 `bank` 一个固定向量，无法同时表达“河岸”和“银行”。ELMo 用双向 LSTM：前向 LM 根据左文预测，后向 LM 根据右文预测，再把不同层的隐藏状态按任务学习加权组合。它首次系统展示“同一个 token 的向量应随句子变化”。
+
+ELMo 仍把预训练表示作为下游模型输入；Transformer 时代进一步把整个网络作为初始化并端到端微调。这个变化解释了预训练范式为何比“下载一个词向量表”强：浅层偏局部句法，深层偏语义与任务信息，下游可以调整所有层。
+
+## 10. GPT 路线的关键变化
+
+- GPT-1：decoder Transformer 的生成式预训练，再为具体任务微调；
+- GPT-2：扩大模型和 WebText，强调零样本任务可由自然语言提示诱导；
+- GPT-3：继续扩展模型、数据和计算，系统展示 zero/one/few-shot ICL；
+- 后续 GPT 类系统：把预训练与指令微调、偏好对齐、工具和多模态系统结合。
+
+参数规模不是唯一变量。架构细节、tokenizer、训练 token 数、数据混合与去重、优化稳定性和后训练共同决定最终能力。比较代际模型时，应区分“基座模型能力”与“聊天系统能力”。
+
+## 11. Scaling laws 与计算最优
+
+经验上，交叉熵 loss 对参数量 $N$、数据量 $D$、计算量 $C$ 常呈带不可约项的幂律：
+
+$$
+L(N)\approx L_\infty+aN^{-\alpha},\qquad
+L(D)\approx L_\infty+bD^{-\beta}.
+$$
+
+Transformer 训练计算量可粗略写成 $C\approx 6ND$（常数依实现而异）。固定计算预算时，过大的模型会因 token 不足而欠训练，过小的模型又浪费数据；计算最优 scaling 需要同时增长 $N$ 与 $D$。课堂强调三点：幂律是经验区间规律而非物理定律；数据质量下降会破坏“更多 token 更好”；下游能力、推理成本与训练 loss 不总是同一最优点。
+
+## 12. 解码是对模型分布的二次设计
+
+Greedy 和 beam search 追求高概率序列，但语言模型可能把概率集中在安全、常见、短而重复的文本上。课堂 GPT-2 示例说明 beam 更宽不保证开放生成更好。随机采样通过温度与截断重新塑造分布：
+
+- top-k 的候选数固定，分布很尖或很平时都不自适应；
+- top-p 的候选集合随不确定性变化；
+- repetition penalty 与 no-repeat n-gram 能止住循环，也可能误伤代码、诗歌和术语；
+- stop sequence 必须在 tokenizer 级验证，字符串边界可能跨 token。
+
+评测生成策略应固定随机种子并报告多样性、事实性、任务成功率和长度，而不是只展示一条“看起来不错”的样例。
+
+## 13. KV Cache 的显存账本
+
+设层数 $L$、序列长 $T$、KV 头数 $h_{kv}$、每头维度 $d_h$、每元素字节数 $b$，单请求缓存近似为
+
+$$
+2LTh_{kv}d_hb,
+$$
+
+系数 2 对应 K 与 V。并发请求和长上下文会线性放大这部分显存。PagedAttention 把缓存切成非连续页，减少不同长度请求造成的碎片；prefix caching 可复用共享系统提示的 KV，但必须保证模型、位置编码和前缀 token 完全一致。
+
+服务指标要分开：TTFT 主要受排队、tokenization 与 prefill 影响；TPOT/ITL 主要反映 decode；吞吐取决于 batching；端到端延迟还与输出长度相关。只报告 tokens/s 容易掩盖交互体验。
+
 ## 延伸阅读
 
 - Radford et al., [Improving Language Understanding by Generative Pre-Training](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf)

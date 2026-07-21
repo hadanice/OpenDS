@@ -110,6 +110,63 @@ $$
 - 长上下文适合文档总量小、单次全读可承受，但成本与注意力有效性有限；
 - 实际系统常组合：微调指令遵循 + RAG 获取知识 + 长上下文容纳证据。
 
+## 9. TF-IDF 与 BM25 的公式直觉
+
+一种常见 TF 采用对数饱和：
+
+$$
+\mathrm{tf}(t,d)=\begin{cases}1+\log f(t,d),&f(t,d)>0,\\0,&\text{otherwise},\end{cases}
+\qquad
+\mathrm{idf}(t)=\log\frac{N}{\mathrm{df}(t)}.
+$$
+
+BM25 把词频饱和与文档长度校正直接放进打分。$k_1$ 越大，重复词频影响持续越久；$b=0$ 不做长度归一化，$b=1$ 完全按平均长度校正。它不理解同义词，却对人名、编号、罕见术语和短实体查询非常强，因此现代 RAG 常保留 BM25 而不是只用向量检索。
+
+## 10. 三种神经检索交互方式
+
+### Cross-encoder
+
+把 `[query; document]` 一起送入 encoder，token 可以充分交互，精度高；但每个候选都要重新前向，无法预计算文档，适合作 Top-k reranker。
+
+### DPR / bi-encoder
+
+查询与文档独立编码：
+
+$$
+s(q,d)=E_q(q)^TE_d(d).
+$$
+
+用 in-batch negatives 或 hard negatives 训练对比损失。文档向量可离线索引，适合大规模召回；若负例太容易，模型只学表面区分，若 hard negative 含实际相关文档又会产生假负例。
+
+### ColBERT / late interaction
+
+保留每个 query/document token 的向量，以 MaxSim 聚合：
+
+$$
+s(q,d)=\sum_{i\in q}\max_{j\in d}q_i^Td_j.
+$$
+
+它比单向量 DPR 保留更多词级匹配，又能预计算文档 token 表示；代价是索引更大、检索管线更复杂。三者形成“交互越晚越快、交互越早越精细”的连续谱。
+
+## 11. 索引构建是离线模型的一部分
+
+索引应保存 embedding 模型版本、维度、归一化方式、chunker 版本、来源权限与更新时间。更换 embedding 模型通常需要重建全量向量；只更新查询模型会让两侧向量空间不一致。增量更新还要正确处理删除、版本冲突和过期 chunk。
+
+ANN 索引不是精确最近邻的同义词。HNSW 的图连接、搜索宽度影响内存/召回/延迟；IVF 先把向量分桶，再只搜索部分倒排簇。评测时要把“embedding 本身的准确率”和“近似索引造成的召回损失”分开。
+
+## 12. 一套可定位责任的实验
+
+准备带 gold evidence 与 gold answer 的问题集，然后依次记录：
+
+1. oracle evidence + generator：测生成上限；
+2. retriever Recall@k：测证据能否进入候选；
+3. reranker nDCG/MRR：测排序；
+4. assembled context：检查截断、重复和权限；
+5. final answer：测正确性、faithfulness 与 citation；
+6. no-answer 子集：测证据不足时能否拒答。
+
+若 oracle evidence 下仍回答错，先修生成与提示；若 oracle 表现好但端到端差，优先修检索。这个分解比反复调整一个总分更高效。
+
 ## 延伸阅读
 
 - Lewis et al., [Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401)
