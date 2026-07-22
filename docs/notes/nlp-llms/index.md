@@ -11,9 +11,9 @@ course: "自然语言处理与大语言模型"
 
 | 讲次 | 主题 | 核心内容 |
 | --- | --- | --- |
-| 1 | [文本预处理与分词](01-文本预处理与分词.md) | 正则、编辑距离、BPE/WordPiece/Unigram、SentencePiece 与词表权衡 |
+| 1 | [文本预处理与分词](01-文本预处理与分词.md) | NLP 发展与歧义、正则、编辑距离、Heaps' Law、子词分词与词表权衡 |
 | 2 | [N-gram 语言模型](02-N-gram语言模型.md) | MLE、交叉熵/困惑度、Good–Turing、Katz 与 Kneser–Ney |
-| 3 | [文本分类与词向量](03-文本分类与词向量.md) | NB/LR、TF-IDF/PMI、Word2Vec、GloVe、fastText 与现代 embedding |
+| 3 | [文本分类与词向量](03-文本分类与词向量.md) | 规则与监督分类、NB/LR、计数矩阵、Word2Vec、GloVe 与现代 embedding |
 | 4 | [神经语言模型与序列建模](04-神经语言模型与序列建模.md) | NPLM、反向传播、RNN/LSTM/GRU、Seq2Seq 与对齐注意力 |
 | 5 | [注意力与 Transformer](05-注意力与Transformer.md) | Q/K/V、多头与交叉注意力、位置编码、参数量与计算复杂度 |
 | 6 | [预训练 LLM、生成与推理系统](06-预训练LLM与生成.md) | ELMo/GPT、解码、scaling、KV cache、FlashAttention、量化与 LoRA |
