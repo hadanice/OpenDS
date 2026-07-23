@@ -19,9 +19,6 @@ const props = withDefaults(defineProps<{ featured?: boolean }>(), {
   featured: false
 })
 
-const repository = 'https://github.com/hadanice/OpenDS/tree/main/'
-const path = (value: string) => `${repository}${encodeURIComponent(value)}`
-
 const courses: Course[] = [
   {
     term: '25秋',
@@ -30,8 +27,7 @@ const courses: Course[] = [
     teacher: '邵美悦',
     materials: ['笔记', '作业'],
     state: '已整理',
-    href: path('高等线性代数'),
-    external: true
+    href: '/notes/advanced-linear-algebra/'
   },
   {
     term: '25秋',
@@ -40,8 +36,7 @@ const courses: Course[] = [
     teacher: '邵美悦',
     materials: ['笔记', '作业', '项目'],
     state: '已整理',
-    href: path('数值算法与案例分析Ⅰ'),
-    external: true
+    href: '/notes/numerical-algorithms/'
   },
   {
     term: '25秋',
@@ -175,7 +170,12 @@ const courses: Course[] = [
 
 const terms = ['全部', '25秋', '26春', '26秋', '27春']
 const activeTerm = ref('全部')
-const termOrder = new Map(terms.slice(1).map((term, index) => [term, index]))
+const termOrder = new Map([
+  ['25秋', 1],
+  ['26春', 2],
+  ['26秋', 3],
+  ['27春', 4]
+])
 
 const visibleCourses = computed(() => {
   if (props.featured) {
@@ -184,7 +184,10 @@ const visibleCourses = computed(() => {
       .sort((left, right) => (termOrder.get(right.term) ?? -1) - (termOrder.get(left.term) ?? -1))
   }
 
-  if (activeTerm.value === '全部') return courses
+  if (activeTerm.value === '全部') {
+    return [...courses]
+      .sort((left, right) => (termOrder.get(left.term) ?? -1) - (termOrder.get(right.term) ?? -1))
+  }
   return courses.filter((course) => course.term === activeTerm.value)
 })
 

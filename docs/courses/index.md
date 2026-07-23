@@ -2,12 +2,12 @@
 layout: page
 sidebar: false
 aside: false
-title: 课程地图
-description: 从基础课程、专业核心到进阶模块的网状学习路径。
+title: 课程
+description: 按学期或知识路径浏览 OpenDS 课程档案。
 ---
 
 <script setup>
-import CourseMap from '../.vitepress/components/CourseMap.vue'
+import CoursePortal from '../.vitepress/components/CoursePortal.vue'
 </script>
 
-<CourseMap />
+<CoursePortal />

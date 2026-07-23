@@ -1,712 +1,1096 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { withBase } from 'vitepress'
 
-type Track = 'math' | 'statistics' | 'systems' | 'intelligence' | 'application'
-type CourseState = '站内可读' | '仓库资料' | '培养方案'
-
-interface CourseNode {
-  id: string
+interface PathCourse {
   title: string
   code: string
-  term: string
-  column: number
-  row: number
-  tracks: Track[]
-  state: CourseState
   href?: string
-  external?: boolean
 }
 
-interface CourseEdge {
-  from: string
-  to: string
+interface PathStage {
+  number: string
+  title: string
+  caption: string
+  courses: PathCourse[]
 }
 
-interface EdgePath extends CourseEdge {
-  d: string
-  active: boolean
+interface ModuleCourse {
+  title: string
+  code: string
+  credits: number
+  term: string
+  href?: string
+  group?: '理医工' | '社会科学'
 }
 
-const repository = 'https://github.com/hadanice/OpenDS/tree/main/'
-const repositoryPath = (value: string) => `${repository}${encodeURIComponent(value)}`
+interface ModuleGroup {
+  id: string
+  number: string
+  title: string
+  kicker: string
+  summary: string
+  courses: ModuleCourse[]
+}
 
-const stages = [
-  { number: '01—02', title: '数理与编程基础', subtitle: '建立共同语言' },
-  { number: '03', title: '核心工具箱', subtitle: '形成计算与推断能力' },
-  { number: '04', title: '建模与数据系统', subtitle: '把方法连接到问题' },
-  { number: '05—06', title: '智能与专业分流', subtitle: '进入进阶模块' },
-  { number: '07—08', title: '实践与研究', subtitle: '把知识变成产出' }
+const pathwayStages: PathStage[] = [
+  {
+    number: '01',
+    title: '数理与编程基础',
+    caption: '先建立描述问题、表达算法与理解不确定性的共同语言。',
+    courses: [
+      { title: '高等数学', code: 'MATH120009' },
+      { title: '程序设计', code: 'COMP110042' },
+      { title: '线性代数', code: 'MATH120010' },
+      { title: '数据科学导论', code: 'DATA130001' }
+    ]
+  },
+  {
+    number: '02',
+    title: '第 3 学期 · 核心工具',
+    caption: '从数学基础进入算法、系统与概率三条互相支撑的主线。',
+    courses: [
+      { title: '高等线性代数', code: 'MATH10003', href: '/notes/advanced-linear-algebra/' },
+      { title: '数值算法 I', code: 'MATH20007', href: '/notes/numerical-algorithms/' },
+      { title: '数据结构', code: 'CS20017', href: '/notes/algorithms/' },
+      { title: '概率论基础', code: 'STAT20011', href: '/notes/probability/' },
+      { title: '计算机原理', code: 'CS20018', href: '/notes/computer-systems/' }
+    ]
+  },
+  {
+    number: '03',
+    title: '第 4 学期 · 建模与系统',
+    caption: '把工具组织成模型、数据系统与可复现的计算过程。',
+    courses: [
+      { title: '最优化方法', code: 'MATH20008', href: '/notes/optimization/' },
+      { title: '数据库及实现', code: 'CS20019', href: '/notes/database/' },
+      { title: '统计学基础 I', code: 'STAT20010', href: '/notes/mathematical-statistics/' },
+      { title: '生物统计学', code: 'STAT50025', href: '/notes/biostatistics/' }
+    ]
+  },
+  {
+    number: '04',
+    title: '第 5—6 学期 · 智能进阶',
+    caption: '沿统计学习、人工智能与数据挖掘进入专业方向。',
+    courses: [
+      { title: '统计（机器）学习', code: 'STAT30015' },
+      { title: '人工智能', code: 'CS50020' },
+      { title: '自然语言处理与大语言模型', code: 'CS40008', href: '/notes/nlp-llms/' },
+      { title: '图数据管理与挖掘', code: 'CS50027' },
+      { title: '神经网络与深度学习', code: 'CS30064' }
+    ]
+  },
+  {
+    number: '05',
+    title: '实践与研究',
+    caption: '用真实问题把知识连接起来，最终形成自己的研究路径。',
+    courses: [
+      { title: '课程项目', code: 'PROJECTS' },
+      { title: '生产实习', code: 'STAT40004' },
+      { title: '毕业论文', code: 'STAT40005' }
+    ]
+  }
 ]
 
-const courses: CourseNode[] = [
-  { id: 'analysis', title: '数学分析 BⅠ—Ⅱ', code: 'MATH10012 / 13', term: '第 1—2 学期', column: 1, row: 1, tracks: ['math', 'statistics', 'intelligence'], state: '培养方案' },
-  { id: 'linear', title: '线性代数', code: 'CS10003', term: '第 1 学期', column: 1, row: 3, tracks: ['math', 'statistics', 'intelligence'], state: '培养方案' },
-  { id: 'programming', title: '程序设计', code: 'CS10004', term: '第 1 学期', column: 1, row: 5, tracks: ['systems', 'intelligence'], state: '培养方案' },
-  { id: 'physics', title: '大学物理 BⅠ—Ⅱ', code: 'PHYS10003 / 04', term: '第 1—2 学期', column: 1, row: 7, tracks: ['math', 'application'], state: '培养方案' },
-
-  { id: 'advanced-linear', title: '高等线性代数', code: 'MATH10003', term: '25 秋 · 第 3 学期', column: 2, row: 1, tracks: ['math', 'statistics', 'intelligence'], state: '站内可读', href: '/notes/advanced-linear-algebra/' },
-  { id: 'numerical', title: '数值算法与案例分析Ⅰ', code: 'MATH20007', term: '25 秋 · 第 3 学期', column: 2, row: 2, tracks: ['math', 'statistics', 'application'], state: '站内可读', href: '/notes/numerical-algorithms/' },
-  { id: 'probability', title: '概率论基础', code: 'STAT20011', term: '25 秋 · 第 3 学期', column: 2, row: 3, tracks: ['statistics', 'intelligence', 'application'], state: '站内可读', href: '/notes/probability/' },
-  { id: 'algorithms', title: '算法与数据结构', code: 'CS20017h', term: '25 秋 · 第 3 学期', column: 2, row: 5, tracks: ['systems', 'intelligence'], state: '站内可读', href: '/notes/algorithms/' },
-  { id: 'computer-systems', title: '计算机原理', code: 'CS20018', term: '25 秋 · 第 3 学期', column: 2, row: 7, tracks: ['systems', 'intelligence'], state: '站内可读', href: '/notes/computer-systems/' },
-
-  { id: 'math-statistics', title: '统计学基础Ⅰ：数理统计', code: 'STAT20010h', term: '26 春 · 第 4 学期', column: 3, row: 1, tracks: ['statistics', 'application'], state: '站内可读', href: '/notes/mathematical-statistics/' },
-  { id: 'optimization', title: '最优化方法', code: 'MATH20008', term: '26 春 · 第 4 学期', column: 3, row: 3, tracks: ['math', 'statistics', 'intelligence'], state: '站内可读', href: '/notes/optimization/' },
-  { id: 'biostatistics', title: '生物统计学', code: 'STAT50025', term: '26 春 · 第 4/6 学期', column: 3, row: 5, tracks: ['statistics', 'application', 'intelligence'], state: '站内可读', href: '/notes/biostatistics/' },
-  { id: 'database', title: '数据库及实现', code: 'CS20019', term: '26 春 · 第 4 学期', column: 3, row: 7, tracks: ['systems', 'intelligence'], state: '站内可读', href: '/notes/database/' },
-
-  { id: 'stat-computing', title: '统计计算', code: 'STAT30016h', term: '26 秋 · 核心课程', column: 4, row: 1, tracks: ['statistics'], state: '培养方案' },
-  { id: 'stat-learning', title: '统计（机器）学习概论', code: 'STAT30015', term: '26 秋 · 第 5 学期', column: 4, row: 2, tracks: ['statistics', 'intelligence'], state: '培养方案' },
-  { id: 'multimodal', title: '多模态数据同化', code: 'AIS410010', term: '26 秋 · 进阶模块', column: 4, row: 3, tracks: ['statistics', 'application', 'intelligence'], state: '培养方案' },
-  { id: 'ai', title: '人工智能', code: 'CS50020', term: '26 秋 · 第 5 学期', column: 4, row: 4, tracks: ['systems', 'intelligence'], state: '培养方案' },
-  { id: 'image', title: '图像处理与数据可视化', code: 'CS30065h', term: '26 秋 · 第 5/6 学期', column: 4, row: 5, tracks: ['systems', 'intelligence', 'application'], state: '培养方案' },
-  { id: 'graph-mining', title: '图数据管理与挖掘', code: 'CS50027', term: '26 秋 · 系统模块', column: 4, row: 6, tracks: ['systems', 'intelligence'], state: '培养方案' },
-  { id: 'nlp', title: '自然语言处理与大语言模型', code: 'CS40008', term: '26 春 · 系统/类脑模块', column: 4, row: 7, tracks: ['systems', 'intelligence'], state: '站内可读', href: '/notes/nlp-llms/' },
-  { id: 'deep-learning', title: '神经网络与深度学习', code: 'CS30064', term: '27 春 · 第 6 学期', column: 4, row: 8, tracks: ['intelligence', 'application'], state: '培养方案' },
-
-  { id: 'internship', title: '生产实习', code: 'STAT40004', term: '第 7 学期', column: 5, row: 3, tracks: ['math', 'statistics', 'systems', 'intelligence', 'application'], state: '培养方案' },
-  { id: 'thesis', title: '毕业论文', code: 'STAT40005', term: '第 8 学期', column: 5, row: 6, tracks: ['math', 'statistics', 'systems', 'intelligence', 'application'], state: '培养方案' }
+const modules: ModuleGroup[] = [
+  {
+    id: 'core',
+    number: '01',
+    title: '专业核心',
+    kicker: 'Common foundation',
+    summary: '共同底座覆盖数值计算、统计建模、算法、系统与智能方法。',
+    courses: [
+      { title: '统计计算', code: 'STAT30016', credits: 3, term: '第 1 学期' },
+      { title: '数值算法与案例分析 I', code: 'MATH20007', credits: 3, term: '第 3 学期', href: '/notes/numerical-algorithms/' },
+      { title: '统计（机器）学习概论', code: 'STAT30015', credits: 3, term: '第 5 学期' },
+      { title: '人工智能', code: 'CS50020', credits: 3, term: '第 5 学期' },
+      { title: '神经网络与深度学习', code: 'CS30064', credits: 3, term: '第 6 学期' },
+      { title: '生产实习', code: 'STAT40004', credits: 1, term: '第 7 学期' },
+      { title: '毕业论文', code: 'STAT40005', credits: 6, term: '第 8 学期' },
+      { title: '数据结构', code: 'CS20017', credits: 4, term: '第 3 学期', href: '/notes/algorithms/' },
+      { title: '概率论基础', code: 'STAT20011', credits: 3, term: '第 3 学期', href: '/notes/probability/' },
+      { title: '计算机原理', code: 'CS20018', credits: 3, term: '第 3 学期', href: '/notes/computer-systems/' },
+      { title: '最优化方法', code: 'MATH20008', credits: 3, term: '第 4 学期', href: '/notes/optimization/' },
+      { title: '数据库及实现', code: 'CS20019', credits: 3, term: '第 4 学期', href: '/notes/database/' },
+      { title: '高等线性代数', code: 'MATH10003', credits: 3, term: '第 3 学期', href: '/notes/advanced-linear-algebra/' },
+      { title: '图像处理与可视化', code: 'CS30065', credits: 3, term: '第 5 学期' },
+      { title: '统计学基础：原理、方法及 R 应用 (I)', code: 'STAT20010', credits: 3, term: '第 4 学期', href: '/notes/mathematical-statistics/' }
+    ]
+  },
+  {
+    id: 'statistics',
+    number: '02',
+    title: '统计与分析',
+    kicker: 'Statistics & analysis',
+    summary: '从随机性、回归与时间序列，延伸到数据同化和稀疏方法。',
+    courses: [
+      { title: '数值算法与案例分析 II', code: 'MATH50009', credits: 3, term: '第 4 / 6 学期' },
+      { title: '随机过程导论', code: 'STAT50017', credits: 3, term: '第 4 / 6 学期' },
+      { title: '统计学基础 II：回归分析', code: 'STAT50024', credits: 3, term: '第 3 / 5 学期' },
+      { title: '时间序列与空间统计', code: 'STAT50016', credits: 3, term: '第 4 / 6 学期' },
+      { title: '数据融合与同化', code: 'STAT50019', credits: 3, term: '第 4 / 6 学期' },
+      { title: '数学模型', code: 'MATH20009', credits: 3, term: '第 4 / 6 学期' },
+      { title: '随机分析', code: 'MATH60033', credits: 3, term: '第 3—6 学期' },
+      { title: '运筹学 A', code: 'MATH130019', credits: 3, term: '第 4 / 6 学期' },
+      { title: '多元统计分析', code: 'STAT50023', credits: 3, term: '第 4 / 6 学期' },
+      { title: '计算方法', code: 'MATH30008', credits: 3, term: '第 3 / 5 学期' },
+      { title: '应用泛函分析', code: 'MATH50011', credits: 3, term: '第 3 / 5 学期' },
+      { title: '线性规划', code: 'MATH50012', credits: 3, term: '第 4 / 6 学期' },
+      { title: '多模态数据同化', code: 'AIS410010', credits: 3, term: '第 4 / 6 学期' },
+      { title: '人工智能中的稀疏理论与应用', code: 'AIS631010', credits: 3, term: '第 3 / 5 学期' },
+      { title: '高等微积分', code: 'MATH50014', credits: 3, term: '秋季' }
+    ]
+  },
+  {
+    id: 'systems',
+    number: '03',
+    title: '系统与数据挖掘',
+    kicker: 'Systems & data mining',
+    summary: '把算法放进大规模系统，处理文本、图、图像与复杂决策。',
+    courses: [
+      { title: '大规模分布式系统', code: 'CS50022', credits: 3, term: '第 4 / 6 学期' },
+      { title: '高级大数据解析', code: 'CS50021', credits: 3, term: '第 3 / 5 学期' },
+      { title: '自然语言处理 / 大语言模型', code: 'CS50023 · 已修读 CS40008', credits: 3, term: '第 4 / 6 学期', href: '/notes/nlp-llms/' },
+      { title: '计算理论', code: 'CS50024', credits: 3, term: '第 3 / 5 学期' },
+      { title: '数字图像处理', code: 'DATA130032', credits: 3, term: '第 3—6 学期' },
+      { title: '图数据管理与挖掘', code: 'CS50027', credits: 3, term: '第 3 / 5 学期' },
+      { title: '强化学习算法与理论基础', code: 'MATH50013', credits: 3, term: '第 3 / 5 学期' },
+      { title: '算法设计与分析', code: 'CS30016', credits: 3, term: '第 4 / 6 学期' },
+      { title: '计算机视觉', code: 'CS50028', credits: 3, term: '第 4 / 6 学期' },
+      { title: '认知智能前沿技术与实践', code: 'AIT531023', credits: 3, term: '第 3 / 5 学期' }
+    ]
+  },
+  {
+    id: 'applied',
+    number: '04',
+    title: '理医工 × 社会科学',
+    kicker: 'Applied data science',
+    summary: '两类应用方向合并成一个探索区，各选一门，把方法带进真实领域。',
+    courses: [
+      { title: '卫生统计学 A', code: 'PHPM40014', credits: 3, term: '第 3 / 5 学期', group: '理医工' },
+      { title: '医疗大数据统计学', code: 'STAT50020', credits: 3, term: '第 4 / 6 学期', group: '理医工' },
+      { title: '医学图像处理', code: 'CS50026', credits: 3, term: '第 4 / 6 学期', group: '理医工' },
+      { title: '生物统计学', code: 'STAT50025', credits: 3, term: '第 4 / 6 学期', group: '理医工', href: '/notes/biostatistics/' },
+      { title: '组学数据的统计分析和挖掘', code: 'BIOL130112', credits: 2, term: '第 3 / 5 学期', group: '理医工' },
+      { title: '心理统计学（一）', code: 'PSYC30017', credits: 3, term: '第 3 / 5 学期', group: '理医工' },
+      { title: '心理统计学（二）', code: 'PSYC30018', credits: 2, term: '第 4 / 6 学期', group: '理医工' },
+      { title: '生物医学工程学基础', code: 'BME30003', credits: 3, term: '第 4 / 6 学期', group: '理医工' },
+      { title: '社交网络挖掘', code: 'CS50019', credits: 3, term: '第 3 / 5 学期', group: '社会科学' },
+      { title: '金融计量学', code: 'STAT50018', credits: 3, term: '第 3 / 5 学期', group: '社会科学' },
+      { title: '商务分析', code: 'DATA130035', credits: 3, term: '第 3 / 5 学期', group: '社会科学' },
+      { title: '社会数据管理与分析', code: 'DATA130037', credits: 3, term: '第 3—6 学期', group: '社会科学' },
+      { title: '决策理论', code: 'DATA130038', credits: 3, term: '第 3 / 5 学期', group: '社会科学' },
+      { title: '金融工程', code: 'STAT50022', credits: 3, term: '第 3 / 5 学期', group: '社会科学' },
+      { title: '社会科学方法论', code: 'SOCI130062', credits: 2, term: '春 / 秋', group: '社会科学' },
+      { title: '社会科学数据挖掘', code: 'STAT50021', credits: 3, term: '第 4 / 6 学期', group: '社会科学' },
+      { title: '大数据传播与新媒体分析', code: 'CS50025', credits: 3, term: '第 4 / 6 学期', group: '社会科学' },
+      { title: '金融风险管理与金融工程', code: 'ECON40019', credits: 3, term: '第 6 学期', group: '社会科学' }
+    ]
+  }
 ]
 
-const edges: CourseEdge[] = [
-  { from: 'analysis', to: 'advanced-linear' },
-  { from: 'analysis', to: 'numerical' },
-  { from: 'analysis', to: 'probability' },
-  { from: 'linear', to: 'advanced-linear' },
-  { from: 'linear', to: 'numerical' },
-  { from: 'programming', to: 'algorithms' },
-  { from: 'programming', to: 'computer-systems' },
-  { from: 'physics', to: 'numerical' },
-  { from: 'advanced-linear', to: 'math-statistics' },
-  { from: 'advanced-linear', to: 'optimization' },
-  { from: 'numerical', to: 'optimization' },
-  { from: 'numerical', to: 'image' },
-  { from: 'probability', to: 'math-statistics' },
-  { from: 'probability', to: 'biostatistics' },
-  { from: 'algorithms', to: 'database' },
-  { from: 'algorithms', to: 'ai' },
-  { from: 'computer-systems', to: 'database' },
-  { from: 'math-statistics', to: 'stat-computing' },
-  { from: 'math-statistics', to: 'stat-learning' },
-  { from: 'math-statistics', to: 'multimodal' },
-  { from: 'optimization', to: 'stat-learning' },
-  { from: 'optimization', to: 'ai' },
-  { from: 'optimization', to: 'deep-learning' },
-  { from: 'biostatistics', to: 'multimodal' },
-  { from: 'database', to: 'graph-mining' },
-  { from: 'database', to: 'nlp' },
-  { from: 'ai', to: 'deep-learning' },
-  { from: 'image', to: 'deep-learning' },
-  { from: 'stat-learning', to: 'internship' },
-  { from: 'multimodal', to: 'internship' },
-  { from: 'graph-mining', to: 'internship' },
-  { from: 'nlp', to: 'internship' },
-  { from: 'deep-learning', to: 'internship' },
-  { from: 'internship', to: 'thesis' }
-]
+const activeScene = ref(0)
+const activeModuleId = ref('core')
+const story = ref<HTMLElement | null>(null)
+const activeModule = computed(() => modules.find((item) => item.id === activeModuleId.value) ?? modules[0])
 
-const trackOptions: Array<{ value: 'all' | Track; label: string }> = [
-  { value: 'all', label: '全景' },
-  { value: 'math', label: '数学与优化' },
-  { value: 'statistics', label: '统计与分析' },
-  { value: 'systems', label: '系统与挖掘' },
-  { value: 'application', label: '理医工应用' },
-  { value: 'intelligence', label: '类脑与智能' }
-]
+const courseHref = (href?: string) => href ? withBase(href) : undefined
 
-const moduleExits = [
-  { title: '统计与分析', detail: '回归分析、时间序列、多元统计、随机过程、数据同化' },
-  { title: '系统与数据挖掘', detail: '分布式系统、自然语言处理、图数据挖掘、算法设计、计算机视觉' },
-  { title: '理医工大数据', detail: '卫生统计、医疗大数据、医学图像、生物统计、组学数据分析' },
-  { title: '社会科学大数据', detail: '社交网络、金融计量、商务分析、社会数据挖掘、新媒体分析' },
-  { title: '类脑计算', detail: '非线性系统、复杂系统、多模态同化、认知智能、神经网络' }
-]
-
-const activeTrack = ref<'all' | Track>('all')
-const canvas = ref<HTMLElement | null>(null)
-const nodeElements = new Map<string, HTMLElement>()
-const edgePaths = ref<EdgePath[]>([])
-let resizeObserver: ResizeObserver | undefined
-
-const courseById = new Map(courses.map((course) => [course.id, course]))
-
-const courseIsActive = (course: CourseNode) =>
-  activeTrack.value === 'all' || course.tracks.includes(activeTrack.value)
-
-const hrefFor = (course: CourseNode) => {
-  if (!course.href) return undefined
-  return course.external ? course.href : withBase(course.href)
+const goToScene = (index: number) => {
+  const target = story.value
+  if (!target) return
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  target.scrollTo({ top: index * target.clientHeight, behavior: reduced ? 'auto' : 'smooth' })
+  activeScene.value = index
 }
 
-const setNodeRef = (id: string, element: unknown) => {
-  if (element instanceof HTMLElement) nodeElements.set(id, element)
-  else nodeElements.delete(id)
+const syncScene = (event: Event) => {
+  const target = event.currentTarget as HTMLElement
+  const nextScene = Math.min(1, Math.max(0, Math.round(target.scrollTop / target.clientHeight)))
+  if (nextScene !== activeScene.value) activeScene.value = nextScene
 }
-
-const updateEdges = () => {
-  if (!canvas.value) return
-  const canvasRect = canvas.value.getBoundingClientRect()
-  edgePaths.value = edges.flatMap((edge) => {
-    const source = nodeElements.get(edge.from)
-    const target = nodeElements.get(edge.to)
-    const sourceCourse = courseById.get(edge.from)
-    const targetCourse = courseById.get(edge.to)
-    if (!source || !target || !sourceCourse || !targetCourse) return []
-
-    const sourceRect = source.getBoundingClientRect()
-    const targetRect = target.getBoundingClientRect()
-    const startX = sourceRect.right - canvasRect.left
-    const startY = sourceRect.top + sourceRect.height / 2 - canvasRect.top
-    const endX = targetRect.left - canvasRect.left
-    const endY = targetRect.top + targetRect.height / 2 - canvasRect.top
-    const bend = Math.max(34, Math.abs(endX - startX) * 0.48)
-    const d = `M ${startX} ${startY} C ${startX + bend} ${startY}, ${endX - bend} ${endY}, ${endX} ${endY}`
-    return [{
-      ...edge,
-      d,
-      active: courseIsActive(sourceCourse) && courseIsActive(targetCourse)
-    }]
-  })
-}
-
-const activeCourseCount = computed(() =>
-  courses.filter((course) => courseIsActive(course)).length
-)
-
-onMounted(async () => {
-  await nextTick()
-  updateEdges()
-  resizeObserver = new ResizeObserver(updateEdges)
-  if (canvas.value) resizeObserver.observe(canvas.value)
-  nodeElements.forEach((element) => resizeObserver?.observe(element))
-  document.fonts?.ready.then(updateEdges)
-  window.addEventListener('resize', updateEdges)
-})
-
-watch(activeTrack, () => nextTick(updateEdges))
-
-onBeforeUnmount(() => {
-  resizeObserver?.disconnect()
-  window.removeEventListener('resize', updateEdges)
-})
 </script>
 
 <template>
-  <main class="course-atlas">
-    <header class="course-atlas__hero">
-      <p class="page-eyebrow">Learning network · 2024 培养方案</p>
-      <div>
-        <h1>课程地图</h1>
-        <p>
-          从数理与编程基础出发，经过统计、计算机与优化核心，分流到智能系统和应用领域，
-          最终汇入实习与毕业研究。连线表示建议的知识承接关系，不等同于学校正式先修规定。
-        </p>
-      </div>
-    </header>
+  <main class="course-map-deck">
+    <nav class="map-progress" aria-label="课程地图页面">
+      <button
+        v-for="(_, index) in 2"
+        :key="index"
+        type="button"
+        :class="{ 'is-active': activeScene === index }"
+        :aria-label="`前往第 ${index + 1} 幕`"
+        :aria-current="activeScene === index ? 'step' : undefined"
+        @click="goToScene(index)"
+      >
+        <span>0{{ index + 1 }}</span>
+        <i />
+      </button>
+    </nav>
 
-    <section class="course-map" aria-labelledby="course-map-title">
-      <div class="course-map__toolbar">
-        <div>
-          <span class="course-map__toolbar-label" id="course-map-title">聚焦一条路径</span>
-          <span class="course-map__count">当前显示 {{ activeCourseCount }} 个节点</span>
-        </div>
-        <div class="course-map__filters" role="group" aria-label="筛选专业方向">
-          <button
-            v-for="option in trackOptions"
-            :key="option.value"
-            type="button"
-            :class="{ 'is-active': activeTrack === option.value }"
-            :aria-pressed="activeTrack === option.value"
-            @click="activeTrack = option.value"
-          >
-            {{ option.label }}
-          </button>
-        </div>
-      </div>
+    <div ref="story" class="map-story" @scroll.passive="syncScene">
+      <section id="map-pathway" class="map-scene map-scene--pathway" :class="{ 'is-active': activeScene === 0 }">
+        <div class="map-scene__content">
+          <a class="map-back" :href="withBase('/courses/')">← 返回课程入口</a>
+          <header class="map-heading">
+            <p>Knowledge pathway · 01</p>
+            <div>
+              <h1>从基础，到专业核心</h1>
+              <span>课程不是一张清单。它们沿着数学、统计、算法与系统四条主线彼此承接，最终汇入真实问题。</span>
+            </div>
+          </header>
 
-      <div class="course-map__scroll" tabindex="0" aria-label="可横向滚动的课程学习路径">
-        <div ref="canvas" class="course-map__canvas">
-          <div class="course-map__stages" aria-hidden="true">
-            <div v-for="stage in stages" :key="stage.number" class="course-map__stage">
-              <span>{{ stage.number }}</span>
-              <strong>{{ stage.title }}</strong>
-              <small>{{ stage.subtitle }}</small>
+          <div class="pathway-shell" aria-label="按学习阶段组织的课程路径">
+            <div class="pathway-flow" aria-hidden="true"><i /></div>
+            <div class="pathway-grid">
+              <article
+                v-for="(stage, index) in pathwayStages"
+                :key="stage.number"
+                class="path-stage"
+                :style="{ '--delay': `${index * 70}ms` }"
+              >
+                <div class="path-stage__node"><span>{{ stage.number }}</span></div>
+                <p>{{ stage.title }}</p>
+                <h2>{{ stage.caption }}</h2>
+                <div class="path-stage__courses">
+                  <component
+                    :is="course.href ? 'a' : 'span'"
+                    v-for="course in stage.courses"
+                    :key="course.code"
+                    :href="courseHref(course.href)"
+                    :class="{ 'has-notes': course.href }"
+                  >
+                    <b>{{ course.title }}</b>
+                    <small>{{ course.code }}</small>
+                  </component>
+                </div>
+              </article>
             </div>
           </div>
 
-          <svg class="course-map__edges" aria-hidden="true">
-            <path
-              v-for="edge in edgePaths"
-              :key="`${edge.from}-${edge.to}`"
-              :d="edge.d"
-              :class="{ 'is-muted': activeTrack !== 'all' && !edge.active }"
-            />
-          </svg>
-
-          <div class="course-map__grid">
-            <component
-              :is="course.href ? 'a' : 'article'"
-              v-for="course in courses"
-              :key="course.id"
-              :ref="(element: unknown) => setNodeRef(course.id, element)"
-              class="course-node"
-              :class="[
-                `course-node--${course.tracks[0]}`,
-                { 'is-muted': activeTrack !== 'all' && !courseIsActive(course) }
-              ]"
-              :style="{ gridColumn: course.column, gridRow: course.row }"
-              :href="hrefFor(course)"
-              :target="course.external ? '_blank' : undefined"
-              :rel="course.external ? 'noreferrer' : undefined"
-            >
-              <div class="course-node__meta">
-                <span>{{ course.term }}</span>
-                <span class="course-node__state" :data-state="course.state">{{ course.state }}</span>
-              </div>
-              <h2>{{ course.title }}</h2>
-              <p>{{ course.code }}</p>
-              <span v-if="course.href" class="course-node__arrow" aria-hidden="true">
-                {{ course.external ? '↗' : '→' }}
-              </span>
-            </component>
-          </div>
+          <button class="scene-cue" type="button" @click="goToScene(1)">
+            <span>继续看方向模块</span>
+            <i>↓</i>
+          </button>
         </div>
-      </div>
+      </section>
 
-      <div class="course-map__legend" aria-label="课程节点状态说明">
-        <span><i data-state="站内可读" />站内可读</span>
-        <span><i data-state="仓库资料" />仓库或外部资料</span>
-        <span><i data-state="培养方案" />培养方案中的前置或计划课程</span>
-      </div>
-    </section>
+      <section id="map-modules" class="map-scene map-scene--modules" :class="{ 'is-active': activeScene === 1 }">
+        <div class="map-scene__content">
+          <header class="map-heading map-heading--modules">
+            <p>Professional pathways · 02</p>
+            <div>
+              <h2>核心课程之后，网络向四组方向展开</h2>
+              <span>专业核心是共同底座。统计、系统与应用方向不是彼此割裂的终点，而是可以交叉选择的观察角度。</span>
+            </div>
+          </header>
 
-    <section class="module-network" aria-labelledby="module-network-title">
-      <div class="module-network__head">
-        <p class="page-eyebrow">Professional pathways</p>
-        <h2 id="module-network-title">核心课程之后，网络向五个模块展开</h2>
-        <p>培养方案允许在专业导师指导下选择发展路径；大数据技术与应用方向要求每个模块至少选一门，类脑计算则形成另一条完整进阶路线。</p>
-      </div>
-      <div class="module-network__hub" aria-hidden="true">专业核心</div>
-      <div class="module-network__branches">
-        <article v-for="(module, index) in moduleExits" :key="module.title">
-          <span>0{{ index + 1 }}</span>
-          <h3>{{ module.title }}</h3>
-          <p>{{ module.detail }}</p>
-        </article>
-      </div>
-    </section>
+          <div class="module-workspace">
+            <div class="module-selector" role="tablist" aria-label="选择课程模块">
+              <button
+                v-for="module in modules"
+                :key="module.id"
+                type="button"
+                role="tab"
+                :aria-selected="activeModuleId === module.id"
+                :aria-controls="`module-${module.id}`"
+                :class="{ 'is-active': activeModuleId === module.id }"
+                @click="activeModuleId = module.id"
+              >
+                <span>{{ module.number }}</span>
+                <div>
+                  <b>{{ module.title }}</b>
+                  <small>{{ module.summary }}</small>
+                </div>
+                <i>{{ module.courses.length }}</i>
+              </button>
+            </div>
+
+            <section class="module-detail" aria-live="polite">
+              <Transition name="module-swap" mode="out-in">
+                <div :id="`module-${activeModule.id}`" :key="activeModule.id" role="tabpanel">
+                  <header>
+                    <div>
+                      <p>{{ activeModule.kicker }}</p>
+                      <h3>{{ activeModule.title }}</h3>
+                    </div>
+                    <span>{{ activeModule.courses.length }} 门课程</span>
+                  </header>
+                  <div class="module-course-grid">
+                    <component
+                      :is="course.href ? 'a' : 'article'"
+                      v-for="course in activeModule.courses"
+                      :key="`${activeModule.id}-${course.code}`"
+                      class="module-course"
+                      :href="courseHref(course.href)"
+                    >
+                      <div>
+                        <em v-if="course.group">{{ course.group }}</em>
+                        <small>{{ course.code }}</small>
+                        <i v-if="course.href">↗</i>
+                      </div>
+                      <h4>{{ course.title }}</h4>
+                      <p>{{ course.credits }} 学分 · {{ course.term }}</p>
+                    </component>
+                  </div>
+                </div>
+              </Transition>
+            </section>
+          </div>
+
+          <button class="scene-cue scene-cue--up" type="button" @click="goToScene(0)">
+            <i>↑</i>
+            <span>回到学习主线</span>
+          </button>
+        </div>
+      </section>
+    </div>
   </main>
 </template>
 
 <style scoped>
-.course-atlas {
-  padding: clamp(58px, 8vw, 112px) 0 120px;
+.course-map-deck {
+  position: relative;
+  height: calc(100svh - var(--vp-nav-height));
+  min-height: 620px;
   overflow: hidden;
-}
-
-.course-atlas__hero,
-.course-map,
-.module-network {
-  width: min(100% - 40px, 1560px);
-  margin-inline: auto;
-}
-
-.course-atlas__hero {
-  display: grid;
-  grid-template-columns: minmax(180px, 0.55fr) minmax(0, 1.45fr);
-  gap: 48px;
-  align-items: end;
-  margin-bottom: 46px;
-}
-
-.course-atlas__hero h1 {
-  margin: 0;
-  font-family: var(--opends-serif);
-  font-size: clamp(3.2rem, 8vw, 7rem);
-  letter-spacing: -0.07em;
-  line-height: 0.95;
-}
-
-.course-atlas__hero p:not(.page-eyebrow) {
-  max-width: 780px;
-  margin: 24px 0 0;
-  color: var(--vp-c-text-2);
-  font-size: 1.04rem;
-  line-height: 1.85;
-}
-
-.course-map {
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 28px;
-  overflow: hidden;
-  background: color-mix(in srgb, var(--vp-c-bg) 94%, transparent);
-  box-shadow: 0 26px 80px rgba(28, 41, 39, 0.08);
-}
-
-.course-map__toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  border-bottom: 1px solid var(--vp-c-divider);
-  padding: 18px 22px;
-  background: color-mix(in srgb, var(--vp-c-bg-soft) 86%, transparent);
-}
-
-.course-map__toolbar-label {
-  display: block;
   color: var(--vp-c-text-1);
-  font-size: 0.82rem;
-  font-weight: 760;
-}
-
-.course-map__count {
-  display: block;
-  margin-top: 3px;
-  color: var(--vp-c-text-2);
-  font-size: 0.72rem;
-}
-
-.course-map__filters {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 7px;
-}
-
-.course-map__filters button {
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 999px;
-  padding: 7px 11px;
-  color: var(--vp-c-text-2);
   background: var(--vp-c-bg);
-  font: inherit;
-  font-size: 0.74rem;
-  font-weight: 680;
-  cursor: pointer;
 }
 
-.course-map__filters button:hover,
-.course-map__filters button:focus-visible,
-.course-map__filters button.is-active {
-  border-color: var(--vp-c-brand-1);
-  color: white;
-  background: var(--vp-c-brand-1);
-  outline: none;
-}
-
-.course-map__scroll {
-  overflow-x: auto;
-  overscroll-behavior-inline: contain;
-  scrollbar-color: var(--vp-c-divider) transparent;
-}
-
-.course-map__scroll:focus-visible {
-  outline: 2px solid var(--vp-c-brand-2);
-  outline-offset: -2px;
-}
-
-.course-map__canvas {
-  position: relative;
-  min-width: 1500px;
-  padding: 34px 44px 52px;
-  background-image:
-    radial-gradient(circle at 18% 18%, rgba(23, 95, 90, 0.06), transparent 20rem),
-    linear-gradient(rgba(23, 95, 90, 0.035) 1px, transparent 1px);
-  background-size: auto, 100% 34px;
-}
-
-.course-map__stages,
-.course-map__grid {
-  display: grid;
-  grid-template-columns: repeat(5, 220px);
-  column-gap: 76px;
-}
-
-.course-map__stages {
-  margin-bottom: 26px;
-}
-
-.course-map__stage {
-  display: flex;
-  flex-direction: column;
-  border-top: 2px solid var(--vp-c-brand-2);
-  padding-top: 10px;
-}
-
-.course-map__stage span {
-  color: var(--opends-gold);
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-}
-
-.course-map__stage strong {
-  margin-top: 3px;
-  font-family: var(--opends-serif);
-  font-size: 1rem;
-}
-
-.course-map__stage small {
-  margin-top: 2px;
-  color: var(--vp-c-text-2);
-  font-size: 0.68rem;
-}
-
-.course-map__grid {
-  position: relative;
-  z-index: 2;
-  grid-template-rows: repeat(8, minmax(84px, auto));
-  row-gap: 20px;
-}
-
-.course-map__edges {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  width: 100%;
+.map-story {
   height: 100%;
-  overflow: visible;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
+  scrollbar-color: color-mix(in srgb, var(--vp-c-brand-1) 38%, transparent) transparent;
+  scrollbar-width: thin;
+}
+
+.map-scene {
+  position: relative;
+  height: 100%;
+  min-height: 620px;
+  overflow-y: auto;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.map-scene::before,
+.map-scene::after {
+  position: absolute;
+  border-radius: 50%;
+  content: "";
   pointer-events: none;
 }
 
-.course-map__edges path {
-  fill: none;
-  stroke: color-mix(in srgb, var(--vp-c-brand-2) 52%, var(--vp-c-divider));
-  stroke-width: 1.5;
-  transition: opacity 220ms ease, stroke-width 220ms ease;
+.map-scene--pathway {
+  background:
+    linear-gradient(color-mix(in srgb, var(--vp-c-divider) 28%, transparent) 1px, transparent 1px),
+    radial-gradient(circle at 10% 18%, color-mix(in srgb, var(--vp-c-brand-1) 13%, transparent), transparent 30%),
+    radial-gradient(circle at 88% 70%, rgba(184, 113, 32, .09), transparent 29%),
+    var(--vp-c-bg);
+  background-size: 100% 45px, auto, auto, auto;
 }
 
-.course-map__edges path:not(.is-muted) {
-  stroke-width: 2;
+.map-scene--pathway::before {
+  top: -24vw;
+  right: -12vw;
+  width: 52vw;
+  height: 52vw;
+  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 16%, transparent);
 }
 
-.course-map__edges path.is-muted {
-  opacity: 0.08;
+.map-scene--pathway::after {
+  top: -11vw;
+  right: 1vw;
+  width: 26vw;
+  height: 26vw;
+  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 10%, transparent);
 }
 
-.course-node {
+.map-scene--modules {
+  background:
+    radial-gradient(circle at 88% 14%, color-mix(in srgb, var(--vp-c-brand-1) 12%, transparent), transparent 25%),
+    radial-gradient(circle at 5% 88%, rgba(184, 113, 32, .09), transparent 24%),
+    var(--vp-c-bg-alt);
+}
+
+.map-scene__content {
   position: relative;
-  align-self: center;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: min(calc(100% - 72px), 1500px);
+  min-height: 100%;
+  margin: 0 auto;
+  padding: clamp(28px, 4vh, 52px) 0 24px;
+}
+
+.map-back {
+  align-self: flex-start;
+  margin-bottom: clamp(24px, 4vh, 46px);
+  color: var(--vp-c-text-2);
+  font-size: 13px;
+  letter-spacing: .05em;
+  text-decoration: none;
+  transition: color .2s ease, transform .2s ease;
+}
+
+.map-back:hover {
+  color: var(--vp-c-brand-1);
+  transform: translateX(-3px);
+}
+
+.map-heading {
+  display: grid;
+  grid-template-columns: minmax(180px, .35fr) minmax(0, 1.65fr);
+  gap: clamp(28px, 5vw, 80px);
+  align-items: start;
+  margin-bottom: clamp(24px, 4vh, 44px);
+}
+
+.map-heading > p {
+  margin: 9px 0 0;
+  color: #b66f20;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.map-heading h1,
+.map-heading h2 {
+  margin: 0;
+  border: 0;
+  color: var(--vp-c-text-1);
+  font-family: var(--opends-serif, "Noto Serif SC", serif);
+  font-size: clamp(42px, 5vw, 74px);
+  font-weight: 500;
+  letter-spacing: -.055em;
+  line-height: 1.05;
+}
+
+.map-heading span {
   display: block;
+  max-width: 860px;
+  margin-top: 18px;
+  color: var(--vp-c-text-2);
+  font-size: clamp(15px, 1.35vw, 19px);
+  line-height: 1.75;
+}
+
+.pathway-shell {
+  position: relative;
+  flex: 1;
+  min-height: 360px;
+  overflow-x: auto;
+  overflow-y: hidden;
   border: 1px solid var(--vp-c-divider);
-  border-left: 4px solid var(--node-accent, var(--vp-c-brand-2));
-  border-radius: 14px;
-  padding: 14px 15px 13px;
-  min-height: 82px;
-  color: var(--vp-c-text-1) !important;
-  background: color-mix(in srgb, var(--vp-c-bg) 94%, transparent);
-  box-shadow: 0 8px 22px rgba(28, 41, 39, 0.07);
-  text-decoration: none !important;
-  transition: opacity 220ms ease, transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+  border-radius: 28px;
+  background: color-mix(in srgb, var(--vp-c-bg) 88%, transparent);
+  box-shadow: 0 22px 70px rgba(16, 54, 49, .07);
+  scrollbar-color: color-mix(in srgb, var(--vp-c-brand-1) 30%, transparent) transparent;
+  scrollbar-width: thin;
 }
 
-a.course-node:hover,
-a.course-node:focus-visible {
-  border-color: var(--node-accent, var(--vp-c-brand-2));
-  box-shadow: 0 14px 34px rgba(23, 95, 90, 0.14);
-  outline: none;
-  transform: translateY(-3px);
+.pathway-flow {
+  position: absolute;
+  top: 50px;
+  left: 9.5%;
+  width: 81%;
+  height: 2px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--vp-c-brand-1) 18%, var(--vp-c-divider));
 }
 
-.course-node.is-muted {
-  opacity: 0.18;
+.pathway-flow i {
+  position: absolute;
+  inset: 0 auto 0 -28%;
+  width: 28%;
+  background: linear-gradient(90deg, transparent, var(--vp-c-brand-1), transparent);
+  animation: pathway-pulse 5.8s ease-in-out infinite;
 }
 
-.course-node--math { --node-accent: #b27432; }
-.course-node--statistics { --node-accent: #24756f; }
-.course-node--systems { --node-accent: #496f9d; }
-.course-node--intelligence { --node-accent: #7b5ca8; }
-.course-node--application { --node-accent: #9b5f64; }
+.pathway-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(220px, 1fr));
+  gap: 0;
+  min-width: 1180px;
+  height: 100%;
+  padding: 30px 22px 22px;
+}
 
-.course-node__meta {
+.path-stage {
+  position: relative;
+  padding: 0 16px;
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+.map-scene.is-active .path-stage {
+  animation: stage-arrive .65s var(--delay) ease forwards;
+}
+
+.path-stage:not(:last-child)::after {
+  position: absolute;
+  top: 17px;
+  right: -5px;
+  color: var(--vp-c-brand-1);
+  content: "→";
+  font-size: 16px;
+}
+
+.path-stage__node {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  margin: 0 auto 22px;
+  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 38%, var(--vp-c-divider));
+  border-radius: 50%;
+  color: var(--vp-c-brand-1);
+  background: var(--vp-c-bg);
+  box-shadow: 0 0 0 9px color-mix(in srgb, var(--vp-c-brand-1) 8%, transparent);
+  font-family: var(--opends-serif, serif);
+  font-size: 13px;
+}
+
+.path-stage > p {
+  margin: 0 0 8px;
+  color: var(--vp-c-text-1);
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.path-stage > h2 {
+  min-height: 55px;
+  margin: 0 0 18px;
+  border: 0;
+  color: var(--vp-c-text-3);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.55;
+  text-align: center;
+}
+
+.path-stage__courses {
+  display: grid;
+  gap: 8px;
+}
+
+.path-stage__courses > * {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 10px;
+  min-height: 42px;
+  padding: 9px 11px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 11px;
   color: var(--vp-c-text-2);
-  font-size: 0.62rem;
+  background: color-mix(in srgb, var(--vp-c-bg-soft) 70%, transparent);
+  text-decoration: none;
+  transition: border-color .2s ease, color .2s ease, transform .2s ease, background .2s ease;
 }
 
-.course-node__state {
+.path-stage__courses > *.has-notes {
+  border-color: color-mix(in srgb, var(--vp-c-brand-1) 28%, var(--vp-c-divider));
+  color: var(--vp-c-text-1);
+}
+
+.path-stage__courses > a:hover {
+  border-color: var(--vp-c-brand-1);
   color: var(--vp-c-brand-1);
-  font-weight: 760;
+  background: color-mix(in srgb, var(--vp-c-brand-1) 8%, var(--vp-c-bg));
+  transform: translateY(-2px);
 }
 
-.course-node__state[data-state='仓库资料'] { color: var(--opends-gold); }
-.course-node__state[data-state='培养方案'] { color: var(--vp-c-text-2); }
-
-.course-node h2 {
-  margin: 8px 20px 2px 0;
-  border: 0;
-  padding: 0;
-  font-family: var(--opends-serif);
-  font-size: 0.88rem;
+.path-stage__courses b {
+  font-size: 12px;
+  font-weight: 600;
   line-height: 1.35;
 }
 
-.course-node p {
-  margin: 0;
-  color: var(--vp-c-text-2);
-  font-size: 0.65rem;
+.path-stage__courses small {
+  flex: none;
+  color: var(--vp-c-text-3);
+  font-family: ui-monospace, monospace;
+  font-size: 9px;
 }
 
-.course-node__arrow {
-  position: absolute;
-  right: 12px;
-  bottom: 11px;
-  color: var(--node-accent, var(--vp-c-brand-2));
-  font-weight: 800;
-}
-
-.course-map__legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 22px;
-  border-top: 1px solid var(--vp-c-divider);
-  padding: 14px 22px;
-  color: var(--vp-c-text-2);
-  font-size: 0.72rem;
-}
-
-.course-map__legend span {
+.scene-cue {
   display: inline-flex;
+  align-items: center;
+  align-self: center;
+  gap: 12px;
+  margin-top: 18px;
+  border: 0;
+  color: var(--vp-c-text-2);
+  background: transparent;
+  cursor: pointer;
+  font-size: 12px;
+  letter-spacing: .08em;
+}
+
+.scene-cue i {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 50%;
+  color: var(--vp-c-brand-1);
+  font-style: normal;
+  animation: cue-drift 2s ease-in-out infinite;
+}
+
+.map-heading--modules {
+  margin-top: clamp(5px, 2vh, 20px);
+}
+
+.map-heading--modules h2 {
+  font-size: clamp(38px, 4.4vw, 66px);
+}
+
+.module-workspace {
+  display: grid;
+  grid-template-columns: minmax(280px, .72fr) minmax(0, 1.58fr);
+  gap: clamp(22px, 3vw, 48px);
+  flex: 1;
+  min-height: 0;
+}
+
+.module-selector {
+  position: relative;
+  display: grid;
+  align-content: center;
+  gap: 8px;
+}
+
+.module-selector::before {
+  position: absolute;
+  top: 12%;
+  bottom: 12%;
+  left: 20px;
+  width: 1px;
+  background: linear-gradient(transparent, var(--vp-c-divider) 15%, var(--vp-c-divider) 85%, transparent);
+  content: "";
+}
+
+.module-selector button {
+  position: relative;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  width: 100%;
+  padding: 16px 15px 16px 0;
+  border: 1px solid transparent;
+  border-radius: 16px;
+  color: var(--vp-c-text-2);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: color .25s ease, background .25s ease, border-color .25s ease, transform .25s ease;
+}
+
+.module-selector button > span {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 41px;
+  height: 41px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 50%;
+  color: var(--vp-c-text-3);
+  background: var(--vp-c-bg-alt);
+  font-family: var(--opends-serif, serif);
+  font-size: 12px;
+  transition: inherit;
+}
+
+.module-selector button b,
+.module-selector button small {
+  display: block;
+}
+
+.module-selector button b {
+  margin-bottom: 5px;
+  color: var(--vp-c-text-1);
+  font-family: var(--opends-serif, serif);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.module-selector button small {
+  overflow: hidden;
+  font-size: 11px;
+  line-height: 1.45;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.module-selector button > i {
+  color: var(--vp-c-text-3);
+  font-size: 11px;
+  font-style: normal;
+}
+
+.module-selector button:hover {
+  color: var(--vp-c-text-1);
+  transform: translateX(4px);
+}
+
+.module-selector button.is-active {
+  border-color: color-mix(in srgb, var(--vp-c-brand-1) 20%, var(--vp-c-divider));
+  color: var(--vp-c-text-1);
+  background: color-mix(in srgb, var(--vp-c-bg) 78%, transparent);
+  box-shadow: 0 12px 36px rgba(18, 61, 56, .06);
+}
+
+.module-selector button.is-active > span {
+  border-color: var(--vp-c-brand-1);
+  color: var(--vp-c-bg);
+  background: var(--vp-c-brand-1);
+  box-shadow: 0 0 0 7px color-mix(in srgb, var(--vp-c-brand-1) 10%, transparent);
+}
+
+.module-detail {
+  min-height: 0;
+  padding: clamp(20px, 2.4vw, 34px);
+  overflow-y: auto;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 26px;
+  background: color-mix(in srgb, var(--vp-c-bg) 91%, transparent);
+  box-shadow: 0 22px 70px rgba(16, 54, 49, .08);
+  scrollbar-color: color-mix(in srgb, var(--vp-c-brand-1) 32%, transparent) transparent;
+  scrollbar-width: thin;
+}
+
+.module-detail header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 22px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--vp-c-divider);
+}
+
+.module-detail header p {
+  margin: 0 0 5px;
+  color: #b66f20;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+
+.module-detail header h3 {
+  margin: 0;
+  color: var(--vp-c-text-1);
+  font-family: var(--opends-serif, serif);
+  font-size: clamp(27px, 2.6vw, 39px);
+  font-weight: 500;
+  letter-spacing: -.035em;
+}
+
+.module-detail header > span {
+  flex: none;
+  color: var(--vp-c-text-3);
+  font-size: 12px;
+}
+
+.module-course-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.module-course {
+  display: block;
+  min-height: 105px;
+  padding: 13px 15px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 13px;
+  color: var(--vp-c-text-1);
+  background: color-mix(in srgb, var(--vp-c-bg-soft) 68%, transparent);
+  text-decoration: none;
+  transition: border-color .2s ease, background .2s ease, transform .2s ease;
+}
+
+a.module-course:hover {
+  border-color: var(--vp-c-brand-1);
+  background: color-mix(in srgb, var(--vp-c-brand-1) 7%, var(--vp-c-bg));
+  transform: translateY(-2px);
+}
+
+.module-course > div {
+  display: flex;
   align-items: center;
   gap: 7px;
 }
 
-.course-map__legend i {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--vp-c-brand-2);
+.module-course small {
+  overflow: hidden;
+  color: var(--vp-c-text-3);
+  font-family: ui-monospace, monospace;
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.course-map__legend i[data-state='仓库资料'] { background: var(--opends-gold); }
-.course-map__legend i[data-state='培养方案'] { background: var(--vp-c-text-2); }
-
-.module-network {
-  position: relative;
-  margin-top: 100px;
-  padding: 54px 0 0;
-}
-
-.module-network__head {
-  max-width: 790px;
-}
-
-.module-network__head h2 {
-  margin: 8px 0 14px;
-  font-family: var(--opends-serif);
-  font-size: clamp(2rem, 4vw, 3.2rem);
-  letter-spacing: -0.045em;
-  line-height: 1.15;
-}
-
-.module-network__head > p:last-child {
-  color: var(--vp-c-text-2);
-  line-height: 1.75;
-}
-
-.module-network__hub {
-  width: max-content;
-  margin: 46px auto 32px;
-  border: 1px solid var(--vp-c-brand-2);
+.module-course em {
+  flex: none;
+  padding: 2px 6px;
   border-radius: 999px;
-  padding: 10px 18px;
-  color: white;
-  background: var(--vp-c-brand-1);
-  font-size: 0.78rem;
-  font-weight: 760;
-  box-shadow: 0 10px 28px rgba(23, 95, 90, 0.18);
+  color: var(--vp-c-brand-1);
+  background: color-mix(in srgb, var(--vp-c-brand-1) 10%, transparent);
+  font-size: 9px;
+  font-style: normal;
 }
 
-.module-network__branches {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 14px;
+.module-course i {
+  margin-left: auto;
+  color: var(--vp-c-brand-1);
+  font-size: 11px;
+  font-style: normal;
 }
 
-.module-network__branches::before {
-  position: absolute;
-  top: -33px;
-  right: 10%;
-  left: 10%;
-  height: 33px;
-  border-top: 1px solid var(--vp-c-divider);
-  border-right: 1px solid var(--vp-c-divider);
-  border-left: 1px solid var(--vp-c-divider);
-  content: '';
+.module-course h4 {
+  margin: 11px 0 8px;
+  color: var(--vp-c-text-1);
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.35;
 }
 
-.module-network__branches article {
-  position: relative;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 16px;
-  padding: 20px;
-  background: color-mix(in srgb, var(--vp-c-bg) 94%, transparent);
-}
-
-.module-network__branches article::before {
-  position: absolute;
-  top: -34px;
-  left: 50%;
-  width: 1px;
-  height: 34px;
-  background: var(--vp-c-divider);
-  content: '';
-}
-
-.module-network__branches span {
-  color: var(--opends-gold);
-  font-family: var(--opends-serif);
-  font-size: 1.25rem;
-}
-
-.module-network__branches h3 {
-  margin: 14px 0 8px;
-  font-size: 0.98rem;
-}
-
-.module-network__branches p {
+.module-course p {
   margin: 0;
-  color: var(--vp-c-text-2);
-  font-size: 0.8rem;
-  line-height: 1.7;
+  color: var(--vp-c-text-3);
+  font-size: 10px;
 }
 
-@media (max-width: 900px) {
-  .course-atlas__hero {
+.scene-cue--up {
+  flex-direction: row;
+  margin-top: 14px;
+}
+
+.module-swap-enter-active,
+.module-swap-leave-active {
+  transition: opacity .22s ease, transform .22s ease;
+}
+
+.module-swap-enter-from {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.module-swap-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+.map-progress {
+  position: absolute;
+  z-index: 5;
+  top: 50%;
+  right: clamp(12px, 2vw, 34px);
+  display: grid;
+  gap: 18px;
+  transform: translateY(-50%);
+}
+
+.map-progress button {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 9px;
+  padding: 0;
+  border: 0;
+  color: var(--vp-c-text-3);
+  background: transparent;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.map-progress i {
+  display: block;
+  width: 17px;
+  height: 2px;
+  background: var(--vp-c-divider);
+  transition: width .25s ease, background .25s ease;
+}
+
+.map-progress button.is-active {
+  color: var(--vp-c-text-1);
+}
+
+.map-progress button.is-active i {
+  width: 32px;
+  background: var(--vp-c-brand-1);
+}
+
+@keyframes pathway-pulse {
+  0% { transform: translateX(0); }
+  55%, 100% { transform: translateX(460%); }
+}
+
+@keyframes stage-arrive {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cue-drift {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(3px); }
+}
+
+@media (max-width: 960px) {
+  .map-heading {
     grid-template-columns: 1fr;
     gap: 8px;
   }
 
-  .course-map__toolbar {
-    align-items: flex-start;
-    flex-direction: column;
+  .map-heading > p {
+    margin: 0;
   }
 
-  .course-map__filters {
-    justify-content: flex-start;
+  .map-heading span {
+    margin-top: 12px;
   }
 
-  .module-network__branches {
+  .module-workspace {
     grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 14px;
   }
 
-  .module-network__branches::before,
-  .module-network__branches article::before,
-  .module-network__hub {
+  .module-selector {
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(220px, 1fr);
+    grid-template-columns: none;
+    align-content: normal;
+    gap: 9px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+    scrollbar-width: thin;
+  }
+
+  .module-selector::before {
+    display: none;
+  }
+
+  .module-selector button {
+    grid-template-columns: 32px minmax(0, 1fr) auto;
+    padding: 10px;
+    border-color: var(--vp-c-divider);
+    background: color-mix(in srgb, var(--vp-c-bg) 66%, transparent);
+  }
+
+  .module-selector button > span {
+    width: 32px;
+    height: 32px;
+  }
+
+  .module-selector button small {
     display: none;
   }
 }
 
+@media (max-width: 700px) {
+  .course-map-deck,
+  .map-scene {
+    min-height: 570px;
+  }
+
+  .map-scene__content {
+    width: min(calc(100% - 30px), 1500px);
+    padding-top: 24px;
+  }
+
+  .map-back {
+    margin-bottom: 22px;
+  }
+
+  .map-heading {
+    margin-bottom: 20px;
+  }
+
+  .map-heading h1,
+  .map-heading h2 {
+    font-size: clamp(34px, 10vw, 47px);
+  }
+
+  .map-heading span {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .pathway-shell {
+    min-height: 340px;
+    border-radius: 20px;
+  }
+
+  .pathway-grid {
+    min-width: 1120px;
+  }
+
+  .map-progress {
+    top: 18px;
+    right: 16px;
+    grid-auto-flow: column;
+    transform: none;
+  }
+
+  .map-progress button span {
+    display: none;
+  }
+
+  .map-progress button.is-active i {
+    width: 24px;
+  }
+
+  .map-heading--modules {
+    margin-top: 22px;
+  }
+
+  .module-detail {
+    padding: 18px;
+    border-radius: 20px;
+  }
+
+  .module-detail header {
+    margin-bottom: 14px;
+    padding-bottom: 13px;
+  }
+
+  .module-course-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .module-course {
+    min-height: 98px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .course-node,
-  .course-map__edges path {
-    transition: none;
+  .map-story {
+    scroll-behavior: auto;
+  }
+
+  .pathway-flow i,
+  .scene-cue i {
+    animation: none;
+  }
+
+  .map-scene.is-active .path-stage {
+    opacity: 1;
+    transform: none;
+    animation: none;
   }
 }
 </style>

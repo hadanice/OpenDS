@@ -54,7 +54,8 @@ const courseSidebar = (course: (typeof publishedCourses)[number]) => {
     {
       text: '课程导航',
       items: [
-        { text: '返回课程地图', link: '/courses/' },
+        { text: '返回课程入口', link: '/courses/' },
+        { text: '查看课程地图', link: '/courses/map' },
         { text: '查看 GitHub 源目录', link: `https://github.com/hadanice/OpenDS/tree/main/docs/notes/${course.slug}` }
       ]
     }
@@ -106,7 +107,7 @@ export default defineConfig({
           text: 'OpenDS',
           items: [
             { text: '项目首页', link: '/' },
-            { text: '课程地图', link: '/courses/' },
+            { text: '课程', link: '/courses/' },
             { text: '学习资源', link: '/resources' },
             { text: '关于与贡献', link: '/about' },
             { text: 'English', link: '/en' }
