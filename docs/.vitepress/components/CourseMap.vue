@@ -1,18 +1,30 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { withBase } from 'vitepress'
 
-interface PathCourse {
+type PathId = 'math' | 'statistics' | 'systems' | 'intelligence' | 'application'
+
+interface KnowledgePath {
+  id: PathId
+  number: string
+  title: string
+  color: string
+}
+
+interface KnowledgeNode {
+  id: string
   title: string
   code: string
+  x: number
+  y: number
+  paths: PathId[]
   href?: string
 }
 
-interface PathStage {
-  number: string
-  title: string
-  caption: string
-  courses: PathCourse[]
+interface KnowledgeEdge {
+  from: string
+  to: string
+  paths: PathId[]
 }
 
 interface ModuleCourse {
@@ -21,6 +33,7 @@ interface ModuleCourse {
   credits: number
   term: string
   href?: string
+  siteCode?: string
   group?: '理医工' | '社会科学'
 }
 
@@ -29,67 +42,78 @@ interface ModuleGroup {
   number: string
   title: string
   kicker: string
-  summary: string
   courses: ModuleCourse[]
 }
 
-const pathwayStages: PathStage[] = [
-  {
-    number: '01',
-    title: '数理与编程基础',
-    caption: '先建立描述问题、表达算法与理解不确定性的共同语言。',
-    courses: [
-      { title: '高等数学', code: 'MATH120009' },
-      { title: '程序设计', code: 'COMP110042' },
-      { title: '线性代数', code: 'MATH120010' },
-      { title: '数据科学导论', code: 'DATA130001' }
-    ]
-  },
-  {
-    number: '02',
-    title: '第 3 学期 · 核心工具',
-    caption: '从数学基础进入算法、系统与概率三条互相支撑的主线。',
-    courses: [
-      { title: '高等线性代数', code: 'MATH10003', href: '/notes/advanced-linear-algebra/' },
-      { title: '数值算法 I', code: 'MATH20007', href: '/notes/numerical-algorithms/' },
-      { title: '数据结构', code: 'CS20017', href: '/notes/algorithms/' },
-      { title: '概率论基础', code: 'STAT20011', href: '/notes/probability/' },
-      { title: '计算机原理', code: 'CS20018', href: '/notes/computer-systems/' }
-    ]
-  },
-  {
-    number: '03',
-    title: '第 4 学期 · 建模与系统',
-    caption: '把工具组织成模型、数据系统与可复现的计算过程。',
-    courses: [
-      { title: '最优化方法', code: 'MATH20008', href: '/notes/optimization/' },
-      { title: '数据库及实现', code: 'CS20019', href: '/notes/database/' },
-      { title: '统计学基础 I', code: 'STAT20010', href: '/notes/mathematical-statistics/' },
-      { title: '生物统计学', code: 'STAT50025', href: '/notes/biostatistics/' }
-    ]
-  },
-  {
-    number: '04',
-    title: '第 5—6 学期 · 智能进阶',
-    caption: '沿统计学习、人工智能与数据挖掘进入专业方向。',
-    courses: [
-      { title: '统计（机器）学习', code: 'STAT30015' },
-      { title: '人工智能', code: 'CS50020' },
-      { title: '自然语言处理与大语言模型', code: 'CS40008', href: '/notes/nlp-llms/' },
-      { title: '图数据管理与挖掘', code: 'CS50027' },
-      { title: '神经网络与深度学习', code: 'CS30064' }
-    ]
-  },
-  {
-    number: '05',
-    title: '实践与研究',
-    caption: '用真实问题把知识连接起来，最终形成自己的研究路径。',
-    courses: [
-      { title: '课程项目', code: 'PROJECTS' },
-      { title: '生产实习', code: 'STAT40004' },
-      { title: '毕业论文', code: 'STAT40005' }
-    ]
-  }
+const knowledgePaths: KnowledgePath[] = [
+  { id: 'math', number: '01', title: '数理基础', color: '#b27432' },
+  { id: 'statistics', number: '02', title: '统计推断', color: '#18756f' },
+  { id: 'systems', number: '03', title: '算法系统', color: '#4d7198' },
+  { id: 'intelligence', number: '04', title: '智能方法', color: '#765a9b' },
+  { id: 'application', number: '05', title: '领域应用', color: '#9a5e61' }
+]
+
+const knowledgeNodes: KnowledgeNode[] = [
+  { id: 'analysis', title: '数学分析 B I—II', code: 'MATH10012 · 10013', x: 8, y: 19, paths: ['math', 'statistics'] },
+  { id: 'linear', title: '线性代数', code: 'CS10003', x: 8, y: 50, paths: ['math', 'intelligence'] },
+  { id: 'programming', title: '程序设计', code: 'CS10004', x: 8, y: 81, paths: ['systems', 'intelligence'] },
+
+  { id: 'advanced-linear', title: '高等线性代数', code: 'MATH10003', x: 29, y: 19, paths: ['math', 'intelligence'], href: '/notes/advanced-linear-algebra/' },
+  { id: 'probability', title: '概率论基础', code: 'STAT20011', x: 29, y: 50, paths: ['statistics', 'intelligence', 'application'], href: '/notes/probability/' },
+  { id: 'algorithms', title: '算法与数据结构', code: 'CS20017h', x: 29, y: 81, paths: ['systems', 'intelligence'], href: '/notes/algorithms/' },
+
+  { id: 'numerical', title: '数值算法 I', code: 'MATH20007', x: 50, y: 11, paths: ['math', 'intelligence', 'application'], href: '/notes/numerical-algorithms/' },
+  { id: 'math-statistics', title: '统计学基础 I', code: 'STAT20010h', x: 50, y: 36, paths: ['statistics', 'intelligence', 'application'], href: '/notes/mathematical-statistics/' },
+  { id: 'computer-systems', title: '计算机原理', code: 'CS20018', x: 50, y: 64, paths: ['systems', 'intelligence'], href: '/notes/computer-systems/' },
+  { id: 'database', title: '数据库及实现', code: 'CS20019', x: 50, y: 88, paths: ['systems', 'application'], href: '/notes/database/' },
+
+  { id: 'optimization', title: '最优化方法', code: 'MATH20008', x: 71, y: 10, paths: ['math', 'statistics', 'intelligence'], href: '/notes/optimization/' },
+  { id: 'stat-computing', title: '统计计算', code: 'STAT30016h', x: 71, y: 29, paths: ['statistics', 'intelligence'] },
+  { id: 'stat-learning', title: '统计（机器）学习', code: 'STAT30015', x: 71, y: 48, paths: ['math', 'statistics', 'intelligence', 'application'] },
+  { id: 'artificial-intelligence', title: '人工智能', code: 'CS50020', x: 71, y: 68, paths: ['systems', 'intelligence'] },
+  { id: 'nlp', title: 'NLP 与大语言模型', code: 'CS40008', x: 71, y: 88, paths: ['systems', 'intelligence', 'application'], href: '/notes/nlp-llms/' },
+
+  { id: 'image', title: '图像处理与可视化', code: 'CS30065', x: 92, y: 10, paths: ['intelligence', 'application'] },
+  { id: 'biostatistics', title: '生物统计学', code: 'STAT50025', x: 92, y: 29, paths: ['statistics', 'application'], href: '/notes/biostatistics/' },
+  { id: 'graph-mining', title: '图数据管理与挖掘', code: 'CS50027', x: 92, y: 48, paths: ['systems', 'application'] },
+  { id: 'deep-learning', title: '神经网络与深度学习', code: 'CS30064', x: 92, y: 68, paths: ['intelligence', 'application'] },
+  { id: 'research', title: '项目 · 实习 · 毕业论文', code: 'PRACTICE', x: 92, y: 88, paths: ['math', 'statistics', 'systems', 'intelligence', 'application'] }
+]
+
+const knowledgeEdges: KnowledgeEdge[] = [
+  { from: 'analysis', to: 'advanced-linear', paths: ['math'] },
+  { from: 'linear', to: 'advanced-linear', paths: ['math', 'intelligence'] },
+  { from: 'advanced-linear', to: 'numerical', paths: ['math', 'intelligence'] },
+  { from: 'numerical', to: 'optimization', paths: ['math', 'intelligence'] },
+  { from: 'optimization', to: 'stat-learning', paths: ['math', 'statistics', 'intelligence'] },
+  { from: 'stat-learning', to: 'research', paths: ['math', 'statistics', 'application'] },
+
+  { from: 'analysis', to: 'probability', paths: ['statistics'] },
+  { from: 'probability', to: 'math-statistics', paths: ['statistics', 'intelligence', 'application'] },
+  { from: 'math-statistics', to: 'stat-computing', paths: ['statistics', 'intelligence'] },
+  { from: 'stat-computing', to: 'stat-learning', paths: ['statistics', 'intelligence'] },
+  { from: 'math-statistics', to: 'biostatistics', paths: ['statistics', 'application'] },
+  { from: 'biostatistics', to: 'research', paths: ['statistics', 'application'] },
+
+  { from: 'programming', to: 'algorithms', paths: ['systems', 'intelligence'] },
+  { from: 'algorithms', to: 'computer-systems', paths: ['systems', 'intelligence'] },
+  { from: 'algorithms', to: 'database', paths: ['systems'] },
+  { from: 'computer-systems', to: 'artificial-intelligence', paths: ['systems', 'intelligence'] },
+  { from: 'database', to: 'graph-mining', paths: ['systems', 'application'] },
+  { from: 'database', to: 'nlp', paths: ['systems', 'application'] },
+  { from: 'artificial-intelligence', to: 'nlp', paths: ['systems', 'intelligence'] },
+  { from: 'graph-mining', to: 'research', paths: ['systems', 'application'] },
+  { from: 'nlp', to: 'research', paths: ['systems', 'intelligence', 'application'] },
+
+  { from: 'advanced-linear', to: 'optimization', paths: ['intelligence'] },
+  { from: 'math-statistics', to: 'stat-learning', paths: ['intelligence'] },
+  { from: 'algorithms', to: 'artificial-intelligence', paths: ['intelligence'] },
+  { from: 'stat-learning', to: 'nlp', paths: ['intelligence', 'application'] },
+  { from: 'stat-learning', to: 'deep-learning', paths: ['intelligence', 'application'] },
+  { from: 'artificial-intelligence', to: 'deep-learning', paths: ['intelligence'] },
+  { from: 'numerical', to: 'image', paths: ['intelligence', 'application'] },
+  { from: 'image', to: 'research', paths: ['intelligence', 'application'] },
+  { from: 'deep-learning', to: 'research', paths: ['intelligence', 'application'] }
 ]
 
 const modules: ModuleGroup[] = [
@@ -98,23 +122,22 @@ const modules: ModuleGroup[] = [
     number: '01',
     title: '专业核心',
     kicker: 'Common foundation',
-    summary: '共同底座覆盖数值计算、统计建模、算法、系统与智能方法。',
     courses: [
-      { title: '统计计算', code: 'STAT30016', credits: 3, term: '第 1 学期' },
+      { title: '统计计算', code: 'STAT30016', siteCode: '修读 STAT30016h', credits: 3, term: '第 5 学期' },
       { title: '数值算法与案例分析 I', code: 'MATH20007', credits: 3, term: '第 3 学期', href: '/notes/numerical-algorithms/' },
       { title: '统计（机器）学习概论', code: 'STAT30015', credits: 3, term: '第 5 学期' },
       { title: '人工智能', code: 'CS50020', credits: 3, term: '第 5 学期' },
       { title: '神经网络与深度学习', code: 'CS30064', credits: 3, term: '第 6 学期' },
       { title: '生产实习', code: 'STAT40004', credits: 1, term: '第 7 学期' },
       { title: '毕业论文', code: 'STAT40005', credits: 6, term: '第 8 学期' },
-      { title: '数据结构', code: 'CS20017', credits: 4, term: '第 3 学期', href: '/notes/algorithms/' },
+      { title: '数据结构', code: 'CS20017', siteCode: '站内 CS20017h', credits: 4, term: '第 3 学期', href: '/notes/algorithms/' },
       { title: '概率论基础', code: 'STAT20011', credits: 3, term: '第 3 学期', href: '/notes/probability/' },
       { title: '计算机原理', code: 'CS20018', credits: 3, term: '第 3 学期', href: '/notes/computer-systems/' },
       { title: '最优化方法', code: 'MATH20008', credits: 3, term: '第 4 学期', href: '/notes/optimization/' },
       { title: '数据库及实现', code: 'CS20019', credits: 3, term: '第 4 学期', href: '/notes/database/' },
       { title: '高等线性代数', code: 'MATH10003', credits: 3, term: '第 3 学期', href: '/notes/advanced-linear-algebra/' },
       { title: '图像处理与可视化', code: 'CS30065', credits: 3, term: '第 5 学期' },
-      { title: '统计学基础：原理、方法及 R 应用 (I)', code: 'STAT20010', credits: 3, term: '第 4 学期', href: '/notes/mathematical-statistics/' }
+      { title: '统计学基础：原理、方法及 R 应用 (I)', code: 'STAT20010', siteCode: '站内 STAT20010h', credits: 3, term: '第 4 学期', href: '/notes/mathematical-statistics/' }
     ]
   },
   {
@@ -122,7 +145,6 @@ const modules: ModuleGroup[] = [
     number: '02',
     title: '统计与分析',
     kicker: 'Statistics & analysis',
-    summary: '从随机性、回归与时间序列，延伸到数据同化和稀疏方法。',
     courses: [
       { title: '数值算法与案例分析 II', code: 'MATH50009', credits: 3, term: '第 4 / 6 学期' },
       { title: '随机过程导论', code: 'STAT50017', credits: 3, term: '第 4 / 6 学期' },
@@ -146,11 +168,10 @@ const modules: ModuleGroup[] = [
     number: '03',
     title: '系统与数据挖掘',
     kicker: 'Systems & data mining',
-    summary: '把算法放进大规模系统，处理文本、图、图像与复杂决策。',
     courses: [
       { title: '大规模分布式系统', code: 'CS50022', credits: 3, term: '第 4 / 6 学期' },
       { title: '高级大数据解析', code: 'CS50021', credits: 3, term: '第 3 / 5 学期' },
-      { title: '自然语言处理 / 大语言模型', code: 'CS50023 · 已修读 CS40008', credits: 3, term: '第 4 / 6 学期', href: '/notes/nlp-llms/' },
+      { title: '自然语言处理', code: 'CS50023', siteCode: '站内 CS40008', credits: 3, term: '第 4 / 6 学期', href: '/notes/nlp-llms/' },
       { title: '计算理论', code: 'CS50024', credits: 3, term: '第 3 / 5 学期' },
       { title: '数字图像处理', code: 'DATA130032', credits: 3, term: '第 3—6 学期' },
       { title: '图数据管理与挖掘', code: 'CS50027', credits: 3, term: '第 3 / 5 学期' },
@@ -165,7 +186,6 @@ const modules: ModuleGroup[] = [
     number: '04',
     title: '理医工 × 社会科学',
     kicker: 'Applied data science',
-    summary: '两类应用方向合并成一个探索区，各选一门，把方法带进真实领域。',
     courses: [
       { title: '卫生统计学 A', code: 'PHPM40014', credits: 3, term: '第 3 / 5 学期', group: '理医工' },
       { title: '医疗大数据统计学', code: 'STAT50020', credits: 3, term: '第 4 / 6 学期', group: '理医工' },
@@ -190,157 +210,274 @@ const modules: ModuleGroup[] = [
 ]
 
 const activeScene = ref(0)
+const activePathId = ref<PathId>('statistics')
 const activeModuleId = ref('core')
-const story = ref<HTMLElement | null>(null)
-const activeModule = computed(() => modules.find((item) => item.id === activeModuleId.value) ?? modules[0])
+const graph = ref<HTMLElement | null>(null)
+const graphSize = ref({ width: 1400, height: 540 })
+const touchStartY = ref(0)
+
+const nodeMap = new Map(knowledgeNodes.map((node) => [node.id, node]))
+const activePath = computed(() => knowledgePaths.find((path) => path.id === activePathId.value) ?? knowledgePaths[0])
+const activeNodes = computed(() => knowledgeNodes.filter((node) => node.paths.includes(activePathId.value)))
+const activeEdges = computed(() => knowledgeEdges.filter((edge) => edge.paths.includes(activePathId.value)))
+const activeModule = computed(() => modules.find((module) => module.id === activeModuleId.value) ?? modules[0])
 
 const courseHref = (href?: string) => href ? withBase(href) : undefined
+const nodeStyle = (node: KnowledgeNode) => ({ left: `${node.x}%`, top: `${node.y}%` })
+const edgeStyle = (edge: KnowledgeEdge) => {
+  const from = nodeMap.get(edge.from)!
+  const to = nodeMap.get(edge.to)!
+  const x1 = graphSize.value.width * from.x / 100
+  const y1 = graphSize.value.height * from.y / 100
+  const x2 = graphSize.value.width * to.x / 100
+  const y2 = graphSize.value.height * to.y / 100
+  const distance = Math.hypot(x2 - x1, y2 - y1)
+  const angle = Math.atan2(y2 - y1, x2 - x1)
+
+  return {
+    left: `${x1}px`,
+    top: `${y1}px`,
+    width: `${distance}px`,
+    transform: `rotate(${angle}rad)`
+  }
+}
+
+let wheelLocked = false
+let wheelTimer: ReturnType<typeof setTimeout> | undefined
+let pathTimer: ReturnType<typeof setInterval> | undefined
+let pathResumeTimer: ReturnType<typeof setTimeout> | undefined
+let resizeObserver: ResizeObserver | undefined
 
 const goToScene = (index: number) => {
-  const target = story.value
-  if (!target) return
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  target.scrollTo({ top: index * target.clientHeight, behavior: reduced ? 'auto' : 'smooth' })
-  activeScene.value = index
+  const next = Math.min(1, Math.max(0, index))
+  if (next === activeScene.value) return
+  activeScene.value = next
+  wheelLocked = true
+  if (wheelTimer) clearTimeout(wheelTimer)
+  wheelTimer = setTimeout(() => { wheelLocked = false }, 780)
 }
 
-const syncScene = (event: Event) => {
-  const target = event.currentTarget as HTMLElement
-  const nextScene = Math.min(1, Math.max(0, Math.round(target.scrollTop / target.clientHeight)))
-  if (nextScene !== activeScene.value) activeScene.value = nextScene
+const handleWheel = (event: WheelEvent) => {
+  if (wheelLocked || Math.abs(event.deltaY) < 16) return
+  goToScene(event.deltaY > 0 ? activeScene.value + 1 : activeScene.value - 1)
 }
+
+const handleKey = (event: KeyboardEvent) => {
+  if (['ArrowDown', 'PageDown', ' '].includes(event.key)) {
+    event.preventDefault()
+    goToScene(activeScene.value + 1)
+  }
+  if (['ArrowUp', 'PageUp'].includes(event.key)) {
+    event.preventDefault()
+    goToScene(activeScene.value - 1)
+  }
+}
+
+const handleTouchStart = (event: TouchEvent) => {
+  touchStartY.value = event.changedTouches[0]?.clientY ?? 0
+}
+
+const handleTouchEnd = (event: TouchEvent) => {
+  const delta = touchStartY.value - (event.changedTouches[0]?.clientY ?? touchStartY.value)
+  if (Math.abs(delta) < 44) return
+  goToScene(delta > 0 ? activeScene.value + 1 : activeScene.value - 1)
+}
+
+const startPathCycle = () => {
+  if (pathTimer || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+  pathTimer = setInterval(() => {
+    if (activeScene.value !== 0) return
+    const current = knowledgePaths.findIndex((path) => path.id === activePathId.value)
+    activePathId.value = knowledgePaths[(current + 1) % knowledgePaths.length].id
+  }, 5200)
+}
+
+const selectPath = (id: PathId) => {
+  activePathId.value = id
+  if (pathTimer) clearInterval(pathTimer)
+  if (pathResumeTimer) clearTimeout(pathResumeTimer)
+  pathTimer = undefined
+  pathResumeTimer = setTimeout(startPathCycle, 12000)
+}
+
+onMounted(() => {
+  if (graph.value) {
+    resizeObserver = new ResizeObserver(([entry]) => {
+      graphSize.value = {
+        width: entry.contentRect.width,
+        height: entry.contentRect.height
+      }
+    })
+    resizeObserver.observe(graph.value)
+  }
+  startPathCycle()
+})
+
+onBeforeUnmount(() => {
+  resizeObserver?.disconnect()
+  if (wheelTimer) clearTimeout(wheelTimer)
+  if (pathTimer) clearInterval(pathTimer)
+  if (pathResumeTimer) clearTimeout(pathResumeTimer)
+})
 </script>
 
 <template>
-  <main class="course-map-deck">
-    <nav class="map-progress" aria-label="课程地图页面">
+  <main
+    class="course-map-deck"
+    tabindex="0"
+    aria-label="两幕课程地图"
+    @wheel.prevent="handleWheel"
+    @keydown="handleKey"
+    @touchstart.passive="handleTouchStart"
+    @touchend.passive="handleTouchEnd"
+  >
+    <nav class="scene-progress" aria-label="课程地图页面">
       <button
-        v-for="(_, index) in 2"
+        v-for="index in 2"
         :key="index"
         type="button"
-        :class="{ 'is-active': activeScene === index }"
-        :aria-label="`前往第 ${index + 1} 幕`"
-        :aria-current="activeScene === index ? 'step' : undefined"
-        @click="goToScene(index)"
+        :class="{ 'is-active': activeScene === index - 1 }"
+        :aria-label="`前往第 ${index} 幕`"
+        :aria-current="activeScene === index - 1 ? 'step' : undefined"
+        @click="goToScene(index - 1)"
       >
-        <span>0{{ index + 1 }}</span>
-        <i />
+        <span>0{{ index }}</span><i />
       </button>
     </nav>
 
-    <div ref="story" class="map-story" @scroll.passive="syncScene">
-      <section id="map-pathway" class="map-scene map-scene--pathway" :class="{ 'is-active': activeScene === 0 }">
-        <div class="map-scene__content">
-          <a class="map-back" :href="withBase('/courses/')">← 返回课程入口</a>
-          <header class="map-heading">
-            <p>Knowledge pathway · 01</p>
-            <div>
-              <h1>从基础，到专业核心</h1>
-              <span>课程不是一张清单。它们沿着数学、统计、算法与系统四条主线彼此承接，最终汇入真实问题。</span>
+    <div
+      class="map-story__track"
+      :style="{ transform: `translateY(-${activeScene * 50}%)` }"
+    >
+      <section class="map-scene map-scene--knowledge">
+        <div class="scene-frame">
+          <header class="compact-header">
+            <div class="compact-header__identity">
+              <a :href="withBase('/courses/')">← 课程入口</a>
+              <div><small>Knowledge pathways · 01</small><h1>知识承接图</h1></div>
+            </div>
+            <div class="path-switcher" role="tablist" aria-label="选择知识路径">
+              <button
+                v-for="path in knowledgePaths"
+                :key="path.id"
+                type="button"
+                role="tab"
+                :aria-selected="activePathId === path.id"
+                :class="{ 'is-active': activePathId === path.id }"
+                :style="{ '--path-color': path.color }"
+                @click="selectPath(path.id)"
+              >
+                <span>{{ path.number }}</span>{{ path.title }}
+              </button>
             </div>
           </header>
 
-          <div class="pathway-shell" aria-label="按学习阶段组织的课程路径">
-            <div class="pathway-flow" aria-hidden="true"><i /></div>
-            <div class="pathway-grid">
-              <article
-                v-for="(stage, index) in pathwayStages"
-                :key="stage.number"
-                class="path-stage"
-                :style="{ '--delay': `${index * 70}ms` }"
+          <div
+            ref="graph"
+            class="knowledge-graph"
+            :style="{ '--path-color': activePath.color }"
+            role="tabpanel"
+            :aria-label="`${activePath.title}知识路径`"
+          >
+            <div class="graph-columns" aria-hidden="true">
+              <span v-for="label in ['基础语言', '核心工具', '建模与系统', '专业方法', '应用与研究']" :key="label">
+                {{ label }}
+              </span>
+            </div>
+
+            <TransitionGroup name="edge-fade" tag="div" class="edge-layer">
+              <span
+                v-for="edge in activeEdges"
+                :key="`${activePathId}-${edge.from}-${edge.to}`"
+                class="knowledge-edge"
+                :style="edgeStyle(edge)"
+                aria-hidden="true"
+              ><i /></span>
+            </TransitionGroup>
+
+            <TransitionGroup name="node-fade" tag="div" class="node-layer">
+              <component
+                :is="node.href ? 'a' : 'article'"
+                v-for="(node, index) in activeNodes"
+                :key="`${activePathId}-${node.id}`"
+                class="knowledge-node"
+                :class="{ 'has-notes': node.href }"
+                :href="courseHref(node.href)"
+                :style="{ ...nodeStyle(node), '--node-delay': `${index * 34}ms` }"
               >
-                <div class="path-stage__node"><span>{{ stage.number }}</span></div>
-                <p>{{ stage.title }}</p>
-                <h2>{{ stage.caption }}</h2>
-                <div class="path-stage__courses">
-                  <component
-                    :is="course.href ? 'a' : 'span'"
-                    v-for="course in stage.courses"
-                    :key="course.code"
-                    :href="courseHref(course.href)"
-                    :class="{ 'has-notes': course.href }"
-                  >
-                    <b>{{ course.title }}</b>
-                    <small>{{ course.code }}</small>
-                  </component>
-                </div>
-              </article>
+                <strong>{{ node.title }}</strong>
+                <small>{{ node.code }}</small>
+                <i v-if="node.href">↗</i>
+              </component>
+            </TransitionGroup>
+
+            <div class="path-status" aria-hidden="true">
+              <span :style="{ background: activePath.color }" />
+              {{ activePath.title }}路线
             </div>
           </div>
 
-          <button class="scene-cue" type="button" @click="goToScene(1)">
-            <span>继续看方向模块</span>
-            <i>↓</i>
+          <button class="scene-hint" type="button" @click="goToScene(1)">
+            滚轮 / 下滑查看方向模块 <span>↓</span>
           </button>
         </div>
       </section>
 
-      <section id="map-modules" class="map-scene map-scene--modules" :class="{ 'is-active': activeScene === 1 }">
-        <div class="map-scene__content">
-          <header class="map-heading map-heading--modules">
-            <p>Professional pathways · 02</p>
-            <div>
-              <h2>核心课程之后，网络向四组方向展开</h2>
-              <span>专业核心是共同底座。统计、系统与应用方向不是彼此割裂的终点，而是可以交叉选择的观察角度。</span>
+      <section class="map-scene map-scene--modules">
+        <div class="scene-frame">
+          <header class="compact-header compact-header--modules">
+            <div class="compact-header__identity">
+              <div><small>Professional pathways · 02</small><h2>方向模块</h2></div>
             </div>
-          </header>
-
-          <div class="module-workspace">
-            <div class="module-selector" role="tablist" aria-label="选择课程模块">
+            <div class="module-switcher" role="tablist" aria-label="选择课程模块">
               <button
                 v-for="module in modules"
                 :key="module.id"
                 type="button"
                 role="tab"
                 :aria-selected="activeModuleId === module.id"
-                :aria-controls="`module-${module.id}`"
                 :class="{ 'is-active': activeModuleId === module.id }"
                 @click="activeModuleId = module.id"
               >
-                <span>{{ module.number }}</span>
-                <div>
-                  <b>{{ module.title }}</b>
-                  <small>{{ module.summary }}</small>
-                </div>
+                <span>{{ module.number }}</span>{{ module.title }}
                 <i>{{ module.courses.length }}</i>
               </button>
             </div>
+          </header>
 
-            <section class="module-detail" aria-live="polite">
-              <Transition name="module-swap" mode="out-in">
-                <div :id="`module-${activeModule.id}`" :key="activeModule.id" role="tabpanel">
-                  <header>
+          <section class="module-panel" aria-live="polite">
+            <Transition name="module-swap" mode="out-in">
+              <div :key="activeModule.id" class="module-panel__body" role="tabpanel">
+                <header>
+                  <div><small>{{ activeModule.kicker }}</small><h3>{{ activeModule.title }}</h3></div>
+                  <span>{{ activeModule.courses.length }} 门</span>
+                </header>
+                <div class="module-course-grid">
+                  <component
+                    :is="course.href ? 'a' : 'article'"
+                    v-for="course in activeModule.courses"
+                    :key="`${activeModule.id}-${course.code}`"
+                    class="module-course"
+                    :href="courseHref(course.href)"
+                  >
                     <div>
-                      <p>{{ activeModule.kicker }}</p>
-                      <h3>{{ activeModule.title }}</h3>
+                      <em v-if="course.group">{{ course.group }}</em>
+                      <code>{{ course.code }}</code>
+                      <i v-if="course.href">↗</i>
                     </div>
-                    <span>{{ activeModule.courses.length }} 门课程</span>
-                  </header>
-                  <div class="module-course-grid">
-                    <component
-                      :is="course.href ? 'a' : 'article'"
-                      v-for="course in activeModule.courses"
-                      :key="`${activeModule.id}-${course.code}`"
-                      class="module-course"
-                      :href="courseHref(course.href)"
-                    >
-                      <div>
-                        <em v-if="course.group">{{ course.group }}</em>
-                        <small>{{ course.code }}</small>
-                        <i v-if="course.href">↗</i>
-                      </div>
-                      <h4>{{ course.title }}</h4>
-                      <p>{{ course.credits }} 学分 · {{ course.term }}</p>
-                    </component>
-                  </div>
+                    <strong>{{ course.title }}</strong>
+                    <small>
+                      {{ course.credits }} 学分 · {{ course.term }}
+                      <b v-if="course.siteCode">{{ course.siteCode }}</b>
+                    </small>
+                  </component>
                 </div>
-              </Transition>
-            </section>
-          </div>
+              </div>
+            </Transition>
+          </section>
 
-          <button class="scene-cue scene-cue--up" type="button" @click="goToScene(0)">
-            <i>↑</i>
-            <span>回到学习主线</span>
+          <button class="scene-hint" type="button" @click="goToScene(0)">
+            <span>↑</span> 上滑返回知识路径
           </button>
         </div>
       </section>
@@ -349,476 +486,452 @@ const syncScene = (event: Event) => {
 </template>
 
 <style scoped>
+:global(body:has(.course-map-deck)) {
+  overflow: hidden;
+}
+
 .course-map-deck {
   position: relative;
-  height: calc(100svh - var(--vp-nav-height));
-  min-height: 620px;
+  height: calc(100dvh - var(--vp-nav-height));
+  min-height: 560px;
   overflow: hidden;
   color: var(--vp-c-text-1);
   background: var(--vp-c-bg);
+  outline: none;
+  overscroll-behavior: none;
+  touch-action: pan-x;
 }
 
-.map-story {
-  height: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
-  scroll-behavior: smooth;
-  scroll-snap-type: y mandatory;
-  scrollbar-color: color-mix(in srgb, var(--vp-c-brand-1) 38%, transparent) transparent;
-  scrollbar-width: thin;
+.map-story__track {
+  display: grid;
+  grid-template-rows: repeat(2, 50%);
+  height: 200%;
+  transition: transform .72s cubic-bezier(.22, .78, .22, 1);
+  will-change: transform;
 }
 
 .map-scene {
-  position: relative;
-  height: 100%;
-  min-height: 620px;
-  overflow-y: auto;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
 }
 
-.map-scene::before,
-.map-scene::after {
-  position: absolute;
-  border-radius: 50%;
-  content: "";
-  pointer-events: none;
-}
-
-.map-scene--pathway {
+.map-scene--knowledge {
   background:
-    linear-gradient(color-mix(in srgb, var(--vp-c-divider) 28%, transparent) 1px, transparent 1px),
-    radial-gradient(circle at 10% 18%, color-mix(in srgb, var(--vp-c-brand-1) 13%, transparent), transparent 30%),
-    radial-gradient(circle at 88% 70%, rgba(184, 113, 32, .09), transparent 29%),
+    linear-gradient(color-mix(in srgb, var(--vp-c-divider) 22%, transparent) 1px, transparent 1px),
+    radial-gradient(circle at 9% 15%, color-mix(in srgb, var(--vp-c-brand-1) 12%, transparent), transparent 27%),
+    radial-gradient(circle at 91% 78%, rgba(178, 116, 50, .08), transparent 25%),
     var(--vp-c-bg);
   background-size: 100% 45px, auto, auto, auto;
 }
 
-.map-scene--pathway::before {
-  top: -24vw;
-  right: -12vw;
-  width: 52vw;
-  height: 52vw;
-  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 16%, transparent);
-}
-
-.map-scene--pathway::after {
-  top: -11vw;
-  right: 1vw;
-  width: 26vw;
-  height: 26vw;
-  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 10%, transparent);
-}
-
 .map-scene--modules {
   background:
-    radial-gradient(circle at 88% 14%, color-mix(in srgb, var(--vp-c-brand-1) 12%, transparent), transparent 25%),
-    radial-gradient(circle at 5% 88%, rgba(184, 113, 32, .09), transparent 24%),
+    radial-gradient(circle at 84% 12%, color-mix(in srgb, var(--vp-c-brand-1) 11%, transparent), transparent 25%),
+    radial-gradient(circle at 5% 90%, rgba(178, 116, 50, .08), transparent 24%),
     var(--vp-c-bg-alt);
 }
 
-.map-scene__content {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  width: min(calc(100% - 72px), 1500px);
-  min-height: 100%;
+.scene-frame {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  width: min(calc(100% - 76px), 1580px);
+  height: 100%;
   margin: 0 auto;
-  padding: clamp(28px, 4vh, 52px) 0 24px;
+  padding: clamp(18px, 2.4vh, 28px) 0 12px;
 }
 
-.map-back {
-  align-self: flex-start;
-  margin-bottom: clamp(24px, 4vh, 46px);
+.compact-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  min-height: 64px;
+  margin-bottom: clamp(12px, 1.8vh, 20px);
+}
+
+.compact-header__identity {
+  display: flex;
+  align-items: center;
+  flex: none;
+  gap: 24px;
+}
+
+.compact-header__identity > a {
   color: var(--vp-c-text-2);
-  font-size: 13px;
-  letter-spacing: .05em;
+  font-size: 12px;
   text-decoration: none;
   transition: color .2s ease, transform .2s ease;
 }
 
-.map-back:hover {
+.compact-header__identity > a:hover {
   color: var(--vp-c-brand-1);
   transform: translateX(-3px);
 }
 
-.map-heading {
-  display: grid;
-  grid-template-columns: minmax(180px, .35fr) minmax(0, 1.65fr);
-  gap: clamp(28px, 5vw, 80px);
-  align-items: start;
-  margin-bottom: clamp(24px, 4vh, 44px);
-}
-
-.map-heading > p {
-  margin: 9px 0 0;
+.compact-header small {
+  display: block;
+  margin-bottom: 3px;
   color: #b66f20;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: .18em;
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: .16em;
   text-transform: uppercase;
 }
 
-.map-heading h1,
-.map-heading h2 {
+.compact-header h1,
+.compact-header h2 {
   margin: 0;
   border: 0;
   color: var(--vp-c-text-1);
   font-family: var(--opends-serif, "Noto Serif SC", serif);
-  font-size: clamp(42px, 5vw, 74px);
-  font-weight: 500;
-  letter-spacing: -.055em;
-  line-height: 1.05;
+  font-size: clamp(24px, 2.4vw, 36px);
+  font-weight: 520;
+  letter-spacing: -.04em;
+  line-height: 1;
 }
 
-.map-heading span {
-  display: block;
-  max-width: 860px;
-  margin-top: 18px;
-  color: var(--vp-c-text-2);
-  font-size: clamp(15px, 1.35vw, 19px);
-  line-height: 1.75;
-}
-
-.pathway-shell {
-  position: relative;
-  flex: 1;
-  min-height: 360px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 28px;
-  background: color-mix(in srgb, var(--vp-c-bg) 88%, transparent);
-  box-shadow: 0 22px 70px rgba(16, 54, 49, .07);
-  scrollbar-color: color-mix(in srgb, var(--vp-c-brand-1) 30%, transparent) transparent;
-  scrollbar-width: thin;
-}
-
-.pathway-flow {
-  position: absolute;
-  top: 50px;
-  left: 9.5%;
-  width: 81%;
-  height: 2px;
-  overflow: hidden;
-  background: color-mix(in srgb, var(--vp-c-brand-1) 18%, var(--vp-c-divider));
-}
-
-.pathway-flow i {
-  position: absolute;
-  inset: 0 auto 0 -28%;
-  width: 28%;
-  background: linear-gradient(90deg, transparent, var(--vp-c-brand-1), transparent);
-  animation: pathway-pulse 5.8s ease-in-out infinite;
-}
-
-.pathway-grid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(220px, 1fr));
-  gap: 0;
-  min-width: 1180px;
-  height: 100%;
-  padding: 30px 22px 22px;
-}
-
-.path-stage {
-  position: relative;
-  padding: 0 16px;
-  opacity: 0;
-  transform: translateY(18px);
-}
-
-.map-scene.is-active .path-stage {
-  animation: stage-arrive .65s var(--delay) ease forwards;
-}
-
-.path-stage:not(:last-child)::after {
-  position: absolute;
-  top: 17px;
-  right: -5px;
-  color: var(--vp-c-brand-1);
-  content: "→";
-  font-size: 16px;
-}
-
-.path-stage__node {
-  display: grid;
-  place-items: center;
-  width: 42px;
-  height: 42px;
-  margin: 0 auto 22px;
-  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 38%, var(--vp-c-divider));
-  border-radius: 50%;
-  color: var(--vp-c-brand-1);
-  background: var(--vp-c-bg);
-  box-shadow: 0 0 0 9px color-mix(in srgb, var(--vp-c-brand-1) 8%, transparent);
-  font-family: var(--opends-serif, serif);
-  font-size: 13px;
-}
-
-.path-stage > p {
-  margin: 0 0 8px;
-  color: var(--vp-c-text-1);
-  font-size: 15px;
-  font-weight: 700;
-  text-align: center;
-}
-
-.path-stage > h2 {
-  min-height: 55px;
-  margin: 0 0 18px;
-  border: 0;
-  color: var(--vp-c-text-3);
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 1.55;
-  text-align: center;
-}
-
-.path-stage__courses {
-  display: grid;
-  gap: 8px;
-}
-
-.path-stage__courses > * {
+.path-switcher,
+.module-switcher {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  min-height: 42px;
-  padding: 9px 11px;
+  min-width: 0;
+  padding: 4px;
+  overflow-x: auto;
   border: 1px solid var(--vp-c-divider);
-  border-radius: 11px;
-  color: var(--vp-c-text-2);
-  background: color-mix(in srgb, var(--vp-c-bg-soft) 70%, transparent);
-  text-decoration: none;
-  transition: border-color .2s ease, color .2s ease, transform .2s ease, background .2s ease;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--vp-c-bg) 80%, transparent);
+  scrollbar-width: none;
 }
 
-.path-stage__courses > *.has-notes {
-  border-color: color-mix(in srgb, var(--vp-c-brand-1) 28%, var(--vp-c-divider));
-  color: var(--vp-c-text-1);
+.path-switcher::-webkit-scrollbar,
+.module-switcher::-webkit-scrollbar {
+  display: none;
 }
 
-.path-stage__courses > a:hover {
-  border-color: var(--vp-c-brand-1);
-  color: var(--vp-c-brand-1);
-  background: color-mix(in srgb, var(--vp-c-brand-1) 8%, var(--vp-c-bg));
-  transform: translateY(-2px);
-}
-
-.path-stage__courses b {
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1.35;
-}
-
-.path-stage__courses small {
+.path-switcher button,
+.module-switcher button {
+  display: inline-flex;
+  align-items: center;
   flex: none;
+  gap: 7px;
+  min-height: 34px;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 999px;
+  color: var(--vp-c-text-2);
+  background: transparent;
+  cursor: pointer;
+  font-size: 11px;
+  white-space: nowrap;
+  transition: color .2s ease, background .2s ease, box-shadow .2s ease;
+}
+
+.path-switcher button span,
+.module-switcher button span {
   color: var(--vp-c-text-3);
-  font-family: ui-monospace, monospace;
+  font-family: var(--opends-serif, serif);
   font-size: 9px;
 }
 
-.scene-cue {
-  display: inline-flex;
-  align-items: center;
-  align-self: center;
-  gap: 12px;
-  margin-top: 18px;
-  border: 0;
-  color: var(--vp-c-text-2);
-  background: transparent;
-  cursor: pointer;
-  font-size: 12px;
-  letter-spacing: .08em;
+.path-switcher button.is-active {
+  color: white;
+  background: var(--path-color);
+  box-shadow: 0 7px 18px color-mix(in srgb, var(--path-color) 23%, transparent);
 }
 
-.scene-cue i {
-  display: grid;
-  place-items: center;
-  width: 26px;
-  height: 26px;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 50%;
-  color: var(--vp-c-brand-1);
-  font-style: normal;
-  animation: cue-drift 2s ease-in-out infinite;
+.path-switcher button.is-active span {
+  color: rgba(255, 255, 255, .72);
 }
 
-.map-heading--modules {
-  margin-top: clamp(5px, 2vh, 20px);
-}
-
-.map-heading--modules h2 {
-  font-size: clamp(38px, 4.4vw, 66px);
-}
-
-.module-workspace {
-  display: grid;
-  grid-template-columns: minmax(280px, .72fr) minmax(0, 1.58fr);
-  gap: clamp(22px, 3vw, 48px);
-  flex: 1;
-  min-height: 0;
-}
-
-.module-selector {
+.knowledge-graph {
   position: relative;
-  display: grid;
-  align-content: center;
-  gap: 8px;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at center, color-mix(in srgb, var(--path-color) 6%, transparent), transparent 62%),
+    color-mix(in srgb, var(--vp-c-bg) 91%, transparent);
+  box-shadow: 0 20px 64px rgba(20, 56, 52, .07);
+  isolation: isolate;
+  transition: background .35s ease;
 }
 
-.module-selector::before {
+.graph-columns {
   position: absolute;
-  top: 12%;
-  bottom: 12%;
-  left: 20px;
-  width: 1px;
-  background: linear-gradient(transparent, var(--vp-c-divider) 15%, var(--vp-c-divider) 85%, transparent);
+  inset: 0;
+  z-index: -1;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  pointer-events: none;
+}
+
+.graph-columns span {
+  position: relative;
+  padding-top: 13px;
+  border-right: 1px solid color-mix(in srgb, var(--vp-c-divider) 62%, transparent);
+  color: var(--vp-c-text-3);
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-align: center;
+}
+
+.graph-columns span:last-child {
+  border-right: 0;
+}
+
+.edge-layer,
+.node-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.knowledge-edge {
+  position: absolute;
+  z-index: 1;
+  display: block;
+  height: 2px;
+  transform-origin: 0 50%;
+  pointer-events: none;
+}
+
+.knowledge-edge::before {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--path-color) 42%, var(--vp-c-divider));
   content: "";
 }
 
-.module-selector button {
-  position: relative;
-  display: grid;
-  grid-template-columns: 42px minmax(0, 1fr) auto;
-  gap: 14px;
-  align-items: center;
-  width: 100%;
-  padding: 16px 15px 16px 0;
-  border: 1px solid transparent;
-  border-radius: 16px;
-  color: var(--vp-c-text-2);
-  background: transparent;
-  cursor: pointer;
-  text-align: left;
-  transition: color .25s ease, background .25s ease, border-color .25s ease, transform .25s ease;
-}
-
-.module-selector button > span {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  place-items: center;
-  width: 41px;
-  height: 41px;
-  border: 1px solid var(--vp-c-divider);
+.knowledge-edge::after {
+  position: absolute;
+  top: -2px;
+  right: -1px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  color: var(--vp-c-text-3);
-  background: var(--vp-c-bg-alt);
-  font-family: var(--opends-serif, serif);
-  font-size: 12px;
-  transition: inherit;
+  background: var(--path-color);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--path-color) 10%, transparent);
+  content: "";
 }
 
-.module-selector button b,
-.module-selector button small {
+.knowledge-edge i {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--path-color) 90%, white), transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: edge-draw .9s .08s ease forwards, edge-shimmer 3.8s 1s ease-in-out infinite;
+}
+
+.knowledge-node {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  place-content: center;
+  width: clamp(112px, 9.8vw, 158px);
+  min-height: clamp(48px, 6.5vh, 66px);
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--path-color) 22%, var(--vp-c-divider));
+  border-radius: 13px;
+  color: var(--vp-c-text-1);
+  background: color-mix(in srgb, var(--vp-c-bg) 95%, transparent);
+  box-shadow: 0 9px 25px rgba(24, 50, 47, .07);
+  pointer-events: auto;
+  text-align: center;
+  text-decoration: none;
+  transform: translate(-50%, -50%);
+  transition: border-color .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+.knowledge-node.has-notes {
+  border-color: color-mix(in srgb, var(--path-color) 56%, var(--vp-c-divider));
+}
+
+a.knowledge-node:hover {
+  z-index: 3;
+  border-color: var(--path-color);
+  color: var(--path-color);
+  box-shadow: 0 13px 34px color-mix(in srgb, var(--path-color) 15%, transparent);
+  transform: translate(-50%, -53%);
+}
+
+.knowledge-node strong,
+.knowledge-node small {
   display: block;
 }
 
-.module-selector button b {
-  margin-bottom: 5px;
-  color: var(--vp-c-text-1);
-  font-family: var(--opends-serif, serif);
-  font-size: 18px;
-  font-weight: 600;
+.knowledge-node strong {
+  font-size: clamp(10px, .75vw, 12px);
+  font-weight: 680;
+  line-height: 1.3;
 }
 
-.module-selector button small {
+.knowledge-node small {
+  margin-top: 4px;
   overflow: hidden;
-  font-size: 11px;
-  line-height: 1.45;
+  color: var(--vp-c-text-3);
+  font-family: ui-monospace, monospace;
+  font-size: clamp(7px, .55vw, 9px);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.module-selector button > i {
-  color: var(--vp-c-text-3);
-  font-size: 11px;
+.knowledge-node > i {
+  position: absolute;
+  top: 5px;
+  right: 7px;
+  color: var(--path-color);
+  font-size: 9px;
   font-style: normal;
 }
 
-.module-selector button:hover {
-  color: var(--vp-c-text-1);
-  transform: translateX(4px);
+.path-status {
+  position: absolute;
+  z-index: 3;
+  right: 14px;
+  bottom: 11px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--vp-c-text-3);
+  font-size: 9px;
+  letter-spacing: .08em;
 }
 
-.module-selector button.is-active {
-  border-color: color-mix(in srgb, var(--vp-c-brand-1) 20%, var(--vp-c-divider));
-  color: var(--vp-c-text-1);
-  background: color-mix(in srgb, var(--vp-c-bg) 78%, transparent);
-  box-shadow: 0 12px 36px rgba(18, 61, 56, .06);
+.path-status span {
+  width: 24px;
+  height: 2px;
 }
 
-.module-selector button.is-active > span {
-  border-color: var(--vp-c-brand-1);
-  color: var(--vp-c-bg);
+.scene-hint {
+  display: inline-flex;
+  align-items: center;
+  justify-self: center;
+  gap: 9px;
+  min-height: 28px;
+  margin-top: 5px;
+  border: 0;
+  color: var(--vp-c-text-3);
+  background: transparent;
+  cursor: pointer;
+  font-size: 9px;
+  letter-spacing: .08em;
+}
+
+.scene-hint span {
+  color: var(--vp-c-brand-1);
+  font-size: 14px;
+  animation: hint-drift 1.8s ease-in-out infinite;
+}
+
+.module-switcher button {
+  position: relative;
+  padding-right: 10px;
+}
+
+.module-switcher button > i {
+  display: grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  color: var(--vp-c-text-3);
+  background: var(--vp-c-bg-soft);
+  font-size: 8px;
+  font-style: normal;
+}
+
+.module-switcher button.is-active {
+  color: white;
   background: var(--vp-c-brand-1);
-  box-shadow: 0 0 0 7px color-mix(in srgb, var(--vp-c-brand-1) 10%, transparent);
+  box-shadow: 0 7px 18px color-mix(in srgb, var(--vp-c-brand-1) 22%, transparent);
 }
 
-.module-detail {
+.module-switcher button.is-active span,
+.module-switcher button.is-active > i {
+  color: rgba(255, 255, 255, .76);
+}
+
+.module-switcher button.is-active > i {
+  background: rgba(255, 255, 255, .13);
+}
+
+.module-panel {
+  position: relative;
   min-height: 0;
-  padding: clamp(20px, 2.4vw, 34px);
-  overflow-y: auto;
+  overflow: hidden;
   border: 1px solid var(--vp-c-divider);
-  border-radius: 26px;
-  background: color-mix(in srgb, var(--vp-c-bg) 91%, transparent);
-  box-shadow: 0 22px 70px rgba(16, 54, 49, .08);
-  scrollbar-color: color-mix(in srgb, var(--vp-c-brand-1) 32%, transparent) transparent;
-  scrollbar-width: thin;
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--vp-c-bg) 92%, transparent);
+  box-shadow: 0 20px 64px rgba(20, 56, 52, .07);
 }
 
-.module-detail header {
+.module-panel__body {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100%;
+  padding: clamp(15px, 2vh, 22px);
+}
+
+.module-panel__body > header {
   display: flex;
   align-items: end;
   justify-content: space-between;
-  gap: 20px;
-  margin-bottom: 22px;
-  padding-bottom: 18px;
+  min-height: 46px;
+  margin-bottom: 10px;
+  padding-bottom: 9px;
   border-bottom: 1px solid var(--vp-c-divider);
 }
 
-.module-detail header p {
-  margin: 0 0 5px;
+.module-panel__body > header small {
+  display: block;
+  margin-bottom: 2px;
   color: #b66f20;
-  font-size: 10px;
-  font-weight: 700;
+  font-size: 8px;
+  font-weight: 750;
   letter-spacing: .15em;
   text-transform: uppercase;
 }
 
-.module-detail header h3 {
+.module-panel__body > header h3 {
   margin: 0;
   color: var(--vp-c-text-1);
   font-family: var(--opends-serif, serif);
-  font-size: clamp(27px, 2.6vw, 39px);
-  font-weight: 500;
+  font-size: clamp(22px, 2.2vw, 32px);
+  font-weight: 520;
   letter-spacing: -.035em;
+  line-height: 1;
 }
 
-.module-detail header > span {
-  flex: none;
+.module-panel__body > header > span {
   color: var(--vp-c-text-3);
-  font-size: 12px;
+  font-size: 10px;
 }
 
 .module-course-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 9px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+  gap: clamp(5px, .7vh, 8px);
+  min-height: 0;
 }
 
 .module-course {
-  display: block;
-  min-height: 105px;
-  padding: 13px 15px;
+  display: grid;
+  grid-template-rows: auto auto auto;
+  align-content: center;
+  min-width: 0;
+  min-height: 0;
+  padding: clamp(7px, 1vh, 11px) 12px;
   border: 1px solid var(--vp-c-divider);
-  border-radius: 13px;
+  border-radius: 11px;
   color: var(--vp-c-text-1);
-  background: color-mix(in srgb, var(--vp-c-bg-soft) 68%, transparent);
+  background: color-mix(in srgb, var(--vp-c-bg-soft) 66%, transparent);
   text-decoration: none;
   transition: border-color .2s ease, background .2s ease, transform .2s ease;
 }
@@ -832,264 +945,324 @@ a.module-course:hover {
 .module-course > div {
   display: flex;
   align-items: center;
-  gap: 7px;
+  min-width: 0;
+  gap: 6px;
 }
 
-.module-course small {
+.module-course code {
   overflow: hidden;
   color: var(--vp-c-text-3);
-  font-family: ui-monospace, monospace;
-  font-size: 9px;
+  font-size: clamp(7px, .55vw, 9px);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .module-course em {
   flex: none;
-  padding: 2px 6px;
+  padding: 1px 5px;
   border-radius: 999px;
   color: var(--vp-c-brand-1);
   background: color-mix(in srgb, var(--vp-c-brand-1) 10%, transparent);
+  font-size: 7px;
+  font-style: normal;
+}
+
+.module-course > div > i {
+  margin-left: auto;
+  color: var(--vp-c-brand-1);
   font-size: 9px;
   font-style: normal;
 }
 
-.module-course i {
-  margin-left: auto;
-  color: var(--vp-c-brand-1);
-  font-size: 11px;
-  font-style: normal;
+.module-course strong {
+  display: -webkit-box;
+  margin: 4px 0 3px;
+  overflow: hidden;
+  font-size: clamp(10px, .75vw, 12px);
+  font-weight: 680;
+  line-height: 1.25;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
-.module-course h4 {
-  margin: 11px 0 8px;
-  color: var(--vp-c-text-1);
-  font-size: 14px;
-  font-weight: 650;
-  line-height: 1.35;
-}
-
-.module-course p {
-  margin: 0;
+.module-course > small {
+  overflow: hidden;
   color: var(--vp-c-text-3);
-  font-size: 10px;
+  font-size: clamp(7px, .52vw, 9px);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.scene-cue--up {
-  flex-direction: row;
-  margin-top: 14px;
+.module-course > small b {
+  margin-left: 5px;
+  color: var(--vp-c-brand-1);
+  font-weight: 520;
 }
 
-.module-swap-enter-active,
-.module-swap-leave-active {
-  transition: opacity .22s ease, transform .22s ease;
-}
-
-.module-swap-enter-from {
-  opacity: 0;
-  transform: translateY(12px);
-}
-
-.module-swap-leave-to {
-  opacity: 0;
-  transform: translateY(-8px);
-}
-
-.map-progress {
+.scene-progress {
   position: absolute;
-  z-index: 5;
+  z-index: 10;
   top: 50%;
-  right: clamp(12px, 2vw, 34px);
+  right: clamp(9px, 1.4vw, 24px);
   display: grid;
-  gap: 18px;
+  gap: 14px;
   transform: translateY(-50%);
 }
 
-.map-progress button {
+.scene-progress button {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 9px;
+  gap: 7px;
   padding: 0;
   border: 0;
   color: var(--vp-c-text-3);
   background: transparent;
   cursor: pointer;
-  font-size: 10px;
+  font-size: 9px;
 }
 
-.map-progress i {
-  display: block;
-  width: 17px;
+.scene-progress i {
+  width: 15px;
   height: 2px;
   background: var(--vp-c-divider);
   transition: width .25s ease, background .25s ease;
 }
 
-.map-progress button.is-active {
+.scene-progress button.is-active {
   color: var(--vp-c-text-1);
 }
 
-.map-progress button.is-active i {
-  width: 32px;
+.scene-progress button.is-active i {
+  width: 29px;
   background: var(--vp-c-brand-1);
 }
 
-@keyframes pathway-pulse {
-  0% { transform: translateX(0); }
-  55%, 100% { transform: translateX(460%); }
+.node-fade-enter-active {
+  animation: node-arrive .45s var(--node-delay) both ease-out;
 }
 
-@keyframes stage-arrive {
-  to { opacity: 1; transform: translateY(0); }
+.node-fade-leave-active {
+  position: absolute;
+  transition: opacity .16s ease, transform .16s ease;
 }
 
-@keyframes cue-drift {
+.node-fade-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(.94);
+}
+
+.edge-fade-enter-active {
+  animation: edge-arrive .35s both ease;
+}
+
+.edge-fade-leave-active {
+  transition: opacity .14s ease;
+}
+
+.edge-fade-leave-to {
+  opacity: 0;
+}
+
+.module-swap-enter-active,
+.module-swap-leave-active {
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+.module-swap-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.module-swap-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+@keyframes node-arrive {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(.9); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes edge-arrive {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes edge-draw {
+  to { transform: scaleX(1); }
+}
+
+@keyframes edge-shimmer {
+  0%, 100% { opacity: .25; }
+  50% { opacity: 1; }
+}
+
+@keyframes hint-drift {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(3px); }
+  50% { transform: translateY(2px); }
 }
 
-@media (max-width: 960px) {
-  .map-heading {
-    grid-template-columns: 1fr;
+@media (max-width: 1120px) {
+  .scene-frame {
+    width: min(calc(100% - 52px), 1580px);
+  }
+
+  .compact-header {
+    gap: 16px;
+  }
+
+  .compact-header__identity {
+    gap: 12px;
+  }
+
+  .path-switcher button,
+  .module-switcher button {
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+
+  .module-course-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .course-map-deck {
+    min-height: 520px;
+  }
+
+  .scene-frame {
+    width: min(calc(100% - 24px), 1580px);
+    padding-top: 12px;
+  }
+
+  .compact-header {
+    display: grid;
+    align-content: start;
     gap: 8px;
+    min-height: 95px;
+    margin-bottom: 8px;
   }
 
-  .map-heading > p {
-    margin: 0;
+  .compact-header__identity {
+    justify-content: space-between;
   }
 
-  .map-heading span {
-    margin-top: 12px;
+  .compact-header h1,
+  .compact-header h2 {
+    font-size: 23px;
   }
 
-  .module-workspace {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto minmax(0, 1fr);
-    gap: 14px;
+  .path-switcher,
+  .module-switcher {
+    width: 100%;
   }
 
-  .module-selector {
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(220px, 1fr);
-    grid-template-columns: none;
-    align-content: normal;
-    gap: 9px;
-    overflow-x: auto;
+  .path-switcher button,
+  .module-switcher button {
+    flex: 1 0 auto;
+    min-height: 30px;
+    padding: 4px 7px;
+    font-size: 9px;
+  }
+
+  .knowledge-graph,
+  .module-panel {
+    border-radius: 17px;
+  }
+
+  .graph-columns span {
+    padding-top: 8px;
+    font-size: 7px;
+    letter-spacing: 0;
+  }
+
+  .knowledge-node {
+    width: clamp(68px, 20vw, 82px);
+    min-height: 42px;
+    padding: 5px;
+    border-radius: 9px;
+  }
+
+  .knowledge-node strong {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 8px;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .knowledge-node small {
+    font-size: 6px;
+  }
+
+  .path-status {
+    display: none;
+  }
+
+  .module-panel__body {
+    padding: 9px;
+  }
+
+  .module-panel__body > header {
+    min-height: 36px;
+    margin-bottom: 6px;
     padding-bottom: 5px;
-    scrollbar-width: thin;
   }
 
-  .module-selector::before {
+  .module-panel__body > header h3 {
+    font-size: 19px;
+  }
+
+  .module-course-grid {
+    gap: 4px;
+  }
+
+  .module-course {
+    padding: 4px 6px;
+    border-radius: 8px;
+  }
+
+  .module-course strong {
+    margin: 2px 0;
+    font-size: 8px;
+  }
+
+  .module-course code,
+  .module-course > small {
+    font-size: 6px;
+  }
+
+  .module-course em {
     display: none;
   }
 
-  .module-selector button {
-    grid-template-columns: 32px minmax(0, 1fr) auto;
-    padding: 10px;
-    border-color: var(--vp-c-divider);
-    background: color-mix(in srgb, var(--vp-c-bg) 66%, transparent);
-  }
-
-  .module-selector button > span {
-    width: 32px;
-    height: 32px;
-  }
-
-  .module-selector button small {
-    display: none;
-  }
-}
-
-@media (max-width: 700px) {
-  .course-map-deck,
-  .map-scene {
-    min-height: 570px;
-  }
-
-  .map-scene__content {
-    width: min(calc(100% - 30px), 1500px);
-    padding-top: 24px;
-  }
-
-  .map-back {
-    margin-bottom: 22px;
-  }
-
-  .map-heading {
-    margin-bottom: 20px;
-  }
-
-  .map-heading h1,
-  .map-heading h2 {
-    font-size: clamp(34px, 10vw, 47px);
-  }
-
-  .map-heading span {
-    font-size: 14px;
-    line-height: 1.6;
-  }
-
-  .pathway-shell {
-    min-height: 340px;
-    border-radius: 20px;
-  }
-
-  .pathway-grid {
-    min-width: 1120px;
-  }
-
-  .map-progress {
-    top: 18px;
-    right: 16px;
+  .scene-progress {
+    top: 11px;
+    right: 11px;
     grid-auto-flow: column;
     transform: none;
   }
 
-  .map-progress button span {
+  .scene-progress button span {
     display: none;
   }
 
-  .map-progress button.is-active i {
-    width: 24px;
-  }
-
-  .map-heading--modules {
-    margin-top: 22px;
-  }
-
-  .module-detail {
-    padding: 18px;
-    border-radius: 20px;
-  }
-
-  .module-detail header {
-    margin-bottom: 14px;
-    padding-bottom: 13px;
-  }
-
-  .module-course-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .module-course {
-    min-height: 98px;
+  .scene-progress button.is-active i {
+    width: 22px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .map-story {
-    scroll-behavior: auto;
+  .map-story__track {
+    transition: none;
   }
 
-  .pathway-flow i,
-  .scene-cue i {
-    animation: none;
-  }
-
-  .map-scene.is-active .path-stage {
-    opacity: 1;
-    transform: none;
+  .knowledge-edge i,
+  .scene-hint span,
+  .node-fade-enter-active,
+  .edge-fade-enter-active {
     animation: none;
   }
 }
