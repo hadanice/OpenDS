@@ -151,16 +151,10 @@ const modules: ModuleGroup[] = [
       { title: '统计学基础 II：回归分析', code: 'STAT50024', credits: 3, term: '第 3 / 5 学期' },
       { title: '时间序列与空间统计', code: 'STAT50016', credits: 3, term: '第 4 / 6 学期' },
       { title: '数据融合与同化', code: 'STAT50019', credits: 3, term: '第 4 / 6 学期' },
-      { title: '数学模型', code: 'MATH20009', credits: 3, term: '第 4 / 6 学期' },
-      { title: '随机分析', code: 'MATH60033', credits: 3, term: '第 3—6 学期' },
-      { title: '运筹学 A', code: 'MATH130019', credits: 3, term: '第 4 / 6 学期' },
       { title: '多元统计分析', code: 'STAT50023', credits: 3, term: '第 4 / 6 学期' },
-      { title: '计算方法', code: 'MATH30008', credits: 3, term: '第 3 / 5 学期' },
       { title: '应用泛函分析', code: 'MATH50011', credits: 3, term: '第 3 / 5 学期' },
       { title: '线性规划', code: 'MATH50012', credits: 3, term: '第 4 / 6 学期' },
-      { title: '多模态数据同化', code: 'AIS410010', credits: 3, term: '第 4 / 6 学期' },
-      { title: '人工智能中的稀疏理论与应用', code: 'AIS631010', credits: 3, term: '第 3 / 5 学期' },
-      { title: '高等微积分', code: 'MATH50014', credits: 3, term: '秋季' }
+      { title: '多模态数据同化', code: 'AIS410010', credits: 3, term: '第 4 / 6 学期' }
     ]
   },
   {
@@ -172,7 +166,6 @@ const modules: ModuleGroup[] = [
       { title: '大规模分布式系统', code: 'CS50022', credits: 3, term: '第 4 / 6 学期' },
       { title: '高级大数据解析', code: 'CS50021', credits: 3, term: '第 3 / 5 学期' },
       { title: '自然语言处理', code: 'CS50023', siteCode: '站内 CS40008', credits: 3, term: '第 4 / 6 学期', href: '/notes/nlp-llms/' },
-      { title: '计算理论', code: 'CS50024', credits: 3, term: '第 3 / 5 学期' },
       { title: '数字图像处理', code: 'DATA130032', credits: 3, term: '第 3—6 学期' },
       { title: '图数据管理与挖掘', code: 'CS50027', credits: 3, term: '第 3 / 5 学期' },
       { title: '强化学习算法与理论基础', code: 'MATH50013', credits: 3, term: '第 3 / 5 学期' },
@@ -187,24 +180,12 @@ const modules: ModuleGroup[] = [
     title: '理医工 × 社会科学',
     kicker: 'Applied data science',
     courses: [
-      { title: '卫生统计学 A', code: 'PHPM40014', credits: 3, term: '第 3 / 5 学期', group: '理医工' },
-      { title: '医疗大数据统计学', code: 'STAT50020', credits: 3, term: '第 4 / 6 学期', group: '理医工' },
-      { title: '医学图像处理', code: 'CS50026', credits: 3, term: '第 4 / 6 学期', group: '理医工' },
       { title: '生物统计学', code: 'STAT50025', credits: 3, term: '第 4 / 6 学期', group: '理医工', href: '/notes/biostatistics/' },
-      { title: '组学数据的统计分析和挖掘', code: 'BIOL130112', credits: 2, term: '第 3 / 5 学期', group: '理医工' },
-      { title: '心理统计学（一）', code: 'PSYC30017', credits: 3, term: '第 3 / 5 学期', group: '理医工' },
-      { title: '心理统计学（二）', code: 'PSYC30018', credits: 2, term: '第 4 / 6 学期', group: '理医工' },
-      { title: '生物医学工程学基础', code: 'BME30003', credits: 3, term: '第 4 / 6 学期', group: '理医工' },
       { title: '社交网络挖掘', code: 'CS50019', credits: 3, term: '第 3 / 5 学期', group: '社会科学' },
-      { title: '金融计量学', code: 'STAT50018', credits: 3, term: '第 3 / 5 学期', group: '社会科学' },
-      { title: '商务分析', code: 'DATA130035', credits: 3, term: '第 3 / 5 学期', group: '社会科学' },
       { title: '社会数据管理与分析', code: 'DATA130037', credits: 3, term: '第 3—6 学期', group: '社会科学' },
-      { title: '决策理论', code: 'DATA130038', credits: 3, term: '第 3 / 5 学期', group: '社会科学' },
       { title: '金融工程', code: 'STAT50022', credits: 3, term: '第 3 / 5 学期', group: '社会科学' },
-      { title: '社会科学方法论', code: 'SOCI130062', credits: 2, term: '春 / 秋', group: '社会科学' },
       { title: '社会科学数据挖掘', code: 'STAT50021', credits: 3, term: '第 4 / 6 学期', group: '社会科学' },
-      { title: '大数据传播与新媒体分析', code: 'CS50025', credits: 3, term: '第 4 / 6 学期', group: '社会科学' },
-      { title: '金融风险管理与金融工程', code: 'ECON40019', credits: 3, term: '第 6 学期', group: '社会科学' }
+      { title: '大数据传播与新媒体分析', code: 'CS50025', credits: 3, term: '第 4 / 6 学期', group: '社会科学' }
     ]
   }
 ]
@@ -460,16 +441,16 @@ onBeforeUnmount(() => {
                     class="module-course"
                     :href="courseHref(course.href)"
                   >
-                    <div>
+                    <div class="module-course__identity">
                       <em v-if="course.group">{{ course.group }}</em>
                       <code>{{ course.code }}</code>
-                      <i v-if="course.href">↗</i>
                     </div>
                     <strong>{{ course.title }}</strong>
                     <small>
                       {{ course.credits }} 学分 · {{ course.term }}
                       <b v-if="course.siteCode">{{ course.siteCode }}</b>
                     </small>
+                    <i v-if="course.href" class="module-course__arrow">↗</i>
                   </component>
                 </div>
               </div>
@@ -923,11 +904,12 @@ a.knowledge-node:hover {
 
 .module-course {
   display: grid;
-  grid-template-rows: auto auto auto;
-  align-content: center;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: clamp(7px, .75vw, 12px);
   min-width: 0;
   min-height: 0;
-  padding: clamp(7px, 1vh, 11px) 12px;
+  padding: clamp(6px, .85vh, 9px) 12px;
   border: 1px solid var(--vp-c-divider);
   border-radius: 11px;
   color: var(--vp-c-text-1);
@@ -942,7 +924,7 @@ a.module-course:hover {
   transform: translateY(-2px);
 }
 
-.module-course > div {
+.module-course__identity {
   display: flex;
   align-items: center;
   min-width: 0;
@@ -967,22 +949,18 @@ a.module-course:hover {
   font-style: normal;
 }
 
-.module-course > div > i {
-  margin-left: auto;
+.module-course__arrow {
   color: var(--vp-c-brand-1);
   font-size: 9px;
   font-style: normal;
 }
 
 .module-course strong {
-  display: -webkit-box;
-  margin: 4px 0 3px;
-  overflow: hidden;
-  font-size: clamp(10px, .75vw, 12px);
+  min-width: 0;
+  font-size: clamp(9px, .72vw, 12px);
   font-weight: 680;
-  line-height: 1.25;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 .module-course > small {
@@ -997,6 +975,12 @@ a.module-course:hover {
   margin-left: 5px;
   color: var(--vp-c-brand-1);
   font-weight: 520;
+}
+
+@media (max-width: 1380px), (max-height: 720px) {
+  .module-course > small {
+    display: none;
+  }
 }
 
 .scene-progress {
@@ -1220,12 +1204,12 @@ a.module-course:hover {
   }
 
   .module-course {
+    gap: 4px;
     padding: 4px 6px;
     border-radius: 8px;
   }
 
   .module-course strong {
-    margin: 2px 0;
     font-size: 8px;
   }
 
