@@ -161,7 +161,7 @@ const modules: ModuleGroup[] = [
       { title: '图数据管理与挖掘', code: 'CS50027', credits: 3, term: '第 3 / 5 学期', group: '系统与数据挖掘' },
       { title: '计算机视觉', code: 'CS50028', credits: 3, term: '第 4 / 6 学期', group: '系统与数据挖掘' },
       { title: '生物统计学', code: 'STAT50025', credits: 3, term: '第 4 / 6 学期', group: '理医工', href: '/notes/biostatistics/' },
-      { title: '社交网络挖掘', code: 'CS50019', credits: 3, term: '第 3 / 5 学期', group: '社会科学' },
+      { title: '社会科学数据挖掘', code: 'CS50019', credits: 3, term: '第 3 / 5 学期', group: '社会科学' },
       { title: '金融工程', code: 'STAT50022', credits: 3, term: '第 3 / 5 学期', group: '社会科学' }
     ]
   }
