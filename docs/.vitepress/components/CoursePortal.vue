@@ -50,10 +50,10 @@ import { withBase } from 'vitepress'
 .course-portal {
   position: relative;
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
-  height: calc(100dvh - var(--vp-nav-height));
-  min-height: 590px;
-  padding: clamp(24px, 4vh, 42px) max(24px, calc((100vw - 1320px) / 2)) clamp(22px, 3.6vh, 38px);
+  grid-template-rows: auto auto;
+  align-content: center;
+  min-height: calc(100dvh - var(--vp-nav-height));
+  padding: clamp(34px, 5vh, 54px) max(34px, calc((100vw - 1160px) / 2));
   overflow: hidden;
   background:
     linear-gradient(rgba(23, 95, 90, 0.032) 1px, transparent 1px),
@@ -80,7 +80,7 @@ import { withBase } from 'vitepress'
   grid-template-columns: minmax(0, 1.12fr) minmax(300px, 0.88fr);
   gap: clamp(24px, 5vw, 78px);
   align-items: end;
-  margin-bottom: clamp(18px, 2.8vh, 30px);
+  margin-bottom: clamp(24px, 3.8vh, 38px);
 }
 
 .course-portal__eyebrow {
@@ -94,10 +94,10 @@ import { withBase } from 'vitepress'
 }
 
 .course-portal__hero h1 {
-  max-width: 720px;
+  max-width: 650px;
   margin: 0;
   font-family: var(--opends-serif);
-  font-size: clamp(2.65rem, 4.7vw, 5rem);
+  font-size: clamp(2.45rem, 4.15vw, 4.15rem);
   letter-spacing: -0.06em;
   line-height: 0.94;
 }
@@ -114,18 +114,16 @@ import { withBase } from 'vitepress'
   z-index: 1;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
-  min-height: 0;
+  gap: clamp(20px, 2.2vw, 28px);
 }
 
 .course-choice {
   position: relative;
   display: grid;
-  min-height: 0;
-  height: 100%;
+  min-height: clamp(300px, 39vh, 340px);
   border: 1px solid var(--vp-c-divider);
   border-radius: 26px;
-  padding: clamp(20px, 2.4vw, 32px);
+  padding: clamp(22px, 2.4vw, 30px);
   overflow: hidden;
   color: var(--vp-c-text-1) !important;
   background: color-mix(in srgb, var(--vp-c-bg) 92%, transparent);
@@ -179,7 +177,7 @@ import { withBase } from 'vitepress'
   border: 0;
   padding: 0;
   font-family: var(--opends-serif);
-  font-size: clamp(1.85rem, 3vw, 3rem);
+  font-size: clamp(1.75rem, 2.6vw, 2.6rem);
   letter-spacing: -0.045em;
 }
 
@@ -210,7 +208,7 @@ import { withBase } from 'vitepress'
   top: 30px;
   right: 30px;
   display: grid;
-  width: min(38%, 210px);
+  width: min(34%, 180px);
   transform: rotate(3deg);
 }
 
@@ -231,7 +229,7 @@ import { withBase } from 'vitepress'
   position: absolute;
   top: 28px;
   right: 34px;
-  width: min(40%, 220px);
+  width: min(36%, 188px);
   aspect-ratio: 1.35;
   opacity: 0.78;
 }
@@ -271,7 +269,6 @@ import { withBase } from 'vitepress'
 @media (max-width: 820px) {
   .course-portal {
     display: block;
-    height: auto;
     min-height: calc(100svh - var(--vp-nav-height));
     padding-top: 48px;
   }
@@ -283,21 +280,25 @@ import { withBase } from 'vitepress'
 
 @media (min-width: 821px) and (max-height: 700px) {
   .course-portal {
-    min-height: 540px;
-    padding-top: 18px;
-    padding-bottom: 18px;
+    min-height: calc(100dvh - var(--vp-nav-height));
+    padding-top: 24px;
+    padding-bottom: 24px;
   }
 
   .course-portal__hero {
-    margin-bottom: 14px;
+    margin-bottom: 20px;
   }
 
   .course-portal__hero h1 {
-    font-size: clamp(2.4rem, 4.1vw, 4.2rem);
+    font-size: clamp(2.25rem, 3.7vw, 3.7rem);
   }
 
   .course-choice__copy p {
     display: none;
+  }
+
+  .course-choice {
+    min-height: 285px;
   }
 }
 

@@ -11,7 +11,7 @@ import CourseGrid from './CourseGrid.vue'
         <p>Chronological archive</p>
         <h1>按学期查看</h1>
       </div>
-      <span>从最近的学习计划向前回溯。选择学期，查看当期课程、资料状态和阅读入口。</span>
+      <span>按学习时间从早到晚展开。选择学期，查看当期课程、资料状态和阅读入口。</span>
     </header>
     <CourseGrid />
   </main>

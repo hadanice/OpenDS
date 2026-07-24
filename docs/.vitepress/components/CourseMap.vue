@@ -64,24 +64,25 @@ const knowledgeNodes: KnowledgeNode[] = [
   { id: 'probability', title: '概率论基础', code: 'STAT20011', x: 24, y: 50, paths: ['statistics', 'intelligence', 'application'], href: '/notes/probability/' },
   { id: 'algorithms', title: '算法与数据结构', code: 'CS20017h', x: 24, y: 81, paths: ['systems', 'intelligence'], href: '/notes/algorithms/' },
 
-  { id: 'numerical', title: '数值算法 I', code: 'MATH20007', x: 41.5, y: 11, paths: ['math', 'intelligence', 'application'], href: '/notes/numerical-algorithms/' },
-  { id: 'math-statistics', title: '统计学基础 I', code: 'STAT20010h', x: 41.5, y: 36, paths: ['statistics', 'intelligence', 'application'], href: '/notes/mathematical-statistics/' },
+  { id: 'numerical', title: '数值算法与案例分析Ⅰ', code: 'MATH20007', x: 41.5, y: 11, paths: ['math', 'intelligence', 'application'], href: '/notes/numerical-algorithms/' },
+  { id: 'math-statistics', title: '统计学基础Ⅰ：数理统计', code: 'STAT20010h', x: 41.5, y: 36, paths: ['statistics', 'intelligence', 'application'], href: '/notes/mathematical-statistics/' },
   { id: 'computer-systems', title: '计算机原理', code: 'CS20018', x: 41.5, y: 64, paths: ['systems', 'intelligence'], href: '/notes/computer-systems/' },
   { id: 'database', title: '数据库及实现', code: 'CS20019', x: 41.5, y: 88, paths: ['systems', 'application'], href: '/notes/database/' },
 
   { id: 'optimization', title: '最优化方法', code: 'MATH20008', x: 59, y: 10, paths: ['math', 'statistics', 'intelligence'], href: '/notes/optimization/' },
   { id: 'stat-computing', title: '统计计算', code: 'STAT30016h', x: 59, y: 29, paths: ['statistics', 'intelligence'] },
-  { id: 'stat-learning', title: '统计（机器）学习', code: 'STAT30015', x: 59, y: 48, paths: ['math', 'statistics', 'intelligence', 'application'] },
+  { id: 'stat-learning', title: '统计（机器）学习概论', code: 'STAT30015', x: 59, y: 48, paths: ['math', 'statistics', 'intelligence', 'application'] },
   { id: 'artificial-intelligence', title: '人工智能', code: 'CS50020', x: 59, y: 68, paths: ['systems', 'intelligence'] },
-  { id: 'nlp', title: 'NLP 与大语言模型', code: 'CS40008', x: 59, y: 88, paths: ['systems', 'intelligence', 'application'], href: '/notes/nlp-llms/' },
+  { id: 'nlp', title: '自然语言处理与大语言模型', code: 'CS40008', x: 59, y: 88, paths: ['systems', 'intelligence', 'application'], href: '/notes/nlp-llms/' },
 
-  { id: 'image', title: '图像处理与可视化', code: 'CS30065', x: 76.5, y: 10, paths: ['intelligence', 'application'] },
-  { id: 'biostatistics', title: '生物统计学', code: 'STAT50025', x: 76.5, y: 29, paths: ['statistics', 'application'], href: '/notes/biostatistics/' },
-  { id: 'graph-mining', title: '图数据管理与挖掘', code: 'CS50027', x: 76.5, y: 48, paths: ['systems', 'application'] },
-  { id: 'deep-learning', title: '神经网络与深度学习', code: 'CS30064', x: 76.5, y: 68, paths: ['intelligence', 'application'] },
-  { id: 'future-electives', title: '专业选修 · 待定 ×4', code: '大三下 · 留待延伸', x: 76.5, y: 88, paths: ['math', 'statistics', 'systems', 'intelligence', 'application'], placeholder: true },
+  { id: 'image', title: '图像处理与数据可视化', code: 'CS30065h', x: 76.5, y: 7, paths: ['intelligence', 'application'] },
+  { id: 'biostatistics', title: '生物统计学', code: 'STAT50025', x: 76.5, y: 24, paths: ['statistics', 'application'], href: '/notes/biostatistics/' },
+  { id: 'graph-mining', title: '图数据管理与挖掘', code: 'CS50027', x: 76.5, y: 41, paths: ['systems', 'application'] },
+  { id: 'deep-learning', title: '神经网络与深度学习', code: 'CS30064', x: 76.5, y: 58, paths: ['intelligence', 'application'] },
+  { id: 'multimodal-assimilation', title: '多模态数据同化', code: 'AIS410010', x: 76.5, y: 75, paths: ['statistics', 'intelligence', 'application'] },
+  { id: 'future-electives', title: '专业选修 · 待定 ×4', code: '大三下 · 留待延伸', x: 76.5, y: 92, paths: ['math', 'statistics', 'systems', 'intelligence', 'application'], placeholder: true },
 
-  { id: 'research', title: '项目 · 实习 · 毕业论文', code: 'PRACTICE', x: 94, y: 88, paths: ['math', 'statistics', 'systems', 'intelligence', 'application'] }
+  { id: 'research', title: '项目 · 实习 · 毕业论文', code: 'PRACTICE', x: 94, y: 92, paths: ['math', 'statistics', 'systems', 'intelligence', 'application'] }
 ]
 
 const knowledgeEdges: KnowledgeEdge[] = [
@@ -90,7 +91,8 @@ const knowledgeEdges: KnowledgeEdge[] = [
   { from: 'advanced-linear', to: 'numerical', paths: ['math', 'intelligence'] },
   { from: 'numerical', to: 'optimization', paths: ['math', 'intelligence'] },
   { from: 'optimization', to: 'stat-learning', paths: ['math', 'statistics', 'intelligence'] },
-  { from: 'stat-learning', to: 'future-electives', paths: ['math', 'statistics', 'application'] },
+  { from: 'stat-learning', to: 'future-electives', paths: ['math'] },
+  { from: 'stat-learning', to: 'multimodal-assimilation', paths: ['statistics', 'intelligence', 'application'] },
 
   { from: 'analysis', to: 'probability', paths: ['statistics'] },
   { from: 'probability', to: 'math-statistics', paths: ['statistics', 'intelligence', 'application'] },
@@ -118,6 +120,7 @@ const knowledgeEdges: KnowledgeEdge[] = [
   { from: 'numerical', to: 'image', paths: ['intelligence', 'application'] },
   { from: 'image', to: 'future-electives', paths: ['intelligence', 'application'] },
   { from: 'deep-learning', to: 'future-electives', paths: ['intelligence', 'application'] },
+  { from: 'multimodal-assimilation', to: 'future-electives', paths: ['statistics', 'intelligence', 'application'] },
   { from: 'future-electives', to: 'research', paths: ['math', 'statistics', 'systems', 'intelligence', 'application'] }
 ]
 
@@ -128,21 +131,21 @@ const modules: ModuleGroup[] = [
     title: '专业核心',
     kicker: 'Common foundation',
     courses: [
-      { title: '统计计算', code: 'STAT30016', siteCode: '修读 STAT30016h', credits: 3, term: '第 5 学期' },
-      { title: '数值算法与案例分析 I', code: 'MATH20007', credits: 3, term: '第 3 学期', href: '/notes/numerical-algorithms/' },
+      { title: '统计计算', code: 'STAT30016h', credits: 3, term: '第 5 学期' },
+      { title: '数值算法与案例分析Ⅰ', code: 'MATH20007', credits: 3, term: '第 3 学期', href: '/notes/numerical-algorithms/' },
       { title: '统计（机器）学习概论', code: 'STAT30015', credits: 3, term: '第 5 学期' },
       { title: '人工智能', code: 'CS50020', credits: 3, term: '第 5 学期' },
       { title: '神经网络与深度学习', code: 'CS30064', credits: 3, term: '第 6 学期' },
       { title: '生产实习', code: 'STAT40004', credits: 1, term: '第 7 学期' },
       { title: '毕业论文', code: 'STAT40005', credits: 6, term: '第 8 学期' },
-      { title: '数据结构', code: 'CS20017', siteCode: '站内 CS20017h', credits: 4, term: '第 3 学期', href: '/notes/algorithms/' },
+      { title: '算法与数据结构', code: 'CS20017h', credits: 4, term: '第 3 学期', href: '/notes/algorithms/' },
       { title: '概率论基础', code: 'STAT20011', credits: 3, term: '第 3 学期', href: '/notes/probability/' },
       { title: '计算机原理', code: 'CS20018', credits: 3, term: '第 3 学期', href: '/notes/computer-systems/' },
       { title: '最优化方法', code: 'MATH20008', credits: 3, term: '第 4 学期', href: '/notes/optimization/' },
       { title: '数据库及实现', code: 'CS20019', credits: 3, term: '第 4 学期', href: '/notes/database/' },
       { title: '高等线性代数', code: 'MATH10003', credits: 3, term: '第 3 学期', href: '/notes/advanced-linear-algebra/' },
-      { title: '图像处理与可视化', code: 'CS30065', credits: 3, term: '第 5 学期' },
-      { title: '统计学基础：原理、方法及 R 应用 (I)', code: 'STAT20010', siteCode: '站内 STAT20010h', credits: 3, term: '第 4 学期', href: '/notes/mathematical-statistics/' }
+      { title: '图像处理与数据可视化', code: 'CS30065h', credits: 3, term: '第 5 学期' },
+      { title: '统计学基础Ⅰ：数理统计', code: 'STAT20010h', credits: 3, term: '第 4 学期', href: '/notes/mathematical-statistics/' }
     ]
   },
   {
@@ -154,10 +157,11 @@ const modules: ModuleGroup[] = [
     courses: [
       { title: '时间序列与空间统计', code: 'STAT50016', credits: 3, term: '第 4 / 6 学期', group: '统计分析' },
       { title: '多模态数据同化', code: 'AIS410010', credits: 3, term: '第 4 / 6 学期', group: '统计分析' },
-      { title: '自然语言处理', code: 'CS50023', siteCode: '站内 CS40008', credits: 3, term: '第 4 / 6 学期', group: '系统与数据挖掘', href: '/notes/nlp-llms/' },
+      { title: '自然语言处理与大语言模型', code: 'CS40008', credits: 3, term: '第 4 / 6 学期', group: '系统与数据挖掘', href: '/notes/nlp-llms/' },
       { title: '图数据管理与挖掘', code: 'CS50027', credits: 3, term: '第 3 / 5 学期', group: '系统与数据挖掘' },
-      { title: '强化学习算法与理论基础', code: 'MATH50013', credits: 3, term: '第 3 / 5 学期', group: '系统与数据挖掘' },
+      { title: '计算机视觉', code: 'CS50028', credits: 3, term: '第 4 / 6 学期', group: '系统与数据挖掘' },
       { title: '生物统计学', code: 'STAT50025', credits: 3, term: '第 4 / 6 学期', group: '理医工', href: '/notes/biostatistics/' },
+      { title: '社交网络挖掘', code: 'CS50019', credits: 3, term: '第 3 / 5 学期', group: '社会科学' },
       { title: '金融工程', code: 'STAT50022', credits: 3, term: '第 3 / 5 学期', group: '社会科学' }
     ]
   }
@@ -448,10 +452,6 @@ onBeforeUnmount(() => {
               </component>
             </TransitionGroup>
 
-            <div class="path-status" aria-hidden="true">
-              <span :style="{ background: activePath.color }" />
-              {{ activePath.title }}路线
-            </div>
           </div>
 
           <button class="scene-hint" type="button" @click="goToScene(1)">
@@ -489,7 +489,10 @@ onBeforeUnmount(() => {
                   <div><small>{{ activeModule.kicker }}</small><h3 :class="{ 'is-long': activeModule.id === 'advanced' }">{{ activeModule.title }}</h3></div>
                   <span>{{ activeModule.courses.length }} 门</span>
                 </header>
-                <div class="module-course-grid">
+                <div
+                  class="module-course-grid"
+                  :class="{ 'is-advanced': activeModule.id === 'advanced' }"
+                >
                   <component
                     :is="course.href ? 'a' : 'article'"
                     v-for="course in activeModule.courses"
@@ -807,24 +810,6 @@ a.knowledge-node:hover {
   font-style: normal;
 }
 
-.path-status {
-  position: absolute;
-  z-index: 3;
-  right: 14px;
-  bottom: 11px;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  color: var(--vp-c-text-3);
-  font-size: 9px;
-  letter-spacing: .08em;
-}
-
-.path-status span {
-  width: 24px;
-  height: 2px;
-}
-
 .scene-hint {
   display: inline-flex;
   align-items: center;
@@ -943,6 +928,38 @@ a.knowledge-node:hover {
   grid-auto-rows: minmax(0, 1fr);
   gap: clamp(5px, .7vh, 8px);
   min-height: 0;
+}
+
+.module-course-grid.is-advanced {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+}
+
+.module-course-grid.is-advanced .module-course {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  align-items: start;
+  padding: clamp(10px, 1.25vh, 15px);
+}
+
+.module-course-grid.is-advanced .module-course__identity {
+  grid-column: 1;
+}
+
+.module-course-grid.is-advanced .module-course strong {
+  grid-column: 1 / -1;
+  align-self: center;
+  font-family: var(--opends-serif, serif);
+  font-size: clamp(11px, .88vw, 14px);
+}
+
+.module-course-grid.is-advanced .module-course > small {
+  grid-column: 1 / -1;
+}
+
+.module-course-grid.is-advanced .module-course__arrow {
+  grid-column: 2;
+  grid-row: 1;
 }
 
 .module-course {
@@ -1126,6 +1143,11 @@ a.module-course:hover {
   .module-course-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .module-course-grid.is-advanced {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(4, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 760px) {
@@ -1198,10 +1220,6 @@ a.module-course:hover {
     font-size: 6px;
   }
 
-  .path-status {
-    display: none;
-  }
-
   .module-panel__body {
     padding: 9px;
   }
@@ -1232,7 +1250,15 @@ a.module-course:hover {
     border-radius: 8px;
   }
 
+  .module-course-grid.is-advanced .module-course {
+    padding: 4px 6px;
+  }
+
   .module-course strong {
+    font-size: 8px;
+  }
+
+  .module-course-grid.is-advanced .module-course strong {
     font-size: 8px;
   }
 

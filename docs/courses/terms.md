@@ -3,7 +3,7 @@ layout: page
 sidebar: false
 aside: false
 title: 按学期查看
-description: 按学期倒序浏览 OpenDS 课程与资料状态。
+description: 按学期正序浏览 OpenDS 课程与资料状态。
 ---
 
 <script setup>

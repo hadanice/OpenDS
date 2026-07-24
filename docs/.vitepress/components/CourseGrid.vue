@@ -71,7 +71,7 @@ const courses: Course[] = [
     code: 'MATH20008',
     teacher: '江如俊',
     materials: ['笔记', '作业'],
-    state: '持续更新',
+    state: '已整理',
     href: '/notes/optimization/'
   },
   {
@@ -80,7 +80,7 @@ const courses: Course[] = [
     code: 'CS20019',
     teacher: '郑卫国',
     materials: ['笔记', '项目'],
-    state: '持续更新',
+    state: '已整理',
     href: '/notes/database/'
   },
   {
@@ -98,7 +98,7 @@ const courses: Course[] = [
     code: 'STAT20010h',
     teacher: '孙鑫伟',
     materials: ['笔记', '项目', '考试'],
-    state: '持续更新',
+    state: '已整理',
     href: '/notes/mathematical-statistics/'
   },
   {
@@ -107,7 +107,7 @@ const courses: Course[] = [
     code: 'STAT50025',
     teacher: '张静茹',
     materials: ['笔记', '项目', '展示'],
-    state: '持续更新',
+    state: '已整理',
     href: '/notes/biostatistics/'
   },
   {
