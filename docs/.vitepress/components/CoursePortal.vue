@@ -7,7 +7,7 @@ import { withBase } from 'vitepress'
     <div class="course-portal__glow" aria-hidden="true" />
     <header class="course-portal__hero">
       <p class="course-portal__eyebrow">Course archive · two views</p>
-      <h1>用两种方式，进入同一张知识网络</h1>
+      <h1>两种方式，一张知识网络</h1>
       <p>按时间回看每个学期的学习现场，或沿知识承接关系理解课程为什么彼此相连。</p>
     </header>
 
@@ -16,10 +16,10 @@ import { withBase } from 'vitepress'
         <div class="course-choice__meta"><span>01</span><small>Chronological</small></div>
         <div class="course-choice__copy">
           <h2>按学期查看</h2>
-          <p>从最近学期向前浏览课程，快速进入笔记、作业、项目和相关资源。</p>
+          <p>按学期顺序浏览课程，快速进入笔记、作业、项目和相关资源。</p>
         </div>
         <div class="term-preview" aria-hidden="true">
-          <span>27 春</span><span>26 秋</span><span>26 春</span><span>25 秋</span>
+          <span>25 秋</span><span>26 春</span><span>26 秋</span><span>27 春</span>
         </div>
         <strong class="course-choice__action">打开学期档案 <i>→</i></strong>
       </a>
@@ -49,8 +49,11 @@ import { withBase } from 'vitepress'
 <style scoped>
 .course-portal {
   position: relative;
-  min-height: calc(100svh - var(--vp-nav-height));
-  padding: clamp(62px, 8vw, 112px) max(24px, calc((100vw - 1320px) / 2)) 72px;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: calc(100dvh - var(--vp-nav-height));
+  min-height: 590px;
+  padding: clamp(24px, 4vh, 42px) max(24px, calc((100vw - 1320px) / 2)) clamp(22px, 3.6vh, 38px);
   overflow: hidden;
   background:
     linear-gradient(rgba(23, 95, 90, 0.032) 1px, transparent 1px),
@@ -74,15 +77,15 @@ import { withBase } from 'vitepress'
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
-  gap: clamp(36px, 7vw, 110px);
+  grid-template-columns: minmax(0, 1.12fr) minmax(300px, 0.88fr);
+  gap: clamp(24px, 5vw, 78px);
   align-items: end;
-  margin-bottom: clamp(46px, 7vh, 76px);
+  margin-bottom: clamp(18px, 2.8vh, 30px);
 }
 
 .course-portal__eyebrow {
   grid-column: 1 / -1;
-  margin: 0 0 -20px;
+  margin: 0 0 -8px;
   color: var(--opends-gold);
   font-size: 0.72rem;
   font-weight: 800;
@@ -91,19 +94,19 @@ import { withBase } from 'vitepress'
 }
 
 .course-portal__hero h1 {
-  max-width: 850px;
+  max-width: 720px;
   margin: 0;
   font-family: var(--opends-serif);
-  font-size: clamp(3.3rem, 6.8vw, 6.8rem);
-  letter-spacing: -0.065em;
-  line-height: 0.98;
+  font-size: clamp(2.65rem, 4.7vw, 5rem);
+  letter-spacing: -0.06em;
+  line-height: 0.94;
 }
 
 .course-portal__hero > p:last-child {
-  margin: 0 0 8px;
+  margin: 0 0 3px;
   color: var(--vp-c-text-2);
-  font-size: 1rem;
-  line-height: 1.85;
+  font-size: 0.9rem;
+  line-height: 1.65;
 }
 
 .course-portal__choices {
@@ -112,15 +115,17 @@ import { withBase } from 'vitepress'
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
+  min-height: 0;
 }
 
 .course-choice {
   position: relative;
   display: grid;
-  min-height: 370px;
+  min-height: 0;
+  height: 100%;
   border: 1px solid var(--vp-c-divider);
   border-radius: 26px;
-  padding: clamp(24px, 3vw, 38px);
+  padding: clamp(20px, 2.4vw, 32px);
   overflow: hidden;
   color: var(--vp-c-text-1) !important;
   background: color-mix(in srgb, var(--vp-c-bg) 92%, transparent);
@@ -174,7 +179,7 @@ import { withBase } from 'vitepress'
   border: 0;
   padding: 0;
   font-family: var(--opends-serif);
-  font-size: clamp(2rem, 3.6vw, 3.4rem);
+  font-size: clamp(1.85rem, 3vw, 3rem);
   letter-spacing: -0.045em;
 }
 
@@ -192,7 +197,7 @@ import { withBase } from 'vitepress'
   align-items: center;
   justify-content: space-between;
   border-top: 1px solid color-mix(in srgb, currentColor 18%, transparent);
-  padding-top: 18px;
+  padding-top: 14px;
   font-size: 0.8rem;
 }
 
@@ -264,11 +269,36 @@ import { withBase } from 'vitepress'
 @keyframes portal-node { 50% { box-shadow: 0 0 0 11px rgba(119, 199, 189, 0.05); transform: scale(1.12); } }
 
 @media (max-width: 820px) {
-  .course-portal { padding-top: 56px; }
+  .course-portal {
+    display: block;
+    height: auto;
+    min-height: calc(100svh - var(--vp-nav-height));
+    padding-top: 48px;
+  }
   .course-portal__hero { grid-template-columns: 1fr; gap: 18px; }
   .course-portal__eyebrow { margin-bottom: 4px; }
   .course-portal__choices { grid-template-columns: 1fr; }
   .course-choice { min-height: 340px; }
+}
+
+@media (min-width: 821px) and (max-height: 700px) {
+  .course-portal {
+    min-height: 540px;
+    padding-top: 18px;
+    padding-bottom: 18px;
+  }
+
+  .course-portal__hero {
+    margin-bottom: 14px;
+  }
+
+  .course-portal__hero h1 {
+    font-size: clamp(2.4rem, 4.1vw, 4.2rem);
+  }
+
+  .course-choice__copy p {
+    display: none;
+  }
 }
 
 @media (max-width: 520px) {

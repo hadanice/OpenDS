@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { withBase } from 'vitepress'
 
 type PathId = 'math' | 'statistics' | 'systems' | 'intelligence' | 'application'
@@ -19,6 +19,7 @@ interface KnowledgeNode {
   y: number
   paths: PathId[]
   href?: string
+  placeholder?: boolean
 }
 
 interface KnowledgeEdge {
@@ -34,13 +35,14 @@ interface ModuleCourse {
   term: string
   href?: string
   siteCode?: string
-  group?: '理医工' | '社会科学'
+  group?: '统计分析' | '系统与数据挖掘' | '理医工' | '社会科学'
 }
 
 interface ModuleGroup {
   id: string
   number: string
   title: string
+  navTitle?: string
   kicker: string
   courses: ModuleCourse[]
 }
@@ -54,30 +56,32 @@ const knowledgePaths: KnowledgePath[] = [
 ]
 
 const knowledgeNodes: KnowledgeNode[] = [
-  { id: 'analysis', title: '数学分析 B I—II', code: 'MATH10012 · 10013', x: 8, y: 19, paths: ['math', 'statistics'] },
-  { id: 'linear', title: '线性代数', code: 'CS10003', x: 8, y: 50, paths: ['math', 'intelligence'] },
-  { id: 'programming', title: '程序设计', code: 'CS10004', x: 8, y: 81, paths: ['systems', 'intelligence'] },
+  { id: 'analysis', title: '数学分析 B I—II', code: 'MATH10012 · 10013', x: 6.5, y: 19, paths: ['math', 'statistics'] },
+  { id: 'linear', title: '线性代数', code: 'CS10003', x: 6.5, y: 50, paths: ['math', 'intelligence'] },
+  { id: 'programming', title: '程序设计', code: 'CS10004', x: 6.5, y: 81, paths: ['systems', 'intelligence'] },
 
-  { id: 'advanced-linear', title: '高等线性代数', code: 'MATH10003', x: 29, y: 19, paths: ['math', 'intelligence'], href: '/notes/advanced-linear-algebra/' },
-  { id: 'probability', title: '概率论基础', code: 'STAT20011', x: 29, y: 50, paths: ['statistics', 'intelligence', 'application'], href: '/notes/probability/' },
-  { id: 'algorithms', title: '算法与数据结构', code: 'CS20017h', x: 29, y: 81, paths: ['systems', 'intelligence'], href: '/notes/algorithms/' },
+  { id: 'advanced-linear', title: '高等线性代数', code: 'MATH10003', x: 24, y: 19, paths: ['math', 'intelligence'], href: '/notes/advanced-linear-algebra/' },
+  { id: 'probability', title: '概率论基础', code: 'STAT20011', x: 24, y: 50, paths: ['statistics', 'intelligence', 'application'], href: '/notes/probability/' },
+  { id: 'algorithms', title: '算法与数据结构', code: 'CS20017h', x: 24, y: 81, paths: ['systems', 'intelligence'], href: '/notes/algorithms/' },
 
-  { id: 'numerical', title: '数值算法 I', code: 'MATH20007', x: 50, y: 11, paths: ['math', 'intelligence', 'application'], href: '/notes/numerical-algorithms/' },
-  { id: 'math-statistics', title: '统计学基础 I', code: 'STAT20010h', x: 50, y: 36, paths: ['statistics', 'intelligence', 'application'], href: '/notes/mathematical-statistics/' },
-  { id: 'computer-systems', title: '计算机原理', code: 'CS20018', x: 50, y: 64, paths: ['systems', 'intelligence'], href: '/notes/computer-systems/' },
-  { id: 'database', title: '数据库及实现', code: 'CS20019', x: 50, y: 88, paths: ['systems', 'application'], href: '/notes/database/' },
+  { id: 'numerical', title: '数值算法 I', code: 'MATH20007', x: 41.5, y: 11, paths: ['math', 'intelligence', 'application'], href: '/notes/numerical-algorithms/' },
+  { id: 'math-statistics', title: '统计学基础 I', code: 'STAT20010h', x: 41.5, y: 36, paths: ['statistics', 'intelligence', 'application'], href: '/notes/mathematical-statistics/' },
+  { id: 'computer-systems', title: '计算机原理', code: 'CS20018', x: 41.5, y: 64, paths: ['systems', 'intelligence'], href: '/notes/computer-systems/' },
+  { id: 'database', title: '数据库及实现', code: 'CS20019', x: 41.5, y: 88, paths: ['systems', 'application'], href: '/notes/database/' },
 
-  { id: 'optimization', title: '最优化方法', code: 'MATH20008', x: 71, y: 10, paths: ['math', 'statistics', 'intelligence'], href: '/notes/optimization/' },
-  { id: 'stat-computing', title: '统计计算', code: 'STAT30016h', x: 71, y: 29, paths: ['statistics', 'intelligence'] },
-  { id: 'stat-learning', title: '统计（机器）学习', code: 'STAT30015', x: 71, y: 48, paths: ['math', 'statistics', 'intelligence', 'application'] },
-  { id: 'artificial-intelligence', title: '人工智能', code: 'CS50020', x: 71, y: 68, paths: ['systems', 'intelligence'] },
-  { id: 'nlp', title: 'NLP 与大语言模型', code: 'CS40008', x: 71, y: 88, paths: ['systems', 'intelligence', 'application'], href: '/notes/nlp-llms/' },
+  { id: 'optimization', title: '最优化方法', code: 'MATH20008', x: 59, y: 10, paths: ['math', 'statistics', 'intelligence'], href: '/notes/optimization/' },
+  { id: 'stat-computing', title: '统计计算', code: 'STAT30016h', x: 59, y: 29, paths: ['statistics', 'intelligence'] },
+  { id: 'stat-learning', title: '统计（机器）学习', code: 'STAT30015', x: 59, y: 48, paths: ['math', 'statistics', 'intelligence', 'application'] },
+  { id: 'artificial-intelligence', title: '人工智能', code: 'CS50020', x: 59, y: 68, paths: ['systems', 'intelligence'] },
+  { id: 'nlp', title: 'NLP 与大语言模型', code: 'CS40008', x: 59, y: 88, paths: ['systems', 'intelligence', 'application'], href: '/notes/nlp-llms/' },
 
-  { id: 'image', title: '图像处理与可视化', code: 'CS30065', x: 92, y: 10, paths: ['intelligence', 'application'] },
-  { id: 'biostatistics', title: '生物统计学', code: 'STAT50025', x: 92, y: 29, paths: ['statistics', 'application'], href: '/notes/biostatistics/' },
-  { id: 'graph-mining', title: '图数据管理与挖掘', code: 'CS50027', x: 92, y: 48, paths: ['systems', 'application'] },
-  { id: 'deep-learning', title: '神经网络与深度学习', code: 'CS30064', x: 92, y: 68, paths: ['intelligence', 'application'] },
-  { id: 'research', title: '项目 · 实习 · 毕业论文', code: 'PRACTICE', x: 92, y: 88, paths: ['math', 'statistics', 'systems', 'intelligence', 'application'] }
+  { id: 'image', title: '图像处理与可视化', code: 'CS30065', x: 76.5, y: 10, paths: ['intelligence', 'application'] },
+  { id: 'biostatistics', title: '生物统计学', code: 'STAT50025', x: 76.5, y: 29, paths: ['statistics', 'application'], href: '/notes/biostatistics/' },
+  { id: 'graph-mining', title: '图数据管理与挖掘', code: 'CS50027', x: 76.5, y: 48, paths: ['systems', 'application'] },
+  { id: 'deep-learning', title: '神经网络与深度学习', code: 'CS30064', x: 76.5, y: 68, paths: ['intelligence', 'application'] },
+  { id: 'future-electives', title: '专业选修 · 待定 ×4', code: '大三下 · 留待延伸', x: 76.5, y: 88, paths: ['math', 'statistics', 'systems', 'intelligence', 'application'], placeholder: true },
+
+  { id: 'research', title: '项目 · 实习 · 毕业论文', code: 'PRACTICE', x: 94, y: 88, paths: ['math', 'statistics', 'systems', 'intelligence', 'application'] }
 ]
 
 const knowledgeEdges: KnowledgeEdge[] = [
@@ -86,14 +90,14 @@ const knowledgeEdges: KnowledgeEdge[] = [
   { from: 'advanced-linear', to: 'numerical', paths: ['math', 'intelligence'] },
   { from: 'numerical', to: 'optimization', paths: ['math', 'intelligence'] },
   { from: 'optimization', to: 'stat-learning', paths: ['math', 'statistics', 'intelligence'] },
-  { from: 'stat-learning', to: 'research', paths: ['math', 'statistics', 'application'] },
+  { from: 'stat-learning', to: 'future-electives', paths: ['math', 'statistics', 'application'] },
 
   { from: 'analysis', to: 'probability', paths: ['statistics'] },
   { from: 'probability', to: 'math-statistics', paths: ['statistics', 'intelligence', 'application'] },
   { from: 'math-statistics', to: 'stat-computing', paths: ['statistics', 'intelligence'] },
   { from: 'stat-computing', to: 'stat-learning', paths: ['statistics', 'intelligence'] },
   { from: 'math-statistics', to: 'biostatistics', paths: ['statistics', 'application'] },
-  { from: 'biostatistics', to: 'research', paths: ['statistics', 'application'] },
+  { from: 'biostatistics', to: 'future-electives', paths: ['statistics', 'application'] },
 
   { from: 'programming', to: 'algorithms', paths: ['systems', 'intelligence'] },
   { from: 'algorithms', to: 'computer-systems', paths: ['systems', 'intelligence'] },
@@ -102,8 +106,8 @@ const knowledgeEdges: KnowledgeEdge[] = [
   { from: 'database', to: 'graph-mining', paths: ['systems', 'application'] },
   { from: 'database', to: 'nlp', paths: ['systems', 'application'] },
   { from: 'artificial-intelligence', to: 'nlp', paths: ['systems', 'intelligence'] },
-  { from: 'graph-mining', to: 'research', paths: ['systems', 'application'] },
-  { from: 'nlp', to: 'research', paths: ['systems', 'intelligence', 'application'] },
+  { from: 'graph-mining', to: 'future-electives', paths: ['systems', 'application'] },
+  { from: 'nlp', to: 'future-electives', paths: ['systems', 'intelligence', 'application'] },
 
   { from: 'advanced-linear', to: 'optimization', paths: ['intelligence'] },
   { from: 'math-statistics', to: 'stat-learning', paths: ['intelligence'] },
@@ -112,8 +116,9 @@ const knowledgeEdges: KnowledgeEdge[] = [
   { from: 'stat-learning', to: 'deep-learning', paths: ['intelligence', 'application'] },
   { from: 'artificial-intelligence', to: 'deep-learning', paths: ['intelligence'] },
   { from: 'numerical', to: 'image', paths: ['intelligence', 'application'] },
-  { from: 'image', to: 'research', paths: ['intelligence', 'application'] },
-  { from: 'deep-learning', to: 'research', paths: ['intelligence', 'application'] }
+  { from: 'image', to: 'future-electives', paths: ['intelligence', 'application'] },
+  { from: 'deep-learning', to: 'future-electives', paths: ['intelligence', 'application'] },
+  { from: 'future-electives', to: 'research', paths: ['math', 'statistics', 'systems', 'intelligence', 'application'] }
 ]
 
 const modules: ModuleGroup[] = [
@@ -141,51 +146,19 @@ const modules: ModuleGroup[] = [
     ]
   },
   {
-    id: 'statistics',
+    id: 'advanced',
     number: '02',
-    title: '统计与分析',
-    kicker: 'Statistics & analysis',
+    title: '统计分析×系统与数据挖掘×理医工×社会科学',
+    navTitle: '专业进阶',
+    kicker: 'Advanced pathways',
     courses: [
-      { title: '数值算法与案例分析 II', code: 'MATH50009', credits: 3, term: '第 4 / 6 学期' },
-      { title: '随机过程导论', code: 'STAT50017', credits: 3, term: '第 4 / 6 学期' },
-      { title: '统计学基础 II：回归分析', code: 'STAT50024', credits: 3, term: '第 3 / 5 学期' },
-      { title: '时间序列与空间统计', code: 'STAT50016', credits: 3, term: '第 4 / 6 学期' },
-      { title: '数据融合与同化', code: 'STAT50019', credits: 3, term: '第 4 / 6 学期' },
-      { title: '多元统计分析', code: 'STAT50023', credits: 3, term: '第 4 / 6 学期' },
-      { title: '应用泛函分析', code: 'MATH50011', credits: 3, term: '第 3 / 5 学期' },
-      { title: '线性规划', code: 'MATH50012', credits: 3, term: '第 4 / 6 学期' },
-      { title: '多模态数据同化', code: 'AIS410010', credits: 3, term: '第 4 / 6 学期' }
-    ]
-  },
-  {
-    id: 'systems',
-    number: '03',
-    title: '系统与数据挖掘',
-    kicker: 'Systems & data mining',
-    courses: [
-      { title: '大规模分布式系统', code: 'CS50022', credits: 3, term: '第 4 / 6 学期' },
-      { title: '高级大数据解析', code: 'CS50021', credits: 3, term: '第 3 / 5 学期' },
-      { title: '自然语言处理', code: 'CS50023', siteCode: '站内 CS40008', credits: 3, term: '第 4 / 6 学期', href: '/notes/nlp-llms/' },
-      { title: '数字图像处理', code: 'DATA130032', credits: 3, term: '第 3—6 学期' },
-      { title: '图数据管理与挖掘', code: 'CS50027', credits: 3, term: '第 3 / 5 学期' },
-      { title: '强化学习算法与理论基础', code: 'MATH50013', credits: 3, term: '第 3 / 5 学期' },
-      { title: '算法设计与分析', code: 'CS30016', credits: 3, term: '第 4 / 6 学期' },
-      { title: '计算机视觉', code: 'CS50028', credits: 3, term: '第 4 / 6 学期' },
-      { title: '认知智能前沿技术与实践', code: 'AIT531023', credits: 3, term: '第 3 / 5 学期' }
-    ]
-  },
-  {
-    id: 'applied',
-    number: '04',
-    title: '理医工 × 社会科学',
-    kicker: 'Applied data science',
-    courses: [
+      { title: '时间序列与空间统计', code: 'STAT50016', credits: 3, term: '第 4 / 6 学期', group: '统计分析' },
+      { title: '多模态数据同化', code: 'AIS410010', credits: 3, term: '第 4 / 6 学期', group: '统计分析' },
+      { title: '自然语言处理', code: 'CS50023', siteCode: '站内 CS40008', credits: 3, term: '第 4 / 6 学期', group: '系统与数据挖掘', href: '/notes/nlp-llms/' },
+      { title: '图数据管理与挖掘', code: 'CS50027', credits: 3, term: '第 3 / 5 学期', group: '系统与数据挖掘' },
+      { title: '强化学习算法与理论基础', code: 'MATH50013', credits: 3, term: '第 3 / 5 学期', group: '系统与数据挖掘' },
       { title: '生物统计学', code: 'STAT50025', credits: 3, term: '第 4 / 6 学期', group: '理医工', href: '/notes/biostatistics/' },
-      { title: '社交网络挖掘', code: 'CS50019', credits: 3, term: '第 3 / 5 学期', group: '社会科学' },
-      { title: '社会数据管理与分析', code: 'DATA130037', credits: 3, term: '第 3—6 学期', group: '社会科学' },
-      { title: '金融工程', code: 'STAT50022', credits: 3, term: '第 3 / 5 学期', group: '社会科学' },
-      { title: '社会科学数据挖掘', code: 'STAT50021', credits: 3, term: '第 4 / 6 学期', group: '社会科学' },
-      { title: '大数据传播与新媒体分析', code: 'CS50025', credits: 3, term: '第 4 / 6 学期', group: '社会科学' }
+      { title: '金融工程', code: 'STAT50022', credits: 3, term: '第 3 / 5 学期', group: '社会科学' }
     ]
   }
 ]
@@ -194,6 +167,7 @@ const activeScene = ref(0)
 const activePathId = ref<PathId>('statistics')
 const activeModuleId = ref('core')
 const graph = ref<HTMLElement | null>(null)
+const edgeCanvas = ref<HTMLCanvasElement | null>(null)
 const graphSize = ref({ width: 1400, height: 540 })
 const touchStartY = ref(0)
 
@@ -205,29 +179,117 @@ const activeModule = computed(() => modules.find((module) => module.id === activ
 
 const courseHref = (href?: string) => href ? withBase(href) : undefined
 const nodeStyle = (node: KnowledgeNode) => ({ left: `${node.x}%`, top: `${node.y}%` })
-const edgeStyle = (edge: KnowledgeEdge) => {
-  const from = nodeMap.get(edge.from)!
-  const to = nodeMap.get(edge.to)!
-  const x1 = graphSize.value.width * from.x / 100
-  const y1 = graphSize.value.height * from.y / 100
-  const x2 = graphSize.value.width * to.x / 100
-  const y2 = graphSize.value.height * to.y / 100
-  const distance = Math.hypot(x2 - x1, y2 - y1)
-  const angle = Math.atan2(y2 - y1, x2 - x1)
-
-  return {
-    left: `${x1}px`,
-    top: `${y1}px`,
-    width: `${distance}px`,
-    transform: `rotate(${angle}rad)`
-  }
-}
 
 let wheelLocked = false
 let wheelTimer: ReturnType<typeof setTimeout> | undefined
 let pathTimer: ReturnType<typeof setInterval> | undefined
 let pathResumeTimer: ReturnType<typeof setTimeout> | undefined
 let resizeObserver: ResizeObserver | undefined
+let edgeFrame: number | undefined
+
+const cubicPoint = (
+  start: number,
+  controlOne: number,
+  controlTwo: number,
+  end: number,
+  progress: number
+) => {
+  const remaining = 1 - progress
+  return remaining ** 3 * start
+    + 3 * remaining ** 2 * progress * controlOne
+    + 3 * remaining * progress ** 2 * controlTwo
+    + progress ** 3 * end
+}
+
+const drawCurves = (progress = 1) => {
+  const canvas = edgeCanvas.value
+  if (!canvas) return
+
+  const { width, height } = graphSize.value
+  const ratio = Math.min(window.devicePixelRatio || 1, 2)
+  canvas.width = Math.max(1, Math.round(width * ratio))
+  canvas.height = Math.max(1, Math.round(height * ratio))
+  canvas.style.width = `${width}px`
+  canvas.style.height = `${height}px`
+
+  const context = canvas.getContext('2d')
+  if (!context) return
+  context.setTransform(ratio, 0, 0, ratio, 0, 0)
+  context.clearRect(0, 0, width, height)
+  context.lineCap = 'round'
+  context.lineJoin = 'round'
+
+  activeEdges.value.forEach((edge, index) => {
+    const from = nodeMap.get(edge.from)
+    const to = nodeMap.get(edge.to)
+    if (!from || !to) return
+
+    const x1 = width * from.x / 100
+    const y1 = height * from.y / 100
+    const x2 = width * to.x / 100
+    const y2 = height * to.y / 100
+    const deltaX = x2 - x1
+    const deltaY = y2 - y1
+    const distance = Math.max(1, Math.hypot(deltaX, deltaY))
+    const direction = index % 2 === 0 ? 1 : -1
+    const bend = direction * Math.min(34, Math.max(13, distance * .11))
+    const normalX = -deltaY / distance
+    const normalY = deltaX / distance
+    const controlOneX = x1 + deltaX * .34 + normalX * bend
+    const controlOneY = y1 + deltaY * .34 + normalY * bend
+    const controlTwoX = x1 + deltaX * .7 + normalX * bend
+    const controlTwoY = y1 + deltaY * .7 + normalY * bend
+    const edgeProgress = Math.max(0, Math.min(1, (progress - index * .035) / .76))
+    if (edgeProgress <= 0) return
+
+    context.beginPath()
+    context.moveTo(x1, y1)
+    const steps = Math.max(8, Math.ceil(36 * edgeProgress))
+    for (let step = 1; step <= steps; step += 1) {
+      const pointProgress = edgeProgress * step / steps
+      context.lineTo(
+        cubicPoint(x1, controlOneX, controlTwoX, x2, pointProgress),
+        cubicPoint(y1, controlOneY, controlTwoY, y2, pointProgress)
+      )
+    }
+
+    const gradient = context.createLinearGradient(x1, y1, x2, y2)
+    gradient.addColorStop(0, `${activePath.value.color}38`)
+    gradient.addColorStop(.5, `${activePath.value.color}c7`)
+    gradient.addColorStop(1, `${activePath.value.color}65`)
+    context.strokeStyle = gradient
+    context.lineWidth = 1.7
+    context.shadowColor = `${activePath.value.color}35`
+    context.shadowBlur = 5
+    context.stroke()
+    context.shadowBlur = 0
+
+    if (edgeProgress >= .995) {
+      context.beginPath()
+      context.arc(x2, y2, 2.5, 0, Math.PI * 2)
+      context.fillStyle = activePath.value.color
+      context.fill()
+    }
+  })
+}
+
+const animateCurves = () => {
+  if (edgeFrame !== undefined) cancelAnimationFrame(edgeFrame)
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    drawCurves(1)
+    return
+  }
+
+  const startedAt = performance.now()
+  const renderFrame = (now: number) => {
+    const progress = Math.min(1, (now - startedAt) / 950)
+    drawCurves(1 - (1 - progress) ** 3)
+    if (progress < 1) edgeFrame = requestAnimationFrame(renderFrame)
+  }
+  edgeFrame = requestAnimationFrame(renderFrame)
+}
+
+watch([activePathId, graphSize], animateCurves, { flush: 'post' })
 
 const goToScene = (index: number) => {
   const next = Math.min(1, Math.max(0, index))
@@ -291,6 +353,7 @@ onMounted(() => {
     })
     resizeObserver.observe(graph.value)
   }
+  requestAnimationFrame(animateCurves)
   startPathCycle()
 })
 
@@ -299,6 +362,7 @@ onBeforeUnmount(() => {
   if (wheelTimer) clearTimeout(wheelTimer)
   if (pathTimer) clearInterval(pathTimer)
   if (pathResumeTimer) clearTimeout(pathResumeTimer)
+  if (edgeFrame !== undefined) cancelAnimationFrame(edgeFrame)
 })
 </script>
 
@@ -361,20 +425,12 @@ onBeforeUnmount(() => {
             :aria-label="`${activePath.title}知识路径`"
           >
             <div class="graph-columns" aria-hidden="true">
-              <span v-for="label in ['基础语言', '核心工具', '建模与系统', '专业方法', '应用与研究']" :key="label">
+              <span v-for="label in ['基础语言', '核心工具', '建模与系统', '专业方法', '专业选修', '实践研究']" :key="label">
                 {{ label }}
               </span>
             </div>
 
-            <TransitionGroup name="edge-fade" tag="div" class="edge-layer">
-              <span
-                v-for="edge in activeEdges"
-                :key="`${activePathId}-${edge.from}-${edge.to}`"
-                class="knowledge-edge"
-                :style="edgeStyle(edge)"
-                aria-hidden="true"
-              ><i /></span>
-            </TransitionGroup>
+            <canvas ref="edgeCanvas" class="edge-canvas" aria-hidden="true" />
 
             <TransitionGroup name="node-fade" tag="div" class="node-layer">
               <component
@@ -382,7 +438,7 @@ onBeforeUnmount(() => {
                 v-for="(node, index) in activeNodes"
                 :key="`${activePathId}-${node.id}`"
                 class="knowledge-node"
-                :class="{ 'has-notes': node.href }"
+                :class="{ 'has-notes': node.href, 'is-placeholder': node.placeholder }"
                 :href="courseHref(node.href)"
                 :style="{ ...nodeStyle(node), '--node-delay': `${index * 34}ms` }"
               >
@@ -420,7 +476,7 @@ onBeforeUnmount(() => {
                 :class="{ 'is-active': activeModuleId === module.id }"
                 @click="activeModuleId = module.id"
               >
-                <span>{{ module.number }}</span>{{ module.title }}
+                <span>{{ module.number }}</span>{{ module.navTitle ?? module.title }}
                 <i>{{ module.courses.length }}</i>
               </button>
             </div>
@@ -430,7 +486,7 @@ onBeforeUnmount(() => {
             <Transition name="module-swap" mode="out-in">
               <div :key="activeModule.id" class="module-panel__body" role="tabpanel">
                 <header>
-                  <div><small>{{ activeModule.kicker }}</small><h3>{{ activeModule.title }}</h3></div>
+                  <div><small>{{ activeModule.kicker }}</small><h3 :class="{ 'is-long': activeModule.id === 'advanced' }">{{ activeModule.title }}</h3></div>
                   <span>{{ activeModule.courses.length }} 门</span>
                 </header>
                 <div class="module-course-grid">
@@ -643,7 +699,7 @@ onBeforeUnmount(() => {
   inset: 0;
   z-index: -1;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   pointer-events: none;
 }
 
@@ -661,51 +717,19 @@ onBeforeUnmount(() => {
   border-right: 0;
 }
 
-.edge-layer,
 .node-layer {
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
 
-.knowledge-edge {
+.edge-canvas {
   position: absolute;
+  inset: 0;
   z-index: 1;
-  display: block;
-  height: 2px;
-  transform-origin: 0 50%;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-}
-
-.knowledge-edge::before {
-  position: absolute;
-  inset: 0;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--path-color) 42%, var(--vp-c-divider));
-  content: "";
-}
-
-.knowledge-edge::after {
-  position: absolute;
-  top: -2px;
-  right: -1px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--path-color);
-  box-shadow: 0 0 0 5px color-mix(in srgb, var(--path-color) 10%, transparent);
-  content: "";
-}
-
-.knowledge-edge i {
-  position: absolute;
-  z-index: 1;
-  inset: 0;
-  border-radius: 999px;
-  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--path-color) 90%, white), transparent);
-  transform: scaleX(0);
-  transform-origin: left;
-  animation: edge-draw .9s .08s ease forwards, edge-shimmer 3.8s 1s ease-in-out infinite;
 }
 
 .knowledge-node {
@@ -730,6 +754,19 @@ onBeforeUnmount(() => {
 
 .knowledge-node.has-notes {
   border-color: color-mix(in srgb, var(--path-color) 56%, var(--vp-c-divider));
+}
+
+.knowledge-node.is-placeholder {
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--path-color) 70%, var(--vp-c-divider));
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--path-color) 9%, transparent), transparent 58%),
+    color-mix(in srgb, var(--vp-c-bg) 96%, transparent);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--path-color) 5%, transparent);
+}
+
+.knowledge-node.is-placeholder strong {
+  color: var(--path-color);
 }
 
 a.knowledge-node:hover {
@@ -889,6 +926,12 @@ a.knowledge-node:hover {
   line-height: 1;
 }
 
+.module-panel__body > header h3.is-long {
+  font-size: clamp(18px, 1.65vw, 26px);
+  letter-spacing: -.025em;
+  white-space: nowrap;
+}
+
 .module-panel__body > header > span {
   color: var(--vp-c-text-3);
   font-size: 10px;
@@ -1036,18 +1079,6 @@ a.module-course:hover {
   transform: translate(-50%, -50%) scale(.94);
 }
 
-.edge-fade-enter-active {
-  animation: edge-arrive .35s both ease;
-}
-
-.edge-fade-leave-active {
-  transition: opacity .14s ease;
-}
-
-.edge-fade-leave-to {
-  opacity: 0;
-}
-
 .module-swap-enter-active,
 .module-swap-leave-active {
   transition: opacity .2s ease, transform .2s ease;
@@ -1066,20 +1097,6 @@ a.module-course:hover {
 @keyframes node-arrive {
   from { opacity: 0; transform: translate(-50%, -50%) scale(.9); }
   to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-}
-
-@keyframes edge-arrive {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes edge-draw {
-  to { transform: scaleX(1); }
-}
-
-@keyframes edge-shimmer {
-  0%, 100% { opacity: .25; }
-  50% { opacity: 1; }
 }
 
 @keyframes hint-drift {
@@ -1199,6 +1216,12 @@ a.module-course:hover {
     font-size: 19px;
   }
 
+  .module-panel__body > header h3.is-long {
+    font-size: 14px;
+    line-height: 1.2;
+    white-space: normal;
+  }
+
   .module-course-grid {
     gap: 4px;
   }
@@ -1243,10 +1266,8 @@ a.module-course:hover {
     transition: none;
   }
 
-  .knowledge-edge i,
   .scene-hint span,
-  .node-fade-enter-active,
-  .edge-fade-enter-active {
+  .node-fade-enter-active {
     animation: none;
   }
 }
