@@ -1,14 +1,15 @@
 ---
 layout: page
 sidebar: false
+aside: false
 footer: false
-title: OpenDS
-titleTemplate: 数据科学学习档案
-description: 复旦大学大数据学院课程的笔记、作业、项目与自学资源。
+title: 课程笔记
+titleTemplate: false
+description: 复旦大学大数据学院课程的笔记。持续整理，开放分享。
 ---
 
 <script setup>
-import ScrollStory from './.vitepress/components/ScrollStory.vue'
+import CoursePortal from './.vitepress/components/CoursePortal.vue'
 </script>
 
-<ScrollStory />
+<CoursePortal />

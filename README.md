@@ -1,26 +1,4 @@
-<div align="center">
-  <a href="https://hadanice.github.io/OpenDS/">
-    <img src="./docs/public/opends-icon.svg" width="112" height="112" alt="OpenDS icon">
-  </a>
-  <p><sub>点击上方图标进入 OpenDS 网站</sub></p>
-
-  <h1>OpenDS</h1>
-
-  <p><strong>中文</strong> · <a href="./README.en.md">English</a></p>
-
-  <p><strong>用知识沉淀一张地图</strong></p>
-  <p>复旦大学大数据学院课程的笔记、作业、项目与自学资源。持续整理，开放分享。</p>
-
-  <p>
-    <a href="https://hadanice.github.io/OpenDS/courses/">浏览课程地图</a>
-    ·
-    <a href="https://hadanice.github.io/OpenDS/resources">学习资源</a>
-  </p>
-</div>
-
----
-
-OpenDS 记录我在复旦大学大数据学院的学习过程，并将分散的课堂笔记、作业解答、项目代码和自学资料整理为一份可检索、可追溯、持续生长的开放档案。你可以从下方课程表直接进入资料，也可以前往网站沿课程地图浏览。
+复旦大学大数据学院课程的笔记。持续整理，开放分享。
 
 ## 🍂 25秋
 

@@ -14,13 +14,13 @@ course: "生物统计学"
 
 | 章节 | 主题 | 对应课件 | Rosner 章节 | 文件 |
 |---|---|---|---|---|
-| 第 1 章 | 描述统计与概率 | `1 DescriStat & Prob.pdf` | Ch.2, 3 | [第1章_描述统计与概率.md](./第1章_描述统计与概率.md) |
-| 第 2 章 | 概率分布（二项、泊松、正态） | `2 Prob Distributions.pdf` | Ch.4, 5 | [第2章_概率分布.md](./第2章_概率分布.md) |
-| 第 3 章 | 估计与单样本检验 | `3 Estimation & 1-Sample Test.pdf` | Ch.6, 7 | [第3章_估计与单样本检验.md](./第3章_估计与单样本检验.md) |
-| 第 4 章 | 双样本检验（配对/独立 t） | `4 2-Sample Test.pdf` | Ch.8 | [第4章_双样本检验.md](./第4章_双样本检验.md) |
-| 第 5 章 | 多样本推断（ANOVA） | `5 Multisample inference.pdf` | Ch.12 | [第5章_多样本推断.md](./第5章_多样本推断.md) |
-| 第 6 章 | 回归与相关 | `6 Regression.pdf` | Ch.11, 12.5 | [第6章_回归分析.md](./第6章_回归分析.md) |
-| 第 7 章 | 人时数据与生存分析 | `7 Person-Time Data.pdf` | Ch.14 | [第7章_人时数据.md](./第7章_人时数据.md) |
+| 第 1 章 | 描述统计与概率 | `1 DescriStat & Prob.pdf` | Ch.2, 3 | [第1章_描述统计与概率.md](第1章_描述统计与概率.md) |
+| 第 2 章 | 概率分布（二项、泊松、正态） | `2 Prob Distributions.pdf` | Ch.4, 5 | [第2章_概率分布.md](第2章_概率分布.md) |
+| 第 3 章 | 估计与单样本检验 | `3 Estimation & 1-Sample Test.pdf` | Ch.6, 7 | [第3章_估计与单样本检验.md](第3章_估计与单样本检验.md) |
+| 第 4 章 | 双样本检验（配对/独立 t） | `4 2-Sample Test.pdf` | Ch.8 | [第4章_双样本检验.md](第4章_双样本检验.md) |
+| 第 5 章 | 多样本推断（ANOVA） | `5 Multisample inference.pdf` | Ch.12 | [第5章_多样本推断.md](第5章_多样本推断.md) |
+| 第 6 章 | 回归与相关 | `6 Regression.pdf` | Ch.11, 12.5 | [第6章_回归分析.md](第6章_回归分析.md) |
+| 第 7 章 | 人时数据与生存分析 | `7 Person-Time Data.pdf` | Ch.14 | [第7章_人时数据.md](第7章_人时数据.md) |
 
 ---
 

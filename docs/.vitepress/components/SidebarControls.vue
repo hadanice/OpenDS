@@ -258,26 +258,24 @@ onBeforeUnmount(() => {
     z-index: calc(var(--vp-z-index-sidebar) + 3);
     display: grid;
     place-items: center;
-    width: 28px;
-    height: 38px;
+    width: 24px;
+    height: 32px;
     border: 1px solid var(--vp-c-divider);
-    border-radius: 9px;
+    border-radius: 2px;
     color: var(--vp-c-text-2);
-    background: color-mix(in srgb, var(--vp-c-bg) 92%, transparent);
-    box-shadow: var(--vp-shadow-2);
-    font-size: 24px;
+    background: var(--vp-c-bg);
+    box-shadow: none;
+    font-size: 20px;
     line-height: 1;
     cursor: pointer;
     transform: translateX(-50%);
-    backdrop-filter: blur(12px);
     transition: color 0.2s, border-color 0.2s, background-color 0.2s;
   }
 
   .opends-sidebar-toggle:hover,
   .opends-sidebar-toggle:focus-visible {
-    border-color: var(--vp-c-brand-2);
-    color: var(--vp-c-brand-1);
-    background: var(--vp-c-bg);
+    border-color: var(--vp-c-text-1);
+    color: var(--vp-c-text-1);
     outline: none;
   }
 
@@ -309,7 +307,7 @@ onBeforeUnmount(() => {
   .opends-sidebar-resizer:focus-visible::after,
   .opends-sidebar-resizer.is-dragging::after {
     width: 3px;
-    background: var(--vp-c-brand-2);
+    background: var(--vp-c-text-1);
   }
 
   .opends-sidebar-resizer:focus-visible {

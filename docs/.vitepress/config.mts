@@ -3,7 +3,7 @@ import { Buffer } from 'node:buffer'
 import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { join, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { publishedCourses } from './course-manifest.mjs'
+import { publishedCourses } from './course-data'
 
 const notesRoot = fileURLToPath(new URL('../notes/', import.meta.url))
 
@@ -13,9 +13,7 @@ const markdownPages = (directory: string): string[] => {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     const fullPath = join(directory, entry.name)
     if (entry.isDirectory()) return markdownPages(fullPath)
-    return entry.isFile() && entry.name.toLowerCase().endsWith('.md')
-      ? [fullPath]
-      : []
+    return entry.isFile() && entry.name.toLowerCase().endsWith('.md') ? [fullPath] : []
   })
 }
 
@@ -52,127 +50,67 @@ const courseSidebar = (course: (typeof publishedCourses)[number]) => {
       ]
     },
     {
-      text: '课程导航',
+      text: '浏览',
       items: [
-        { text: '返回课程入口', link: '/courses/' },
-        { text: '查看课程地图', link: '/courses/map' },
-        { text: '查看 GitHub 源目录', link: `https://github.com/hadanice/OpenDS/tree/main/docs/notes/${course.slug}` }
+        { text: '按学期', link: '/courses/terms' },
+        { text: '按方向模块', link: '/courses/map' }
       ]
     }
   ]
 }
 
 const noteSidebars = Object.fromEntries(
-  publishedCourses.map((course) => [
-    `/notes/${course.slug}/`,
-    courseSidebar(course)
-  ])
+  publishedCourses.map((course) => [`/notes/${course.slug}/`, courseSidebar(course)])
 )
 
 export default defineConfig({
   lang: 'zh-CN',
   title: 'OpenDS',
-  description: '复旦大学数据科学课程笔记、作业、项目与学习资源',
+  description: '复旦大学大数据学院课程的笔记。持续整理，开放分享。',
   base: '/OpenDS/',
   cleanUrls: true,
-  lastUpdated: true,
   sitemap: {
     hostname: 'https://hadanice.github.io/OpenDS/'
   },
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/OpenDS/opends-icon.svg' }],
-    ['meta', { name: 'theme-color', content: '#175f5a' }],
+    ['meta', { name: 'theme-color', content: '#111111' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:site_name', content: 'OpenDS' }],
-    ['meta', { property: 'og:title', content: 'OpenDS · 数据科学学习档案' }],
-    ['meta', {
-      property: 'og:description',
-      content: '课程笔记、作业、项目与自学资源的开放索引。'
-    }]
+    ['meta', { property: 'og:title', content: 'OpenDS' }],
+    ['meta', { property: 'og:description', content: '复旦大学大数据学院课程的笔记。' }]
   ],
   themeConfig: {
     siteTitle: 'OpenDS',
-    logo: '/opends-icon.svg',
+    logo: { src: '/opends-icon.svg', alt: 'OpenDS' },
     nav: [
-      { text: '首页', link: '/' },
-      { text: '课程', link: '/courses/' },
-      { text: '学习资源', link: '/resources' },
-      { text: '关于', link: '/about' },
-      { text: 'English', link: '/en' }
+      { text: '按学期', link: '/courses/terms' },
+      { text: '按方向模块', link: '/courses/map' }
     ],
-    sidebar: {
-      ...noteSidebars,
-      '/': [
-        {
-          text: 'OpenDS',
-          items: [
-            { text: '项目首页', link: '/' },
-            { text: '课程', link: '/courses/' },
-            { text: '学习资源', link: '/resources' },
-            { text: '关于与贡献', link: '/about' },
-            { text: 'English', link: '/en' }
-          ]
-        }
-      ]
-    },
+    sidebar: noteSidebars,
     search: {
       provider: 'local',
       options: {
         translations: {
-          button: {
-            buttonText: '搜索',
-            buttonAriaLabel: '搜索站点'
-          },
+          button: { buttonText: '搜索', buttonAriaLabel: '搜索站点' },
           modal: {
             noResultsText: '没有找到相关内容',
             resetButtonTitle: '清除查询',
-            footer: {
-              selectText: '选择',
-              navigateText: '切换',
-              closeText: '关闭'
-            }
+            footer: { selectText: '选择', navigateText: '切换', closeText: '关闭' }
           }
         }
       }
     },
-    outline: {
-      label: '本页目录',
-      level: [2, 3]
-    },
-    docFooter: {
-      prev: '上一页',
-      next: '下一页'
-    },
-    lastUpdated: {
-      text: '最后更新于',
-      formatOptions: {
-        dateStyle: 'medium',
-        timeStyle: 'short'
-      }
-    },
-    editLink: {
-      pattern: 'https://github.com/hadanice/OpenDS/edit/main/docs/:path',
-      text: '在 GitHub 上编辑此页'
-    },
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/hadanice/OpenDS' }
-    ],
-    footer: {
-      message: '知识因整理而清晰，因分享而生长。',
-      copyright: 'Released under the MIT License · OpenDS'
-    }
+    outline: { label: '本页目录', level: [2, 3] },
+    docFooter: { prev: '上一页', next: '下一页' }
   },
   markdown: {
     math: {
       svg: {
-        // Keep every formula self-contained. The global cache emits <use>
-        // references without their shared <defs> in statically rendered pages.
         fontCache: 'none'
       }
     },
-    languageAlias: {
-      gdb: 'text'
-    },
+    languageAlias: { gdb: 'text' },
     config: (markdown) => {
       const defaultFence = markdown.renderer.rules.fence!
       markdown.renderer.rules.fence = (tokens, index, options, env, self) => {
@@ -185,9 +123,6 @@ export default defineConfig({
       }
     },
     lineNumbers: true,
-    theme: {
-      light: 'github-light',
-      dark: 'github-dark'
-    }
+    theme: { light: 'github-light', dark: 'github-dark' }
   }
 })

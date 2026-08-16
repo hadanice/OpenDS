@@ -1,26 +1,4 @@
-<div align="center">
-  <a href="https://hadanice.github.io/OpenDS/en">
-    <img src="./docs/public/opends-icon.svg" width="112" height="112" alt="OpenDS icon">
-  </a>
-  <p><sub>Click the icon above to visit the OpenDS website</sub></p>
-
-  <h1>OpenDS</h1>
-
-  <p><a href="./README.md">中文</a> · <strong>English</strong></p>
-
-  <p><strong>Turning knowledge into a map</strong></p>
-  <p>Notes, assignments, projects, and self-study resources from the School of Data Science at Fudan University. Continuously organized and openly shared.</p>
-
-  <p>
-    <a href="https://hadanice.github.io/OpenDS/courses/">Explore the course map</a>
-    ·
-    <a href="https://hadanice.github.io/OpenDS/resources">Learning resources</a>
-  </p>
-</div>
-
----
-
-OpenDS documents my studies at the School of Data Science, Fudan University, and organizes scattered course notes, homework solutions, project code, and self-study materials into a searchable, traceable, and continuously evolving open archive. Use the course tables below to open specific materials, or explore the website through its course map.
+Course notes from the School of Data Science, Fudan University. Continuously updated and openly shared.
 
 ## 🍂 Fall 2025
 

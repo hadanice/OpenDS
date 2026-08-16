@@ -1,10 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title description">
   <title id="title">OpenDS</title>
-  <desc id="description">由数据轨道、知识节点与字母 O、D 构成的 OpenDS 图标</desc>
-  <rect width="64" height="64" rx="15" fill="#175f5a"/>
-  <circle cx="30" cy="32" r="20" fill="none" stroke="#f7f3e9" stroke-width="5"/>
-  <path d="M30 12v40" fill="none" stroke="#74c1b8" stroke-linecap="round" stroke-width="5"/>
-  <path d="M30 18c10 0 17 5.2 17 14s-7 14-17 14" fill="none" stroke="#f7f3e9" stroke-linecap="round" stroke-width="4"/>
-  <circle cx="47.5" cy="17.5" r="5.5" fill="#b27432" stroke="#175f5a" stroke-width="3"/>
-  <circle cx="19" cy="43" r="3.5" fill="#74c1b8" stroke="#175f5a" stroke-width="2"/>
+  <desc id="description">黑底白线构成的极简字母 D</desc>
+  <rect width="64" height="64" rx="6" fill="#111111"/>
+  <path d="M18 14h13c11 0 18 7 18 18s-7 18-18 18H18V14Z" fill="none" stroke="#ffffff" stroke-width="4"/>
+  <circle cx="18" cy="32" r="3" fill="#ffffff"/>
 </svg>

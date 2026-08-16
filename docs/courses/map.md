@@ -3,12 +3,12 @@ layout: page
 sidebar: false
 aside: false
 footer: false
-title: 课程地图
-description: 沿基础、专业核心与方向模块浏览数据科学学习路径。
+title: 按方向模块查看
+description: 按方向模块浏览课程笔记。
 ---
 
 <script setup>
-import CourseMap from '../.vitepress/components/CourseMap.vue'
+import CourseArchive from '../.vitepress/components/CourseArchive.vue'
 </script>
 
-<CourseMap />
+<CourseArchive mode="direction" />

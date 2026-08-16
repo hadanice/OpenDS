@@ -5,12 +5,16 @@ on:
     branches: [main]
     paths:
       - 'docs/**'
+      - '*/笔记/**'
+      - 'scripts/sync-notes.mjs'
       - 'package.json'
       - 'package-lock.json'
       - '.github/workflows/deploy-pages.yml'
   pull_request:
     paths:
       - 'docs/**'
+      - '*/笔记/**'
+      - 'scripts/sync-notes.mjs'
       - 'package.json'
       - 'package-lock.json'
       - '.github/workflows/deploy-pages.yml'
